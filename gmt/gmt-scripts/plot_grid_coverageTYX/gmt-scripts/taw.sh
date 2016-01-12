@@ -9,6 +9,8 @@ else
 	outfile="${outDir}/$currentTime-$var"
 
 	echo "-> TAW..."
+	
+	echo ${infile}
 
 	grdmath ${infile}?u[$tIndex] SQR ${infile}?v[$tIndex] SQR ADD SQRT = ${workingDir}/L2.grd
 	grdmath ${workingDir}/L2.grd $minVector GT = ${workingDir}/mask.grd

@@ -25,7 +25,9 @@ LANG=en_us_8859_1
 # 1. Import config file
 
 basedir="${0%/*}"
-source $basedir/$1
+# Old way to use
+#source $basedir/$1
+source $1
 
 # 2. Set environement
 
@@ -172,7 +174,7 @@ for infile in ${path}/*.nc; do
 				source $basedir/gmt-scripts/taw.sh
 			fi
 			
-			var="two-taw"	
+			var="tsub"	
 			if test $twoSubTaw -eq 1 && [[ "$filename" == *"$var"* ]];
 			then					
 				source $basedir/gmt-scripts/two-taw.sh
