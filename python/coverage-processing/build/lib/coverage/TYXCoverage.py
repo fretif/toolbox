@@ -13,6 +13,9 @@ class TYXCoverage:
         self.reader = myReader; 
         self.times = myReader.read_axis_t();
         
+    def get_times(self): 
+        return self.times
+        
     def find_time_index(self,t):
        
         for i in xrange(len(self.times)):        

@@ -36,7 +36,4 @@ class WW3Reader:
         myFile = Dataset(self.filename, 'r')
         return myFile.variables[var][t][:]
     
-    def read_data(self,var):     
-        myFile = Dataset(self.filename, 'r')
-        return myFile.variables[var][:]    
     
