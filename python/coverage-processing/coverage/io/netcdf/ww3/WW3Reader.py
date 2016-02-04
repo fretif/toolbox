@@ -2,41 +2,35 @@
 # To change this template file, choose Tools | Templates
 # and open the template in the editor.
 
-from netCDF4 import Dataset
-from utils.jdutil import jd_to_datetime
-from utils.jdutil import date_to_jd
-from numpy import ndarray
-import datetime as datetime
+from coverage.io.File import File
+from coverage.TimeCoverage import TimeCoverage
+from netCDF4 import Dataset, num2date
+import numpy as np
 
-class WW3Reader:
-    
-    TIME_DATUM = date_to_jd(1990,01,01)
+class WW3Reader (File): 
 
-    def __init__(self, myFile):   
-        self.filename = myFile; 
+    def __init__(self, myFile):
+        File.__init__(self,myFile);         
+        self.ncfile = Dataset(self.filename, 'r')
         
-    def read_axis_t(self):       
-        myFile = Dataset(self.filename, 'r')
-        data = myFile.variables['time'][:]
-        result = ndarray((len(data),),datetime.datetime)
-        for i in xrange(len(data)):
-            result[i] = jd_to_datetime(data[i]+WW3Reader.TIME_DATUM)
-            
-        return result
-    
-    def read_axis_x(self):
-        myFile = Dataset(self.filename, 'r')
-        return myFile.variables['longitude'][:]
-    
-    def read_axis_y(self):
-        myFile = Dataset(self.filename, 'r')
-        return myFile.variables['latitude'][:]
+    # Axis
+    def read_axis_t(self,timestamp):
+        data = self.ncfile.variables['time'][:]        
+        result = num2date(data, units = self.ncfile.variables['time'].units, calendar = "julian")
         
-    def read_data_at_time(self,var,t):     
-        myFile = Dataset(self.filename, 'r')
-        return myFile.variables[var][t][:]
+        if timestamp ==1:           
+            return [ (t - TimeCoverage.TIME_DATUM).total_seconds() \
+                for t in result];
+        else:            
+            return result
     
-    def read_data(self,var):     
-        myFile = Dataset(self.filename, 'r')
-        return myFile.variables[var][:]    
+    def read_axis_x(self):        
+        return self.ncfile.variables['longitude'][:]
+    
+    def read_axis_y(self):        
+        return self.ncfile.variables['latitude'][:]
+    
+    def read_variable_wlv_at_time(self,t):         
+        return self.ncfile.variables["wlv"][t][:]
+           
     

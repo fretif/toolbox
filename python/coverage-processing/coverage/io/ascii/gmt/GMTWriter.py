@@ -2,39 +2,21 @@
 # To change this template file, choose Tools | Templates
 # and open the template in the editor.
 
-import math as math
+from coverage.io.File import File
 
-class GMTWriter:
+class GMTWriter(File):
 
-    def __init__(self, myFilename, myCoverage):
-        self.filename = myFilename; 
-        self.coverage = myCoverage;
+    def __init__(self, myFile):
+        File.__init__(self,myFile);         
         
-    def write_vector_at_time(self,uvar,vvar,selectedTime): 
+    def write_variable_bathymetry(self): 
         
         lon = self.coverage.read_axis_x()
         lat = self.coverage.read_axis_y()
-        u =  self.coverage.read_data_at_time(uvar,selectedTime)
-        v =  self.coverage.read_data_at_time(vvar,selectedTime)       
+        data =  self.coverage.read_variable_bathymetry() 
         
-        file = open(self.filename, "w")       
-        for i in range(0, len(lon[1])):
-            for j in range(0, len(lon)):    
-                #print i,j
-                
-                #file.write(str(lon[j,i])+"\t"+str(lat[j,i])+"\t"+str(math.degrees(math.atan2(v[j,i],u[j,i]))+180)+"\t"+str(math.sqrt(u[j,i]**2 + v[j,i]**2))+"\t"+str(math.sqrt(u[j,i]**2 + v[j,i]**2))+"\n")          
-                file.write(str(lon[j,i])+"\t"+str(lat[j,i])+"\t"+str(u[j,i])+"\t"+str(v[j,i])+"\n")          
-           
-            
-        file.close()
-        
-    def write_var(self,var): 
-        
-        lon = self.coverage.read_axis_x()
-        lat = self.coverage.read_axis_y()
-        data =  self.coverage.read_data(var) 
-        
-        file = open(self.filename, "w")       
+        file = open(self.filename, "w")  
+        file.write("#Longitude \t Latitude \t h (m)\n")  
         for i in range(0, len(lon[1])):
             for j in range(0, len(lon)):    
                 #print i,j
@@ -43,36 +25,35 @@ class GMTWriter:
             
         file.close()
         
-    def write_var_at_time(self,var,selectedTime): 
+    def write_variable_current_at_time_and_level(self,coverage,time,z):
         
-        lon = self.coverage.read_axis_x()
-        lat = self.coverage.read_axis_y()
-        data =  self.coverage.read_data_at_time(var,selectedTime) 
+        lon = coverage.read_axis_x()
+        lat = coverage.read_axis_y()
+        ucur = coverage.read_variable_u_current_at_time_and_level(time,z)
+        vcur = coverage.read_variable_v_current_at_time_and_level(time,z)
         
-        file = open(self.filename, "w")       
-        for i in range(0, len(lon[1])):
-            for j in range(0, len(lon)):    
+        file = open(self.filename, "w")  
+        file.write("#Longitude \t Latitude \t u comp (m/s) \t v comp (m/s)\n")
+        for i in range(0, coverage.get_x_size()):
+            for j in range(0, coverage.get_y_size()):
                 #print i,j
+                file.write(str(lon[i,j])+"\t"+str(lat[i,j])+"\t"+str(ucur[i,j])+"\t"+str(vcur[i,j])+"\n")  
                 
-                file.write(str(lon[j,i])+"\t"+str(lat[j,i])+"\t"+str(data[j,i])+"\n")
-            
         file.close()
         
-    def write_2vars(self,uvar,vvar): 
+    def write_variable_current_at_time(self,coverage,time):
         
         lon = self.coverage.read_axis_x()
         lat = self.coverage.read_axis_y()
-        u =  self.coverage.read_data(uvar)
-        v =  self.coverage.read_data(vvar)       
+        ucur = coverage.read_variable_u_current_at_time(time)
+        vcur = coverage.read_variable_v_current_at_time(time)
         
-        file = open(self.filename, "w")       
-        for i in range(0, len(lon[1])):
-            for j in range(0, len(lon)):    
-                print i,j
+        file = open(self.filename, "w")  
+        file.write("#Longitude \t Latitude \t u comp (m/s) \t v comp (m/s)\n")  
+        for i in range(0, self.coverage.get_x_size()):
+            for j in range(0, self.coverage.get_y_size()):
                 
-                #file.write(str(lon[j,i])+"\t"+str(lat[j,i])+"\t"+str(math.degrees(math.atan2(v[j,i],u[j,i]))+180)+"\t"+str(math.sqrt(u[j,i]**2 + v[j,i]**2))+"\t"+str(math.sqrt(u[j,i]**2 + v[j,i]**2))+"\n")          
-                file.write(str(lon[j,i])+"\t"+str(lat[j,i])+"\t"+str(u[j,i])+"\t"+str(v[j,i])+"\n")          
-           
-            
+                file.write(str(lon[j,i])+"\t"+str(lat[j,i])+"\t"+str(ucur[j,i])+"\t"+str(vcur[j,i])+"\n")  
+                
         file.close()
 

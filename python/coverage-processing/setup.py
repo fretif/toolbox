@@ -6,12 +6,12 @@ setup (
        packages=find_packages(),
 
        # Declare your packages' dependencies here, for eg:
-       install_requires=['foo>=3'],
+       install_requires=['foo>=3','netCDF4>=1.0.7','scipy>=0.16.1'],
 
        # Fill in these to make your Egg ready for upload to
        # PyPI
-       author='retf',
-       author_email='',
+       author='Fabien Retif',
+       author_email='fabien.retif@zoho.com',
 
        #summary = 'Just another Python package for the cheese shop',
        url='',
@@ -19,6 +19,5 @@ setup (
        long_description='Long description of the package',
 
        # could also include long_description, download_url, classifiers, etc.
-
   
        )
