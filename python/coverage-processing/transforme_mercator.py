@@ -11,6 +11,7 @@ from coverage.io.netcdf.ww3.WW3Reader import WW3Reader
 from coverage.io.netcdf.gmt.GMTWriter import GMTWriter
 from coverage.operator.Interpolator import resample2d
 import numpy as np
+from utils.Mercator import resampleTXY
 
 if __name__ == "__main__":
     print("Hello World !")
@@ -23,7 +24,7 @@ if __name__ == "__main__":
         
     coverage = TimeLevelCoverage(reader); 
    
-    #resampledCoverage = resample2d(coverage,coverage.read_axis_t()[0],coverage.read_variable_wlv_at_time(0));    
+    resampledCoverage = resampleTXY(coverage);    
     #writer = WW3Writer('/home/retf/work/fieldsites/taiwan/modelling/mercator/test.nc')  
     #writer.write_axis(resampledCoverage);    
     #writer.write_variable_wlv(resampledCoverage);
@@ -48,10 +49,11 @@ if __name__ == "__main__":
     #writer.write_variable_wlv(ww3Coverage);    
     #writer.close() 
     
-    #writer = GMTWriter('/home/retf/work/fieldsites/taiwan/modelling/mercator/gmt.nc')  
-    #writer.write_axis(coverage);    
-    #writer.write_variable_wlv(coverage);    
-    #writer.close() 
+    writer = GMTWriter('/home/retf/work/fieldsites/taiwan/modelling/mercator/gmt/surface-current.nc')  
+    writer.write_axis(resampledCoverage);    
+    writer.write_variable_wlv(resampledCoverage);   
+    writer.write_variable_surface_current(resampledCoverage)
+    writer.close() 
     
     print 'End of programm'
      

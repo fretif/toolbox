@@ -48,6 +48,30 @@ class TimeCoverage(Coverage):
         index=0
         return self.reader.read_variable_wlv_at_time(index)  
     
+    def read_variable_u_surface_current_at_time(self,t):    
+        """
+        Lecture de ssh
+        """        
+        if type(t) == datetime:
+            index = self.find_time_index(t);
+        else:
+            index = t;
+            
+        index=0
+        return self.reader.read_variable_u_surface_current_at_time(index)  
+    
+    def read_variable_v_surface_current_at_time(self,t):    
+        """
+        Lecture de ssh
+        """        
+        if type(t) == datetime:
+            index = self.find_time_index(t);
+        else:
+            index = t;
+            
+        index=0
+        return self.reader.read_variable_v_surface_current_at_time(index)  
+    
     # METEO 
 
             

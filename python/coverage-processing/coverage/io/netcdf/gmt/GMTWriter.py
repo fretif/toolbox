@@ -79,6 +79,72 @@ class GMTWriter (File):
         for time in coverage.read_axis_t():            
             wlv[time_index:time_index+1,:,:] = coverage.read_variable_wlv_at_time(time)
             time_index += 1
+            
+    def write_variable_current_at_level(self,coverage,z):
+        
+        if self.ncfile == None:
+            raise IOError("Please call write_axis() first")   
+            
+        ucur = self.ncfile.createVariable('ucur', float32, ('time', 'latitude', 'longitude',),fill_value="NaN")
+        ucur.long_name = "eastward current" ;
+        ucur.standard_name = "eastward_sea_water_velocity" ;
+        ucur.globwave_name = "eastward_sea_water_velocity" ;
+        ucur.units = "m s-1" ;
+        #ucur.scale_factor = 1.f ;
+        #ucur.add_offset = 0.f ;
+        #ucur.valid_min = -990 ;
+        #ucur.valid_max = 990 ;
+        ucur.comment = "cur=sqrt(U**2+V**2)" ;
+        
+        vcur = self.ncfile.createVariable('vcur', float32, ('time', 'latitude', 'longitude',),fill_value="NaN")
+        vcur.long_name = "northward current" ;
+        vcur.standard_name = "northward_sea_water_velocity" ;
+        vcur.globwave_name = "northward_sea_water_velocity" ;
+        vcur.units = "m s-1" ;
+        #ucur.scale_factor = 1.f ;
+        #ucur.add_offset = 0.f ;
+        #ucur.valid_min = -990 ;
+        #ucur.valid_max = 990 ;
+        vcur.comment = "cur=sqrt(U**2+V**2)" ;
+        
+        time_index=0
+        for time in coverage.read_axis_t(): 
+            ucur[time_index:time_index+1,:,:] = coverage.read_variable_u_current_at_time_and_level(time,z)
+            vcur[time_index:time_index+1,:,:] = coverage.read_variable_v_current_at_time_and_level(time,z)
+            time_index += 1 
+            
+    def write_variable_surface_current(self,coverage):
+        
+        if self.ncfile == None:
+            raise IOError("Please call write_axis() first")   
+            
+        ucur = self.ncfile.createVariable('v', float32, ('time', 'latitude', 'longitude',),fill_value="NaN")
+        ucur.long_name = "eastward current" ;
+        ucur.standard_name = "eastward_sea_water_velocity" ;
+        ucur.globwave_name = "eastward_sea_water_velocity" ;
+        ucur.units = "m s-1" ;
+        #ucur.scale_factor = 1.f ;
+        #ucur.add_offset = 0.f ;
+        #ucur.valid_min = -990 ;
+        #ucur.valid_max = 990 ;
+        ucur.comment = "cur=sqrt(U**2+V**2)" ;
+        
+        vcur = self.ncfile.createVariable('u', float32, ('time', 'latitude', 'longitude',),fill_value="NaN")
+        vcur.long_name = "northward current" ;
+        vcur.standard_name = "northward_sea_water_velocity" ;
+        vcur.globwave_name = "northward_sea_water_velocity" ;
+        vcur.units = "m s-1" ;
+        #ucur.scale_factor = 1.f ;
+        #ucur.add_offset = 0.f ;
+        #ucur.valid_min = -990 ;
+        #ucur.valid_max = 990 ;
+        vcur.comment = "cur=sqrt(U**2+V**2)" ;
+        
+        time_index=0
+        for time in coverage.read_axis_t(): 
+            ucur[time_index:time_index+1,:,:] = coverage.read_variable_u_surface_current_at_time(time)
+            vcur[time_index:time_index+1,:,:] = coverage.read_variable_v_surface_current_at_time(time)
+            time_index += 1  
         
       
        
