@@ -35,9 +35,8 @@ class GMTWriter(File):
         file = open(self.filename, "w")  
         file.write("#Longitude \t Latitude \t u comp (m/s) \t v comp (m/s)\n")
         for i in range(0, coverage.get_x_size()):
-            for j in range(0, coverage.get_y_size()):
-                #print i,j
-                file.write(str(lon[i,j])+"\t"+str(lat[i,j])+"\t"+str(ucur[i,j])+"\t"+str(vcur[i,j])+"\n")  
+            for j in range(0, coverage.get_y_size()):               
+                    file.write(str(lon[j,i])+"\t"+str(lat[j,i])+"\t"+str(ucur[j,i])+"\t"+str(vcur[j,i])+"\n")  
                 
         file.close()
         

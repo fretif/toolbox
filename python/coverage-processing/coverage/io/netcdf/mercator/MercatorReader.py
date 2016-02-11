@@ -8,15 +8,16 @@ import numpy as np
 
 class MercatorReader: 
     
-    def __init__(self,m,t,u,v): 
+    def __init__(self,m,d,t,u,v): 
         self.mask = Dataset(m, 'r')
+        self.grid2D = Dataset(d, 'r')
         self.gridT = Dataset(t, 'r') 
         self.gridU = Dataset(u, 'r')  
         self.gridV = Dataset(v, 'r') 
      
     # Axis
-    def read_axis_t(self,timestamp):
-        data = self.gridT.variables['time_counter'][:]        
+    def read_axis_t(self,timestamp):    
+        data = self.gridT.variables['time_counter'][:]   
         result = num2date(data, units = self.gridT.variables['time_counter'].units, calendar = self.gridT.variables['time_counter'].calendar)
         
         if timestamp ==1:           
@@ -38,8 +39,8 @@ class MercatorReader:
     def read_variable_mask(self): 
         return self.mask.variables["tmask"][:]
     
-    def read_variable_wlv_at_time(self,t):    
-        return self.gridT.variables["sossheig"][t][:]
+    def read_variable_wlv_at_time(self,t): 
+        return self.grid2D.variables["sossheig"][t][:]
      
     def read_variable_u_current_at_time_and_level(self,t,z):
         mask_t = self.read_variable_mask();
@@ -97,12 +98,8 @@ class MercatorReader:
 
                     # compute an half-value
                     u[y,x]=0.5*(u_left+u_right)
-                    v[y,x]=0.5*(v_down+v_up)  
+                    v[y,x]=0.5*(v_down+v_up) 
                     
-                    # without rotation
-                    #u_rot[y,x]=u[y,x]
-                    #v_rot[y,x]=v[y,x]
-
                     # apply rotation                
                     u_rot[y,x]=u[y,x]*gridrotcos_t[y,x]+v[y,x]*gridrotsin_t[y,x]
                     v_rot[y,x]=-u[y,x]*gridrotsin_t[y,x]+v[y,x]*gridrotcos_t[y,x]   
@@ -181,7 +178,7 @@ class MercatorReader:
 
                     # compute an half-value
                     u[y,x]=0.5*(u_left+u_right)
-                    v[y,x]=0.5*(v_down+v_up)                    
+                    v[y,x]=0.5*(v_down+v_up)                   
 
                     # apply rotation                
                     u_rot[y,x]=u[y,x]*gridrotcos_t[y,x]+v[y,x]*gridrotsin_t[y,x]

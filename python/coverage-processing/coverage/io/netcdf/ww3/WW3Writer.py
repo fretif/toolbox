@@ -7,6 +7,7 @@ from netCDF4 import Dataset
 from netCDF4 import date2num
 from numpy import float32
 from numpy import float64
+import logging
 
 class WW3Writer (File):
 
@@ -61,7 +62,7 @@ class WW3Writer (File):
             
     def write_variable_wlv(self,coverage):
         if self.ncfile == None:
-            raise IOError("Please call write_axis() first")   
+            raise IOError("Please call write_axis() first") 
             
         wlv = self.ncfile.createVariable('wlv', float32, ('time', 'latitude', 'longitude',),fill_value="NaN")
         wlv.long_name = "sea surface height above sea level" ;
@@ -74,8 +75,9 @@ class WW3Writer (File):
         #wlv.valid_max = 10000f ;
         
         time_index=0
-        for time in coverage.read_axis_t():              
-            wlv[time_index:time_index+1,:,:] = coverage.read_variable_wlv_at_time(time)
+        for time in coverage.read_axis_t():
+            logging.info('[WW3Writer] Writing variable \'wlv\' at time \''+str(time)+'\'') 
+            wlv[time_index:time_index+1,:] = coverage.read_variable_wlv_at_time(time)
             time_index += 1
             
     def write_variable_current_at_level(self,coverage,z):
@@ -107,6 +109,7 @@ class WW3Writer (File):
         
         time_index=0
         for time in coverage.read_axis_t(): 
+            logging.info('[WW3Writer] Writing variable \'current\' at time \''+str(time)+'\'') 
             ucur[time_index:time_index+1,:,:] = coverage.read_variable_u_current_at_time_and_level(time,z)
             vcur[time_index:time_index+1,:,:] = coverage.read_variable_v_current_at_time_and_level(time,z)
             time_index += 1  

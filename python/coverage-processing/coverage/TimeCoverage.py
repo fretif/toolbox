@@ -35,7 +35,7 @@ class TimeCoverage(Coverage):
     
     # Variables
     
-    # HYDRO    
+    # HYDRO   
     def read_variable_wlv_at_time(self,t):    
         """
         Lecture de ssh
@@ -43,9 +43,8 @@ class TimeCoverage(Coverage):
         if type(t) == datetime:
             index = self.find_time_index(t);
         else:
-            index = t;
-            
-        index=0
+            index = t;            
+       
         return self.reader.read_variable_wlv_at_time(index)  
     
     def read_variable_u_surface_current_at_time(self,t):    
@@ -57,7 +56,6 @@ class TimeCoverage(Coverage):
         else:
             index = t;
             
-        index=0
         return self.reader.read_variable_u_surface_current_at_time(index)  
     
     def read_variable_v_surface_current_at_time(self,t):    
@@ -68,9 +66,119 @@ class TimeCoverage(Coverage):
             index = self.find_time_index(t);
         else:
             index = t;
-            
-        index=0
+       
         return self.reader.read_variable_v_surface_current_at_time(index)  
+    
+    # WAVES
+    def read_variable_hs_at_time(self,t):    
+        """
+        Lecture de la hauteur significatives des vagues
+        """        
+        if type(t) == datetime:
+            index = self.find_time_index(t);
+        else:
+            index = t;
+       
+        return self.reader.read_variable_hs_at_time(index) 
+    
+    def read_variable_waves_dir_at_time(self,t):    
+        """
+        Lecture de la direction des vagues
+        """        
+        if type(t) == datetime:
+            index = self.find_time_index(t);
+        else:
+            index = t;
+       
+        return self.reader.read_variable_waves_dir_at_time(index) 
+    
+    def read_variable_waves_mean_period_at_time(self,t):    
+        """
+        Lecture de la periode moyenne des vagues
+        """        
+        if type(t) == datetime:
+            index = self.find_time_index(t);
+        else:
+            index = t;
+       
+        return self.reader.read_variable_waves_mean_period_at_time(index) 
+    
+    def read_variable_j_pressure_at_time(self,t):    
+        """
+        Lecture de la pression J
+        """        
+        if type(t) == datetime:
+            index = self.find_time_index(t);
+        else:
+            index = t;
+       
+        return self.reader.read_variable_j_pressure_at_time(index) 
+    
+    def read_variable_u_surface_stokes_drift_at_time(self,t):    
+        """
+        Lecture de la composante u de la derive de Stokes en surface
+        """        
+        if type(t) == datetime:
+            index = self.find_time_index(t);
+        else:
+            index = t;
+            
+        return self.reader.read_variable_u_surface_stokes_drift_at_time(index)  
+    
+    def read_variable_v_surface_stokes_drift_at_time(self,t):    
+        """
+        Lecture de la composante v de la derive de Stokes en surface
+        """        
+        if type(t) == datetime:
+            index = self.find_time_index(t);
+        else:
+            index = t;
+       
+        return self.reader.read_variable_v_surface_stokes_drift_at_time(index) 
+    
+    def read_variable_u_taw_at_time(self,t):    
+        """
+        Lecture de la composante u du tau atmosphere->vagues
+        """        
+        if type(t) == datetime:
+            index = self.find_time_index(t);
+        else:
+            index = t;
+            
+        return self.reader.read_variable_u_taw_at_time(index)  
+    
+    def read_variable_v_taw_at_time(self,t):    
+        """
+        Lecture de la composante v du tau atmosphere->vagues
+        """        
+        if type(t) == datetime:
+            index = self.find_time_index(t);
+        else:
+            index = t;
+       
+        return self.reader.read_variable_v_taw_at_time(index) 
+    
+    def read_variable_u_two_at_time(self,t):    
+        """
+        Lecture de la composante u du tau vagues->ocean
+        """        
+        if type(t) == datetime:
+            index = self.find_time_index(t);
+        else:
+            index = t;
+            
+        return self.reader.read_variable_u_two_at_time(index)  
+    
+    def read_variable_v_two_at_time(self,t):    
+        """
+        Lecture de la composante v du tau vagues->ocean
+        """        
+        if type(t) == datetime:
+            index = self.find_time_index(t);
+        else:
+            index = t;
+       
+        return self.reader.read_variable_v_two_at_time(index) 
     
     # METEO 
 
