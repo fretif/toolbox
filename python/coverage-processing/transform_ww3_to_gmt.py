@@ -8,7 +8,7 @@ from coverage.io.netcdf.ww3.WW3Reader import WW3Reader
 import logging
 
 if __name__ == "__main__":
-    print("Transforme/Interpole WW3 to ")
+    print("Transform/Interpole WW3 to GMT ")
     
     logging.basicConfig(format='[%(levelname)s] %(message)s',level=logging.INFO)
     

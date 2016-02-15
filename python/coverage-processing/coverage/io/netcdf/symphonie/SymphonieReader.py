@@ -10,13 +10,13 @@ class SymphonieReader(File):
 
     def __init__(self,myGrid, myFile):   
         File.__init__(self,myFile); 
+        self.ncfile = Dataset(self.filename, 'r')
         self.grid = Dataset(myGrid, 'r')
         
     # Axis
     def read_axis_t(self,timestamp):
-        myFile = Dataset(self.filename, 'r')
-        data = myFile.variables['time'][:]         
-        result = num2date(data, units = myFile.variables['time'].units.replace('from','since').replace('mar','03'), calendar = myFile.variables['time'].calendar)
+        data = self.ncfile.variables['time'][:]         
+        result = num2date(data, units = self.ncfile.variables['time'].units.replace('from','since').replace('mar','03'), calendar = self.ncfile.variables['time'].calendar)
         
         if timestamp ==1:           
             return [ (t - TimeCoverage.TIME_DATUM).total_seconds() \
@@ -35,24 +35,25 @@ class SymphonieReader(File):
         
     # Data    
     def read_variable_mask(self): 
-        return self.grid.variables["mask_t"][:]
+        return self.grid.variables["mask_t"][0][:]
     
-    def read_variable_bathy(self): 
+    def read_variable_mesh_size(self): 
+        return self.grid.variables["sqrt_dxdy"][:]    
+    
+    def read_variable_bathymetry(self): 
         return self.grid.variables["hm_w"][:]
     
-    def read_variable_wlv_at_time(self,t): 
-        myFile = Dataset(self.filename, 'r')
-        return myFile.variables["ssh_w"][t][:]
+    def read_variable_wlv_at_time(self,t):         
+        return self.ncfile.variables["ssh_w"][t][:]
      
-    def read_variable_u_current_at_time_and_level(self,t,z):
-        myFile = Dataset(self.filename, 'r')
+    def read_variable_u_current_at_time_and_level(self,t,z):       
         mask_t = self.read_variable_mask();
         mask_u = self.grid.variables["mask_u"][:];
         mask_v = self.grid.variables["mask_v"][:];
         lon_t = self.read_axis_x();
         lat_t = self.read_axis_y();
-        data_u = myFile.variables["vel_u"][t][z][:]  
-        data_v = myFile.variables["vel_v"][t][z][:]  
+        data_u = self.ncfile.variables["vel_u"][t][z][:]  
+        data_v = self.ncfile.variables["vel_v"][t][z][:]  
         
         # compute and apply rotation matrix
         imax=np.shape(lon_t)[0]
@@ -125,15 +126,14 @@ class SymphonieReader(File):
         return u_rot               
 	
         
-    def read_variable_v_current_at_time_and_level(self,t,z):
-        myFile = Dataset(self.filename, 'r')
+    def read_variable_v_current_at_time_and_level(self,t,z):       
         mask_t = self.read_variable_mask();
         mask_u = self.grid.variables["mask_u"][:];
         mask_v = self.grid.variables["mask_v"][:];
         lon_t = self.read_axis_x();
         lat_t = self.read_axis_y();
-        data_u = myFile.variables["vel_u"][t][z][:]  
-        data_v = myFile.variables["vel_v"][t][z][:]  
+        data_u = self.ncfile.variables["vel_u"][t][z][:]  
+        data_v = self.ncfile.variables["vel_v"][t][z][:]  
         
         # compute and apply rotation matrix
         imax=np.shape(lon_t)[0]

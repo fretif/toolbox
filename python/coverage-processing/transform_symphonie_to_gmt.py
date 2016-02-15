@@ -8,7 +8,7 @@ from coverage.io.netcdf.symphonie.SymphonieReader import SymphonieReader
 import logging
 
 if __name__ == "__main__":
-    print("Transforme/Interpole Symphonie to GMT")
+    print("Transform/Interpole Symphonie to GMT")
     
     logging.basicConfig(format='[%(levelname)s] %(message)s',level=logging.INFO)
     

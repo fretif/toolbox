@@ -49,7 +49,7 @@ class TimeCoverage(Coverage):
     
     def read_variable_u_surface_current_at_time(self,t):    
         """
-        Lecture de ssh
+        Lecture de la composante u du courant de surface
         """        
         if type(t) == datetime:
             index = self.find_time_index(t);
@@ -60,7 +60,7 @@ class TimeCoverage(Coverage):
     
     def read_variable_v_surface_current_at_time(self,t):    
         """
-        Lecture de ssh
+        Lecture de la composante v du courant de surface
         """        
         if type(t) == datetime:
             index = self.find_time_index(t);
@@ -72,7 +72,7 @@ class TimeCoverage(Coverage):
     # WAVES
     def read_variable_hs_at_time(self,t):    
         """
-        Lecture de la hauteur significatives des vagues
+        Lecture de la hauteur significative des vagues
         """        
         if type(t) == datetime:
             index = self.find_time_index(t);

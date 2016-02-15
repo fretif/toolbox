@@ -24,7 +24,7 @@ class LevelCoverage(Coverage):
         """
         TODO
         """
-        print len(self.levels)
+        raise RuntimeError("No implemented yet.")
         for i in xrange(len(self.levels)):     
             print self.levels[i]
             if self.levels[i] - z > LevelCoverage.LEVEL_DELTA:

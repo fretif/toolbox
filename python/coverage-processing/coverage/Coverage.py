@@ -41,8 +41,27 @@ class Coverage:
     # HYDRO    
     def read_variable_bathymetry(self):     
         """
-        Read data
+        Read bathymetry
         """        
         return self.reader.read_variable_bathymetry()
+    
+    def read_variable_mesh_size(self):     
+        """
+        Read mesh size
+        """        
+        return self.reader.read_variable_mesh_size()
+    
+    def read_variable_mask(self):     
+        """
+        Read mask
+        """        
+        return self.reader.read_variable_mask()
+    
+    # ATMOS    
+    def read_variable_topography(self):     
+        """
+        Read topography
+        """        
+        return self.reader.read_variable_topography()
         
         
