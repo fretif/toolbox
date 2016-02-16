@@ -56,18 +56,18 @@ class SymphonieReader(File):
         data_v = self.ncfile.variables["vel_v"][t][z][:]  
         
         # compute and apply rotation matrix
-        imax=np.shape(lon_t)[0]
-        jmax=np.shape(lon_t)[1]
-        gridrotcos_t = np.zeros([imax,jmax])
-        gridrotsin_t = np.zeros([imax,jmax])
+        xmax=np.shape(lon_t)[1]
+        ymax=np.shape(lat_t)[0]
+        gridrotcos_t = np.zeros([ymax,xmax])
+        gridrotsin_t = np.zeros([ymax,xmax])
         
-        u = np.zeros([imax,jmax])
+        u = np.zeros([ymax,xmax])
         u[:] = np.NAN
-        v = np.zeros([imax,jmax])
+        v = np.zeros([ymax,xmax])
         v[:] = np.NAN
-        u_rot = np.zeros([imax,jmax])
+        u_rot = np.zeros([ymax,xmax])
         u_rot[:] = np.NAN
-        v_rot = np.zeros([imax,jmax])
+        v_rot = np.zeros([ymax,xmax])
         v_rot[:] = np.NAN
         
         # We process points inside the domain
@@ -81,23 +81,23 @@ class SymphonieReader(File):
                 gridrotcos_t[y,x]=np.cos(x0)
                 gridrotsin_t[y,x]=np.sin(x0)
                 
-                if (mask_t[0,0,y,x] == 1.):
+                if (mask_t[y,x] == 1.):
                     
                     u_left = 0
                     u_right = 0
                     v_down = 0
                     v_up = 0
                    
-                    if (mask_u[0,0,y,x-1] == 1.):
+                    if (mask_u[0,y,x-1] == 1.):
                         u_left = data_u[y,x-1];
 
-                    if (mask_u[0,0,y,x] == 1.):
+                    if (mask_u[0,y,x] == 1.):
                         u_right = data_u[y,x];
 
-                    if (mask_v[0,0,y-1,x] == 1.):
+                    if (mask_v[0,y-1,x] == 1.):
                         v_down = data_v[y-1,x];
 
-                    if (mask_v[0,0,y,x] == 1.):
+                    if (mask_v[0,y,x] == 1.):
                         v_up = data_v[y,x];                        
 
                     # compute an half-value
@@ -136,18 +136,18 @@ class SymphonieReader(File):
         data_v = self.ncfile.variables["vel_v"][t][z][:]  
         
         # compute and apply rotation matrix
-        imax=np.shape(lon_t)[0]
-        jmax=np.shape(lon_t)[1]
-        gridrotcos_t = np.zeros([imax,jmax])
-        gridrotsin_t = np.zeros([imax,jmax])
+        xmax=np.shape(lon_t)[1]
+        ymax=np.shape(lat_t)[0]
+        gridrotcos_t = np.zeros([ymax,xmax])
+        gridrotsin_t = np.zeros([ymax,xmax])
         
-        u = np.zeros([imax,jmax])
+        u = np.zeros([ymax,xmax])
         u[:] = np.NAN
-        v = np.zeros([imax,jmax])
+        v = np.zeros([ymax,xmax])
         v[:] = np.NAN
-        u_rot = np.zeros([imax,jmax])
+        u_rot = np.zeros([ymax,xmax])
         u_rot[:] = np.NAN
-        v_rot = np.zeros([imax,jmax])
+        v_rot = np.zeros([ymax,xmax])
         v_rot[:] = np.NAN
         
         # We process points inside the domain
@@ -161,23 +161,23 @@ class SymphonieReader(File):
                 gridrotcos_t[y,x]=np.cos(x0)
                 gridrotsin_t[y,x]=np.sin(x0)
                 
-                if (mask_t[0,0,y,x] == 1.):
+                if (mask_t[y,x] == 1.):
                     
                     u_left = 0
                     u_right = 0
                     v_down = 0
                     v_up = 0
                    
-                    if (mask_u[0,0,y,x-1] == 1.):
+                    if (mask_u[0,y,x-1] == 1.):
                         u_left = data_u[y,x-1];
 
-                    if (mask_u[0,0,y,x] == 1.):
+                    if (mask_u[0,y,x] == 1.):
                         u_right = data_u[y,x];
 
-                    if (mask_v[0,0,y-1,x] == 1.):
+                    if (mask_v[0,y-1,x] == 1.):
                         v_down = data_v[y-1,x];
 
-                    if (mask_v[0,0,y,x] == 1.):
+                    if (mask_v[0,y,x] == 1.):
                         v_up = data_v[y,x];                        
 
                     # compute an half-value

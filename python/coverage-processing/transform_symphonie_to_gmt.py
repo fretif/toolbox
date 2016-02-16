@@ -14,7 +14,7 @@ if __name__ == "__main__":
     
     # Read file
     reader = SymphonieReader('/home/retf/work/fieldsites/med-cruesim/modelling/hydro/gulf-of-lion/graphiques/grid.nc',
-                             '/home/retf/work/fieldsites/med-cruesim/modelling/hydro/gulf-of-lion/graphiques/20110301_000000.nc')      
+                             '/home/retf/work/fieldsites/med-cruesim/modelling/hydro/gulf-of-lion/graphiques/20110330_000033.nc')      
         
     coverage = TimeLevelCoverage(reader); 
     
