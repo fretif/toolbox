@@ -13,11 +13,11 @@ if __name__ == "__main__":
     logging.basicConfig(format='[%(levelname)s] %(message)s',level=logging.INFO)
     
     # Read file
-    reader = MesoNhReader('/home/retf/work/fieldsites/med-cruesim/modelling/atmosphere/AOC_500M_V2.nc')      
+    reader = MesoNhReader('/home/retf/work/fieldsites/med-cruesim/modelling/atmosphere/AOC_500M_MED.nc')      
         
     coverage = Coverage(reader); 
     
-    resample_type_1(coverage,0.005,0.005,'/home/retf/work/fieldsites/med-cruesim/modelling/atmosphere/regular.nc')  
+    resample_type_1(coverage,0.005,0.005,'/home/retf/work/fieldsites/med-cruesim/modelling/atmosphere/regular-MED.nc')  
     
     print 'End of programm'
      

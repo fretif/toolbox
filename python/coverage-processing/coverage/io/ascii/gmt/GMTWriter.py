@@ -31,12 +31,14 @@ class GMTWriter(File):
         lat = coverage.read_axis_y()
         ucur = coverage.read_variable_u_current_at_time_and_level(time,z)
         vcur = coverage.read_variable_v_current_at_time_and_level(time,z)
+        mask = coverage.read_variable_mask()
         
         file = open(self.filename, "w")  
         file.write("#Longitude \t Latitude \t u comp (m/s) \t v comp (m/s)\n")
-        for i in range(0, coverage.get_x_size()):
-            for j in range(0, coverage.get_y_size()):               
-                    file.write(str(lon[j,i])+"\t"+str(lat[j,i])+"\t"+str(ucur[j,i])+"\t"+str(vcur[j,i])+"\n")  
+        for i in range(0, coverage.get_x_size(),6):
+            for j in range(0, coverage.get_y_size(),6):    
+                    if(mask[j,i]==1.):
+                        file.write(str(lon[j,i])+"\t"+str(lat[j,i])+"\t"+str(ucur[j,i])+"\t"+str(vcur[j,i])+"\n")  
                 
         file.close()
         
