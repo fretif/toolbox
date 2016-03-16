@@ -33,7 +33,7 @@ LANG=en_us_8859_1
 #################
 
 basedir="${0%/*}"
-source $basedir/$1
+source $1
 
 #################
 #	BEGIN	#
@@ -160,6 +160,26 @@ for index in "${!files[@]}"; do
 				       dateGMT = year"-"month"-"day"T"hour":"min":"sec;
 				       printf("%s %s\n",dateGMT,$'${columns[$index]}'); 	  
 				     }' $file > ${workingDir}/file.tmp
+
+			elif [[ "${format}" == "sirocco" ]] 
+			then
+				if [[ ! -n "${columns[$index]}" ]] 
+				then
+					echo "You need select a column for Sirocco."				
+				fi
+
+				# SIROCCO Format #
+				 
+				awk -F'\t' '$0~/#/ {next;}
+				     { year  = substr($1,1,4); 
+				       month = substr($1,6,2);
+				       day   = substr($1,9,2);
+				       hour  = substr($1,12,2);
+				       min   = substr($1,15,2);
+				       sec   = substr($1,18,2);      
+				       dateGMT = year"-"month"-"day"T"hour":"min":"sec;				       
+				       printf("%s %s\n",dateGMT,$'${columns[$index]}'); 	  
+				     }' $file > ${workingDir}/file.tmp				
 
 			else
 				echo "Unknowed format for file $index."
