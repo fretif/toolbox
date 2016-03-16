@@ -6,8 +6,7 @@ then
 else	
 
 	#outfile
-	outfile="${outDir}/$currentTime-$var"
-
+	outfile="${outDir}/$currentTime-$var"	
 	echo "-> TWO..."
 
 	grdmath ${infile}?u[$tIndex] SQR ${infile}?v[$tIndex] SQR ADD SQRT = ${workingDir}/L2.grd
@@ -46,7 +45,7 @@ else
 	fi
 	
 	psbasemap $envelope $projection $mapAnnotation -P -O -K >> ${outfile}.ps
-	psscale -D`echo "($Xmax - $Xmin)*$mapRatioSize + 1" | bc -l`/`echo "(($Ymax - $Ymin)*$mapRatioSize)/2" | bc -l`/`echo "($Ymax - $Ymin)*$mapRatioSize" | bc -l`/`echo "(($Ymax - $Ymin)*$mapRatioSize)/40" | bc -l` -C$twoPalFile -B2:"":/:"": -E -O -K >> ${outfile}.ps	
+	psscale -D`echo "($Xmax - $Xmin)*$mapRatioSize + 1" | bc -l`/`echo "(($Ymax - $Ymin)*$mapRatioSize)/2" | bc -l`/`echo "($Ymax - $Ymin)*$mapRatioSize" | bc -l`/`echo "(($Ymax - $Ymin)*$mapRatioSize)/40" | bc -l` -C$twoPalFile -B0.2:"":/:"": -E -O -K >> ${outfile}.ps	
 	echo "5 9 12 0 5 BC TWO (N/m2)" > ${workingDir}/legend	
 	echo "5 8.5 8 0 5 BC ${currentTime:0:`expr index "$currentTime" "_"`-1} ${currentTime: -8:2} h ${currentTime: -5:2}" >> ${workingDir}/legend
  	cat ${workingDir}/legend | pstext -R0/10/0/10 -J -Y`echo "(($Ymax - $Ymin)*$mapRatioSize)/4" | bc -l` -O >> ${outfile}.ps

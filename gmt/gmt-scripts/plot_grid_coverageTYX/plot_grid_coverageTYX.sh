@@ -163,21 +163,39 @@ for infile in ${path}/*.nc; do
 			fi
 			
 			var="two"	
-			if test $two -eq 1 && [[ "$filename" == *"$var"* ]];
+			if test $two -eq 1 && [[ "$filename" == *"$var."* ]];
 			then					
 				source $basedir/gmt-scripts/two.sh
 			fi
 			
+			var="two-momentum-flux"	
+			if test $twoMomentumFlux -eq 1 && [[ "$filename" == *"$var"* ]];
+			then					
+				source $basedir/gmt-scripts/two-momentum-flux.sh
+			fi
+			
 			var="taw"	
-			if test $taw -eq 1 && [[ "$filename" == *"$var"* ]];
+			if test $taw -eq 1 && [[ "$filename" == *"$var."* ]];
 			then					
 				source $basedir/gmt-scripts/taw.sh
+			fi
+			
+			var="taw-momentum-flux"	
+			if test $tawMomentumFlux -eq 1 && [[ "$filename" == *"$var"* ]];
+			then					
+				source $basedir/gmt-scripts/taw-momentum-flux.sh
 			fi
 			
 			var="tsub"	
 			if test $twoSubTaw -eq 1 && [[ "$filename" == *"$var"* ]];
 			then					
 				source $basedir/gmt-scripts/two-taw.sh
+			fi
+			
+			var="wind"	
+			if test $wind -eq 1 && [[ "$filename" == *"$var"* ]];
+			then					
+				source $basedir/gmt-scripts/wind.sh
 			fi
 		fi
 
@@ -283,6 +301,16 @@ fi
 if test $ib -eq 1
 then
 	var="inverse-barometer"		
+
+	if test $exportToMov -eq 1
+	then
+		source $basedir/exportToMov.sh
+	fi
+fi
+
+if test $hs -eq 1
+then
+	var="hs-wave"	
 
 	if test $exportToMov -eq 1
 	then
