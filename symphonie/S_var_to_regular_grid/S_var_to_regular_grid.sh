@@ -52,7 +52,7 @@ fi
 # 1. Import config file
 
 basedir="${0%/*}"
-source $basedir/$1
+source $1
 
 # 2. Check config file
 
