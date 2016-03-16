@@ -26,7 +26,7 @@ class TimeLevelCoverage(Coverage,LevelCoverage,TimeCoverage):
             index = self.find_time_index(t);
         else:
             index = t;
-            
+          
         return self.reader.read_variable_u_current_at_time_and_level(index,z) 
     
     def read_variable_v_current_at_time_and_level(self,t,z):    

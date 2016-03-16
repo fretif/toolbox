@@ -9,6 +9,7 @@ from coverage.io.netcdf.symphonie.SymphonieReader import SymphonieReader
 from coverage.io.netcdf.symphonie.SymphonieOfflineReader import SymphonieOfflineReader
 from coverage.io.ascii.gmt.GMTWriter import GMTWriter
 import logging
+from datetime import datetime
 
 if __name__ == "__main__":
     print("Transform/Interpole Symphonie to GMT")
@@ -20,6 +21,10 @@ if __name__ == "__main__":
                              '/home/retf/work/fieldsites/med-cruesim/modelling/hydro/gulf-of-lion/graphiques/leo/20130224_120000.nc')      
         
     coverage = TimeLevelCoverage(reader); 
+    
+    print coverage.read_variable_u_current_at_time_and_level(datetime(2013,02,24,12),0)
+    
+    
     
     writer = GMTWriter('/home/retf/work/fieldsites/med-cruesim/modelling/hydro/gulf-of-lion/graphiques/leo/fevrier-2013.dat')
     
