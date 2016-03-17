@@ -60,7 +60,7 @@ class WW3Writer (File):
         longitudes[:,:] = coverage.read_axis_x(); 
         times[:] = date2num(coverage.read_axis_t(), units = times.units, calendar = times.calendar)        
             
-    def write_variable_wlv(self,coverage):
+    def write_variable_ssh(self,coverage):
         if self.ncfile == None:
             raise IOError("Please call write_axis() first") 
             
@@ -77,7 +77,7 @@ class WW3Writer (File):
         time_index=0
         for time in coverage.read_axis_t():
             logging.info('[WW3Writer] Writing variable \'wlv\' at time \''+str(time)+'\'') 
-            wlv[time_index:time_index+1,:] = coverage.read_variable_wlv_at_time(time)
+            wlv[time_index:time_index+1,:] = coverage.read_variable_ssh_at_time(time)
             time_index += 1
             
     def write_variable_current_at_level(self,coverage,z):

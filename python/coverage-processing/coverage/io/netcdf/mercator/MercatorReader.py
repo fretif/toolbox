@@ -39,7 +39,7 @@ class MercatorReader:
     def read_variable_mask(self): 
         return self.mask.variables["tmask"][:]
     
-    def read_variable_wlv_at_time(self,t): 
+    def read_variable_ssh_at_time(self,t):
         return self.grid2D.variables["sossheig"][t][:]
      
     def read_variable_u_current_at_time_and_level(self,t,z):

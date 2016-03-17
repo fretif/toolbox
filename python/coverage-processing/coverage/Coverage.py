@@ -1,12 +1,37 @@
-# To change this license header, choose License Headers in Project Properties.
-# To change this template file, choose Tools | Templates
-# and open the template in the editor.
+#! /usr/bin/env python2.7
+# -*- coding: utf-8 -*-
+#
+# CoverageProcessing is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# any later version.
+#
+# CoverageProcessing is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+
 
 import numpy as np
 import math
  
 def distance_on_unit_sphere(long1, lat1,long2, lat2):
- 
+    """
+    Calcule la distance en kilomètre entre les deux points. Les coordonnées
+    sont données en longitude, latitude.
+
+    @type  long1: number
+    @param long1: Coordonnée X du point 1.
+    @type  lat1: number
+    @param lat1: Coordonnée Y du point 1.
+    @type  long2: number
+    @param long2: Coordonnée X du point 1.
+    @type  lat2: number
+    @param lat2: Coordonnée Y du point 1.
+    @return:  la ditance en kilomètre en ces deux points sur la Terre.
+    """
+
     # Convert latitude and longitude to 
     # spherical coordinates in radians.
     degrees_to_radians = math.pi/180.0
@@ -33,43 +58,71 @@ def distance_on_unit_sphere(long1, lat1,long2, lat2):
  
     # Remember to multiply arc by the radius of the earth 
     # in your favorite set of units to get length.
-    return arc
+    return arc*6373
 
 class Coverage:  
-    """"""
-   
+    """
+La classe Coverage représente une couverture spatiale sur l'horizontale. Les points qui représentent cette couverture
+peuvent être alignés sur une maille régulière (x,y) ou sur une maille non-régulière ((x1,y1),(x2,y2)). En fonction du
+type de maille, les fonctions de lecture des axes retourneront des tableaux à une ou deux dimensions. Pour éviter
+un chargement en mémoire de la totalité du fichier, la coverage contient un pointeur vers un lecteur. Les couches
+sont donc lues à la demande dans le fichier.
+
+Attention, les axes sont toujours inversés dans les tableaux à cause de NetCDF.
+Soit l'axe y en premier puis l'axe x. Exemple : [y,x]
+
+@param  myReader: lecteur de fichier
+"""
     def __init__(self, myReader):          
             
         self.reader = myReader; 
         
     # Axis        
-    def read_axis_x(self): 
-        """Return array[y:x]"""
+    def read_axis_x(self):
+        """Retourne les valeurs (souvent la longitude) de l'axe x.
+    @return:  un tableau à une ou deux dimensions selon le type de maille des valeurs de l'axe x (souvent la longitude) : [x] ou [y,x]."""
+
         return self.reader.read_axis_x()
         
-    def read_axis_y(self): 
+    def read_axis_y(self):
+        """Retourne les valeurs (souvent la latitude) de l'axe y.
+    @return:  un tableau à une ou deux dimensions selon le type de maille des valeurs de l'axe y (souvent la latitude) : [x] ou [y,x]."""
         return self.reader.read_axis_y()
     
     def get_x_size(self):
+        """Retourne la taille de l'axe x.
+    @return:  un entier correspondant à la taille de l'axe x."""
         if self.is_regular_grid():
             return np.shape(self.read_axis_x())[0];
         else:
             return np.shape(self.read_axis_x())[1];
     
     def get_y_size(self):
+        """Retourne la taille de l'axe y.
+    @return:  un entier correspondant à la taille de l'axe y."""
         if self.is_regular_grid():
             return np.shape(self.read_axis_y())[0];
         else:
             return np.shape(self.read_axis_y())[0];
     
-    def is_regular_grid(self):        
+    def is_regular_grid(self):
+        """Retourne vrai si la maille est régulière, sinon faux.
+    @return:  vrai si la maille est régulière sinon faux."""
         if self.read_axis_x().ndim == 1:
             return True
         else:
             return False
         
     def find_point_index(self,x,y):
-        """Return array[nearest_i_index,nearest_j_index,nearest_lon,nearest_lat,min_dist_in_km]"""
+        """Retourne le point le plus proche du point donné en paramètre.
+    @param x: Coordonnée longitude du point
+    @param y: Coordonnée latitude du point
+    @return: un tableau contenant
+     [0] : l'index x du point le plus proche
+     [1] : l'index y du point le plus proche
+     [2] : la coordonnée en longitude du point le plus proche
+     [3] : la coordonnée en latitude point le plus proche
+     [4] : la distance du point le plus proche en kilomètre."""
         min_dist=10000000
         lon = self.read_axis_x()
         lat = self.read_axis_y()
@@ -88,33 +141,29 @@ class Coverage:
                     nearest_i_index = i
                     nearest_j_index = j
 		
-        return [nearest_i_index,nearest_j_index,nearest_lon,nearest_lat,min_dist*6373]
+        return [nearest_i_index,nearest_j_index,nearest_lon,nearest_lat,min_dist]
     
     # Variables
     # HYDRO    
     def read_variable_bathymetry(self):     
-        """
-        Read bathymetry
-        """        
+        """Retourne la bathymétrie sur toute la couverture
+    @return: un tableau en deux dimensions [y,x]."""
         return self.reader.read_variable_bathymetry()
     
     def read_variable_mesh_size(self):     
-        """
-        Read mesh size
-        """        
+        """Retourne la taille de la grille sur toute la couverture
+    @return: un tableau en deux dimensions [y,x]."""
         return self.reader.read_variable_mesh_size()
     
     def read_variable_mask(self):     
-        """
-        Read mask
-        """        
+        """Retourne le masque terre/mer sur toute la couverture
+    @return: un tableau en deux dimensions [y,x]."""
         return self.reader.read_variable_mask()
     
     # ATMOS    
     def read_variable_topography(self):     
-        """
-        Read topography
-        """        
+        """Retourne la topographie sur toute la couverture
+    @return: un tableau en deux dimensions [y,x]."""
         return self.reader.read_variable_topography()
         
         
