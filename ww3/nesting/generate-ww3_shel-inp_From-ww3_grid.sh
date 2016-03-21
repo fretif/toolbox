@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Convert to the ww3_shel format. We remove the duplicated point (the four corner)       
+awk 'BEGIN { i = 0 ; skip=0 }
+     $0~/>/ {skip=1; next;}	
+     { if(skip==1) { skip=0 ; next } 
+       printf("    %s  %s \x27Point%s\x27      \n",$7,$9,i);
+       i=i+1 	  
+     }' $1 > insert-ww3_shel.inp
+
