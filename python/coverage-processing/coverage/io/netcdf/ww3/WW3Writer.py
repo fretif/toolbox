@@ -109,9 +109,10 @@ class WW3Writer (File):
         
         time_index=0
         for time in coverage.read_axis_t(): 
-            logging.info('[WW3Writer] Writing variable \'current\' at time \''+str(time)+'\'') 
-            ucur[time_index:time_index+1,:,:] = coverage.read_variable_u_current_at_time_and_level(time,z)
-            vcur[time_index:time_index+1,:,:] = coverage.read_variable_v_current_at_time_and_level(time,z)
+            logging.info('[WW3Writer] Writing variable \'current\' at time \''+str(time)+'\'')
+            cur = coverage.read_variable_current_at_time_and_level(time,z)
+            ucur[time_index:time_index+1,:,:] = cur[0]
+            vcur[time_index:time_index+1,:,:] = cur[1]
             time_index += 1  
         
         

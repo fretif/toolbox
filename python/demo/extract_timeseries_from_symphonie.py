@@ -52,8 +52,9 @@ if __name__ == "__main__":
         logging.info(date) 
         myDate = datetime(date.year,date.month,date.day,date.hour,date.minute,date.second)  
         
-        u_cur = coverage.read_variable_u_current_at_time_and_level(myDate,z_level)[nearestPoint[0],nearestPoint[1]]      
-        v_cur = coverage.read_variable_v_current_at_time_and_level(myDate,z_level)[nearestPoint[0],nearestPoint[1]]          
+        cur = coverage.read_variable_current_at_time_and_level(myDate,z_level)
+        u_cur = cur[0][nearestPoint[0],nearestPoint[1]]
+        v_cur = cur[1][nearestPoint[0],nearestPoint[1]]
         ssh = coverage.read_variable_ssh_at_time(myDate)[nearestPoint[0],nearestPoint[1]]
         
         file.write(str(date)+"\t"+str(nearestPoint[2])+"\t"+str(nearestPoint[3])+"\t"+str(u_cur)+"\t"+str(v_cur)+"\t"+str(ssh)+"\n") 

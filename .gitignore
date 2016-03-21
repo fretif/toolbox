@@ -54,4 +54,5 @@ Thumbs.db
 .Rproj*
 
 *work/*
+*.idea/*
 .Rproj.user

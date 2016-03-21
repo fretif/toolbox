@@ -16,25 +16,28 @@
 import sys
 sys.path.append('../coverage-processing')
 
-from coverage.Coverage import Coverage
-from coverage.operator.interpolator.models.MesoNh import resample_type_1
-from coverage.io.netcdf.mesonh.MesoNhReader import MesoNhReader
+from coverage.TimeCoverage import TimeCoverage
+from coverage.operator.interpolator.CoverageInterpolator import CoverageInterpolator
+from coverage.io.netcdf.ww3.WW3Reader import WW3Reader
 import logging
 
 if __name__ == "__main__":
     """
-    Cette routine permet d'interpoler sur une grille régulière des données de MESO-NH.
+    Cette routine permet d'interpoler des résultats de WaveWatchIII sur une grille régulière.
     """
-    print("Transform/Interpole Meso-nh to GMT")
+    print("Transform/Interpole WW3 to GMT ")
     
     logging.basicConfig(format='[%(levelname)s] %(message)s',level=logging.INFO)
     
     # Read file
-    reader = MesoNhReader('/home/retf/work/fieldsites/med-cruesim/modelling/atmosphere/AOC_500M_MED.nc')      
+    reader = WW3Reader('/home/retf/work/fieldsites/med-cruesim/modelling/waves/med/outputs/netcdf/ww3.201103.nc')
         
-    coverage = Coverage(reader); 
-    
-    resample_type_1(coverage,0.005,0.005,'/home/retf/work/fieldsites/med-cruesim/modelling/atmosphere/regular-MED.nc')  
+    coverage = TimeCoverage(reader);
+
+    interpolator = CoverageInterpolator(coverage,0.01,0.01,'/home/retf/work/fieldsites/med-cruesim/modelling/waves/med/outputs/netcdf/regular/ww3.201103.nc') # résolution voulue en degrès
+    interpolator.resample_variable_current(coverage)
+    interpolator.resample_variable_ssh(coverage)
+    interpolator.close()
     
     print 'End of programm'
      

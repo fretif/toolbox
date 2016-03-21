@@ -6,6 +6,7 @@ from coverage.io.File import File
 from coverage.TimeCoverage import TimeCoverage
 from netCDF4 import Dataset, num2date
 import numpy as np
+import logging
 
 class GMTReader (File): 
 
@@ -30,13 +31,11 @@ class GMTReader (File):
     def read_axis_y(self):        
         return self.ncfile.variables['latitude'][:]
     
-    def read_variable_wlv_at_time(self,t):         
-        return self.ncfile.variables["wlv"][t][:]
+    def read_variable_ssh_at_time(self,t):
+        return self.ncfile.variables["ssh"][t][:]
     
-    def read_variable_u_surface_current_at_time(self,t):         
-        return self.ncfile.variables["surface_ucur"][t][:]
-    
-    def read_variable_v_surface_current_at_time(self,t):         
-        return self.ncfile.variables["surface_vcur"][t][:]
+    def read_variable__current_at_time(self,t):
+        logging.info('[GMTReader] Reading surface current')
+        return [self.ncfile.variables["surface_ucur"][t][:],self.ncfile.variables["surface_vcur"][t][:]]
            
     

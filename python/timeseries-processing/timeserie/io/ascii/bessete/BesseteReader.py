@@ -38,5 +38,5 @@ class BesseteReader:
         data['sea_surface_height'][data['sea_surface_height'] < 20000] = np.nan       
         toMeters = lambda x:(x - data['sea_surface_height'].mean())*0.001       
         data['sea_surface_height'] = data['sea_surface_height'].apply(toMeters)
-       
+
         return data

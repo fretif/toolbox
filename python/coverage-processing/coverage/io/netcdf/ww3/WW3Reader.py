@@ -1,6 +1,16 @@
-# To change this license header, choose License Headers in Project Properties.
-# To change this template file, choose Tools | Templates
-# and open the template in the editor.
+#! /usr/bin/env python2.7
+# -*- coding: utf-8 -*-
+#
+# CoverageProcessing is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# any later version.
+#
+# CoverageProcessing is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
 
 from coverage.io.File import File
 from coverage.TimeCoverage import TimeCoverage
@@ -8,6 +18,7 @@ from netCDF4 import Dataset, num2date
 import numpy as np
 from datetime import datetime
 from time import strftime
+import logging
 
 class WW3Reader (File): 
 
@@ -58,12 +69,10 @@ class WW3Reader (File):
         return self.ncfile.variables["bhd"][t][:]
     
     # Vector
-    def read_variable_u_surface_current_at_time(self,t):         
-        return self.ncfile.variables["ucur"][t][:]
-    
-    def read_variable_v_surface_current_at_time(self,t):         
-        return self.ncfile.variables["vcur"][t][:]
-    
+    def read_variable_current_at_time(self,t):
+        logging.info('[WWReader] Reading surface current')
+        return [self.ncfile.variables["ucur"][t][:], self.ncfile.variables["vcur"][t][:]]
+
     def read_variable_u_taw_at_time(self,t):         
         return self.ncfile.variables["utaw"][t][:]
     
