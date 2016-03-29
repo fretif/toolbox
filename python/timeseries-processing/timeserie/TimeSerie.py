@@ -8,10 +8,16 @@ import pandas
 class TimeSerie:  
     """"""
    
-    def __init__(self,myReader,start,end,freq):          
+    def __init__(self,myReader,freq,start=None,end=None):
             
-        self.reader = myReader;   
-        self.time_range = pandas.date_range(start=start, end=end,freq=freq)
+        self.reader = myReader;
+
+        if start is None or end is None:
+            self.time_range = None
+            self.freq =freq
+        else:
+            self.time_range = pandas.date_range(start=start, end=end,freq=freq)
+
         self.data = None
         self.data_source = "Undefined"
         self.name_station = "Undefined"
@@ -26,38 +32,57 @@ class TimeSerie:
     def get_time_size(self):
         return np.shape(self.time_range)[0]; 
     
-    def read_data(self):     
-        self.data = self.reader.read_data().reindex(self.time_range, fill_value='NaN');
-        return self.data; 
+    def read_data(self):
+
+        self.data = self.reader.read_data();
+
+        if self.time_range is None:
+            self.time_range = pandas.date_range(start=self.data.index[0], end=self.data.index[self.data.index.size-1],freq=self.freq);
+
+        self.data = self.data.reindex(self.time_range, fill_value=np.nan);
+
+        return self.data;
         
-    def read_variable_ssh(self):     
+    def read_variable_sea_surface_height(self):
         """
-        Read ssh
+        Read sea_surface_height
         """   
         if self.data == None:
             self.read_data();
         
-        if 'ssh' in self.data:
-            return self.data.ssh;
+        if 'sea_surface_height' in self.data:
+            return self.data.sea_surface_height;
         else:
-            raise ValueError("None ssh variable")         
+            raise ValueError("None sea_surface_height variable")
         
     def read_variable_sea_surface_wave_significant_height(self):     
         """
         Read ssh
         """   
-        if self.data == None:
+        if self.data is None:
             self.read_data();
         
         if 'sea_surface_wave_significant_height' in self.data:
             return self.data.sea_surface_wave_significant_height;
         else:
-            raise ValueError("None sea_surface_wave_significant_height variable")   
+            raise ValueError("None sea_surface_wave_significant_height variable")
+
+    def read_variable_sea_surface_wave_mean_period(self):
+        """
+        Read sea_surface_wave_mean_period
+        """
+        if self.data is None:
+            self.read_data();
+
+        if 'sea_surface_wave_mean_period' in self.data:
+            return self.data.sea_surface_wave_mean_period;
+        else:
+            raise ValueError("None sea_surface_wave_mean_period variable")
     
     def resample(self,startTime,endTime):
         idx = pandas.date_range(start=startTime, end=endTime,freq='H')
         
         data = self.read_data()      
-        return data.reindex(idx, fill_value='NaN')       
+        return data.reindex(idx, fill_value=np.nan)
 
         
