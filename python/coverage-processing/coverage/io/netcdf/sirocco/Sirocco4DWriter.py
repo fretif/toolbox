@@ -9,7 +9,7 @@ from numpy import float32
 from numpy import float64
 import logging
 
-class WW3Writer (File):
+class SymphonieLevelWriter (File):
 
     def __init__(self, myFile):   
         File.__init__(self,myFile); 
@@ -28,6 +28,7 @@ class WW3Writer (File):
 
         # dimensions
         self.ncfile.createDimension('time', None)
+        self.ncfile.createDimension('level', 2)
         self.ncfile.createDimension('latitude', coverage.get_y_size())
         self.ncfile.createDimension('longitude', coverage.get_x_size())
 
@@ -38,6 +39,11 @@ class WW3Writer (File):
         times.standard_name= 'time'
         times.axis='T'
         times.conventions = "UTC time"
+
+        levels = self.ncfile.createVariable('level', float64, ('level',))
+        levels.standard_name= 'level'
+        levels.long_name="profondeur positive"
+        levels.axis='Z'
         
         latitudes = self.ncfile.createVariable('latitude', float32, ('latitude','longitude',))
         latitudes.units = "degree_north" ;
@@ -55,9 +61,10 @@ class WW3Writer (File):
         longitudes.valid_max = "180.f" ;
         longitudes.axis = "X" ; 
         
-         # data
+        # data
         latitudes[:,:] = coverage.read_axis_y();
-        longitudes[:,:] = coverage.read_axis_x(); 
+        longitudes[:,:] = coverage.read_axis_x();
+        levels[:] = [18.5987,4.20537];
         times[:] = date2num(coverage.read_axis_t(), units = times.units, calendar = times.calendar)        
             
     def write_variable_ssh(self,coverage):
@@ -85,7 +92,7 @@ class WW3Writer (File):
         if self.ncfile == None:
             raise IOError("Please call write_axis() first")   
             
-        ucur = self.ncfile.createVariable('ucur', float32, ('time', 'latitude', 'longitude',),fill_value="NaN")
+        ucur = self.ncfile.createVariable('ucur', float32, ('time','level', 'latitude', 'longitude',),fill_value="NaN")
         ucur.long_name = "eastward current" ;
         ucur.standard_name = "eastward_sea_water_velocity" ;
         ucur.globwave_name = "eastward_sea_water_velocity" ;
@@ -96,7 +103,7 @@ class WW3Writer (File):
         #ucur.valid_max = 990 ;
         ucur.comment = "cur=sqrt(U**2+V**2)" ;
         
-        vcur = self.ncfile.createVariable('vcur', float32, ('time', 'latitude', 'longitude',),fill_value="NaN")
+        vcur = self.ncfile.createVariable('vcur', float32, ('time', 'level', 'latitude', 'longitude',),fill_value="NaN")
         vcur.long_name = "northward current" ;
         vcur.standard_name = "northward_sea_water_velocity" ;
         vcur.globwave_name = "northward_sea_water_velocity" ;
@@ -110,16 +117,16 @@ class WW3Writer (File):
         time_index=0
         for time in coverage.read_axis_t():
 
-            logging.info('[WW3Writer] Writing variable \'current\' at time \''+str(time)+'\'')
-            cur = coverage.read_variable_current_at_time_and_level(time,z)
+             logging.info('[WW3Writer] Writing variable \'current\' at time \''+str(time)+'\'')
 
-            ucur[time_index:time_index+1,:,:] = cur[0]
-            vcur[time_index:time_index+1,:,:] = cur[1]
-            time_index += 1
+             level_index = 0
+             for level in range(33,39,5):
 
+                cur = coverage.read_variable_current_at_time_and_level(time,level)
 
+                ucur[time_index:time_index+1,level_index:level_index+1,:,:] = cur[0]
+                vcur[time_index:time_index+1,level_index:level_index+1,:,:] = cur[1]
+                level_index+= 1
+
+             time_index += 1
         
-        
-      
-       
-    

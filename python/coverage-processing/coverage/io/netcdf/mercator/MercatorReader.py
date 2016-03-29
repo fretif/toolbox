@@ -18,8 +18,8 @@ class MercatorReader:
     # Axis
     def read_axis_t(self,timestamp):
         """Attention si gridT, U,V,2D ont un time_counter different"""
-        data = self.gridU.variables['time_counter'][:]
-        result = num2date(data, units = self.gridU.variables['time_counter'].units, calendar = self.gridU.variables['time_counter'].calendar)
+        data = self.gridT.variables['time_counter'][:]
+        result = num2date(data, units = self.gridT.variables['time_counter'].units, calendar = self.gridT.variables['time_counter'].calendar)
         
         if timestamp ==1:           
             return [ (t - TimeCoverage.TIME_DATUM).total_seconds() \

@@ -48,100 +48,53 @@ Elle rajoute une dimension verticale à la couverture horizontale classique.
     @return:  un entier correspondant à la taille de l'axe z."""
         return np.shape(self.levels)[0];
     
-    def find_level_index(self,z):
+    def find_level_index(self,depth):
         """Retourne l'index de la profondeur la plus proche selon le point le plus proche.
-    @type z : integer ou flottant
-    @param z: Profondeur en mètre souhaitée ou index de la profondeur souhaitée
-    @return:  un tableau de l'indice de la couche verticale la plus proche en chacun point de la grille."""
+    @type depth : integer ou flottant
+    @param depth: Profondeur en mètre souhaitée ou index de la profondeur souhaitée
+    @method : Méthode de calcul pour converger.
+    @return:  un tableau de l'indice de la couche verticale inférieur la plus proche en chacun point de la grille. z < vert_coord[y,x] et z > vert_coord[y,x]+1.
+    Les valeurs masquées valent -999."""
 
         xmax=self.get_x_size()
         ymax=self.get_y_size()
         vert_coord = np.zeros([ymax,xmax],dtype=int)
-        vert_coord[:] = np.NAN
+        vert_coord[:] = -999
+        found = False
 
-        if type(z) == int:
+        if type(depth) == int:
 
-            vert_coord[:] = z
+            if depth < 0 or depth >= self.get_z_size():
+                raise ValueError("Depth index have to range between 0 and "+str(self.get_z_size()-1)+". Actually depth index = "+str(depth))
+
+            vert_coord[:] = depth
+            found = True
 
         elif self.is_sigma_coordinate() == True: # Cas de grille sigma
 
-            raise RuntimeError("No implemented yet. Please give a vertical index")
-
-            near_vert_layer = np.NAN
-
-            for y in range(0,ymax):
-
-                # On cherche le premier index de grille qui correspond à la profondeur souhaitée
-                if (np.isnan(near_vert_layer)): # Si on n'a pas trouvé, on continue
-
+                for y in range(0,ymax):
                     for x in range(0,xmax):
 
-                        if (np.isnan(near_vert_layer)): # Si on n'a pas trouvé, on continue
+                        # Pour chaque niveau
+                        for z in range(0,self.get_z_size()-1):
 
-                            # Pour chaque niveau
-                            for i in range(0,self.get_z_size()):
-                                try:
-                                    # On test à la deuxième décimale prêt
-                                    print self.levels[i,y,x],z
-                                    np.testing.assert_approx_equal(self.levels[i,y,x],z, 2)
-                                    near_vert_layer = i
-                                    break;
-                                except AssertionError:
-                                    # Sinon on cherche au delta prêt
-                                    if self.levels[i,y,x] - z > LevelCoverage.LEVEL_DELTA:
-                                        near_vert_layer = i
-                                        break;
-
-                        else:
-                            break;
-                else:
-                    break;
-
-            # Test si on l'a trouvé sinon on lance une erreur
-            if (np.isnan(near_vert_layer)):
-                 raise ValueError(""+str(z)+" was not found. Maybe the LevelCoverage.LEVEL_DELTA ("+ str(LevelCoverage.LEVEL_DELTA)+"m) is too small or the depth is out the range.")
-
-            # On recommence pour toute la grille
-            for y in range(0,ymax):
-                for x in range(0,xmax):
-
-                    # Pour chaque niveau entre -5 et +5 du niveau le plus proche
-                    for i in range(near_vert_layer-5,near_vert_layer + 5):
-                        try:
-                            # On test à la deuxième décimale prêt
-                            print np.shape(self.levels),i,y,x
-                            np.testing.assert_approx_equal(self.levels[i,y,x],z, 2)
-                            vert_coord[y,x] = i
-                            break;
-                        except AssertionError:
-                            # Sinon on cherche au delta prêt
-                            if self.levels[i,y,x] - z > LevelCoverage.LEVEL_DELTA:
-                                vert_coord[y,x] = i
+                            if self.levels[z,y,x] > depth - LevelCoverage.LEVEL_DELTA and self.levels[z+1,y,x] < depth + LevelCoverage.LEVEL_DELTA:
+                                vert_coord[y,x]= z
+                                found = True
                                 break;
 
         else: # Cas de grille classique
 
-            near_vert_layer = np.NAN
+            # Pour chaque niveau
+            for z in range(0,self.get_z_size()-1):
 
-            for i in xrange(self.get_z_size()):
-
-                if (np.isnan(near_vert_layer)):
-
-                    try:
-                        # On test à la deuxième décimale prêt
-                        np.testing.assert_approx_equal(self.levels[i],z, 2)
-                        near_vert_layer= i
-                    except AssertionError:
-                        # Sinon on cherche au delta prêt
-                        if self.levels[i] - z > LevelCoverage.LEVEL_DELTA:
-                            near_vert_layer = i
-                else:
+                 if self.levels[z] > depth - LevelCoverage.LEVEL_DELTA and self.levels[z+1] < depth + LevelCoverage.LEVEL_DELTA:
+                    vert_coord[:]= z
+                    found = True
                     break;
 
-            if (np.isnan(near_vert_layer)):
-                raise ValueError(""+str(z)+" was not found. Maybe the LevelCoverage.LEVEL_DELTA ("+ str(LevelCoverage.LEVEL_DELTA)+"m) is too small or the depth is out the range.")
-            else:
-                vert_coord[:] = near_vert_layer
+        if found == False:
+                raise ValueError(""+str(depth)+" was not found. Maybe the LevelCoverage.LEVEL_DELTA ("+ str(LevelCoverage.LEVEL_DELTA)+"m) is too small or the depth is out the range.")
 
         # On retourne le tableau d'index
         return vert_coord

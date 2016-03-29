@@ -90,7 +90,7 @@ class CoverageInterpolator(File):
         if self.ncfile == None:
             raise IOError("Please call write_axis() first")
 
-        logging.info('[CoverageInterpolator] Resample variable \'topography\' at resolution '+str(self.targetResX)+'/'+str(self.targetResY)+'.')
+        logging.info('[CoverageInterpolator] Resample variable \'topography\' to the resolution '+str(self.targetResX)+'/'+str(self.targetResY)+'.')
 
         wlv = self.ncfile.createVariable('topo', float32, ('latitude', 'longitude',),fill_value="NaN")
         wlv.long_name = "topography" ;
@@ -126,12 +126,12 @@ class CoverageInterpolator(File):
             wlv[time_index:time_index+1,:,:] = resample_2d_to_grid(coverage.read_axis_x(),coverage.read_axis_y(),self.lon_reg,self.lat_reg,coverage.read_variable_ssh_at_time(time))
             time_index += 1
 
-    def resample_variable_current_at_level(self,coverage,z):
+    def resample_variable_current_at_level(self,coverage,z,vertical_method="nearest"):
 
         if self.ncfile == None:
             raise IOError("Please call write_axis() first")
 
-        logging.info('[CoverageInterpolator] Resample variable \'current\' at level '+str(z)+' at resolution '+str(self.targetResX)+'/'+str(self.targetResY)+'.')
+        logging.info('[CoverageInterpolator] Resample variable \'current\' at level '+str(z)+' to the resolution '+str(self.targetResX)+'/'+str(self.targetResY)+'.')
 
         ucur = self.ncfile.createVariable('ucur', float32, ('time', 'latitude', 'longitude',),fill_value="NaN")
         ucur.long_name = "eastward current" ;
@@ -157,7 +157,7 @@ class CoverageInterpolator(File):
 
         time_index=0
         for time in coverage.read_axis_t():
-            cur = coverage.read_variable_current_at_time_and_level(time,z)
+            cur = coverage.read_variable_current_at_time_and_level(time,z,vertical_method)
             ucur[time_index:time_index+1,:,:] = resample_2d_to_grid(coverage.read_axis_x(),coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[0])
             vcur[time_index:time_index+1,:,:] = resample_2d_to_grid(coverage.read_axis_x(),coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[1])
             time_index += 1
@@ -167,7 +167,7 @@ class CoverageInterpolator(File):
         if self.ncfile == None:
             raise IOError("Please call write_axis() first")
 
-        logging.info('[CoverageInterpolator] Resample variable \'current\' at resolution '+str(self.targetResX)+'/'+str(self.targetResY)+'.')
+        logging.info('[CoverageInterpolator] Resample variable \'current\' to the resolution '+str(self.targetResX)+'/'+str(self.targetResY)+'.')
 
         ucur = self.ncfile.createVariable('ucur', float32, ('time', 'latitude', 'longitude',),fill_value="NaN")
         ucur.long_name = "eastward current" ;

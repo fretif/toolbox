@@ -1,20 +1,35 @@
-# To change this license header, choose License Headers in Project Properties.
-# To change this template file, choose Tools | Templates
-# and open the template in the editor.
+#! /usr/bin/env python2.7
+# -*- coding: utf-8 -*-
+#
+# CoverageProcessing is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# any later version.
+#
+# CoverageProcessing is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
 
 from coverage.io.File import File
 from netCDF4 import Dataset, num2date
 import numpy as np
 
 class SymphonieReader(File):
+    """
+La classe SymphonieReader permet de lire les données du format Symphonie
 
+@param  myGrid : lien vers le fichier de grille (que l'on trouve dans le RDIR/tmp/grid.nc)
+@param myFile : lien vers le fichier de données (que l'on trouve dans GRAPHIQUES)
+"""
     def __init__(self,myGrid, myFile):   
         File.__init__(self,myFile); 
         self.ncfile = Dataset(self.filename, 'r')
         self.grid = Dataset(myGrid, 'r')
         
     # Axis
-    def read_axis_t(self,timestamp):
+    def read_axis_t(self,timestamp=0):
         data = self.ncfile.variables['time'][:]         
         result = num2date(data, units = self.ncfile.variables['time'].units.replace('from','since').replace('mar','03'), calendar = self.ncfile.variables['time'].calendar)
         
@@ -48,16 +63,22 @@ class SymphonieReader(File):
     def read_variable_ssh_at_time(self,t):
         return self.ncfile.variables["ssh_w"][t][:]
 
-    def read_variable_current_at_time_and_level(self,t,z):
+    def read_variable_current_at_time_and_level(self,index_t,index_z,depth,method="nearest"):
         mask_t = self.read_variable_mask();
         mask_u = self.grid.variables["mask_u"][:];
         mask_v = self.grid.variables["mask_v"][:];
         lon_t = self.read_axis_x();
         lat_t = self.read_axis_y();
-        data_u = self.ncfile.variables["vel_u"][t][::]
-        data_v = self.ncfile.variables["vel_v"][t][::]
+        depth_t = self.read_axis_z()
+        size_depth_t = np.shape(depth_t)[0];
+        depth_u = self.grid.variables['depth_u'][::]
+        depth_u[::] *= -1.0 # inverse la profondeur
+        depth_v = self.grid.variables['depth_v'][::]
+        depth_v[::] *= -1.0 # inverse la profondeur
 
-        # compute and apply rotation matrix
+        data_u = self.ncfile.variables["vel_u"][index_t][::]
+        data_v = self.ncfile.variables["vel_v"][index_t][::]
+
         xmax=np.shape(lon_t)[1]
         ymax=np.shape(lon_t)[0]
         gridrotcos_t = np.zeros([ymax,xmax])
@@ -72,10 +93,11 @@ class SymphonieReader(File):
         v_rot = np.zeros([ymax,xmax])
         v_rot[:] = np.NAN
 
-        # We process points inside the domain
+        # 1. On calcule les points à l'intérieur du domaine en excluant les bords
         for y in range(1,ymax-1):
             for x in range(1,xmax-1):
 
+                # 1.1 On calcule la matrice de rotation
                 x1=(lon_t[y,x+1]-lon_t[y,x-1])*np.pi/180.
                 if(x1<-np.pi): x1=x1+2.*np.pi
                 if(x1> np.pi): x1=x1-2.*np.pi
@@ -83,34 +105,88 @@ class SymphonieReader(File):
                 gridrotcos_t[y,x]=np.cos(x0)
                 gridrotsin_t[y,x]=np.sin(x0)
 
-                if (mask_t[z[y,x],y,x] == 1.):
+                if index_z[y,x] != -999 : # Le point (x,y) a une couche de profondeur depth
 
-                    u_left = 0
-                    u_right = 0
-                    v_down = 0
-                    v_up = 0
+                    if mask_t[index_z[y,x],y,x] == 1.:
 
-                    if (mask_u[z[y,x-1],y,x-1] == 1.):
-                        u_left = data_u[z[y,x-1],y,x-1];
+                        # 1.2 On interpole sur la verticale si possible et on récupère les valeurs aux points encadrant X.
+                        ##############################
+                        #           v_up
+                        #
+                        #   u_left   X     u_right
+                        #
+                        #         v_bottom
+                        #############################
 
-                    if (mask_u[z[y,x],y,x] == 1.):
-                        u_right = data_u[z[y,x],y,x];
+                        vert_inc=1
+                        if method == "linear" and index_z[y,x]+1 >= size_depth_t:
+                            vert_inc=-1
 
-                    if (mask_v[z[y-1,x],y-1,x] == 1.):
-                        v_down = data_v[z[y-1,x],y-1,x];
+                        # u_left
+                        u_left = 0
+                        if (method == "linear" and mask_u[index_z[y,x],y,x-1] == 1. and mask_u[index_z[y,x]+vert_inc,y,x-1] == 1.):
+                        # ATTENTION, par commodité, on utilise l'indice index_[y,x] qui est sur la grille C comme indice z des variables u et v qui sont sur une grille différente.
+                        # Il peut donc exister un léger décalage.
 
-                    if (mask_v[z[y,x],y,x] == 1.):
-                        v_up = data_v[z[y,x],y,x];
+                            # On fait une interpolation linéaire sur la verticale
+                            r = (depth_u[index_z[y,x],y,x-1] - depth) / (depth_u[index_z[y,x]+vert_inc,y,x-1] - depth_u[index_z[y,x],y,x-1])
+                            u_left_z1 = data_u[index_z[y,x],y,x-1];
+                            u_left_z2 = data_u[index_z[y,x]+vert_inc,y,x-1];
+                            u_left = u_left_z2*r + (1-r)*u_left_z1
+                            print u_left_z1,u_left_z2,u_left
 
-                    # compute an half-value
-                    u[y,x]=0.5*(u_left+u_right)
-                    v[y,x]=0.5*(v_down+v_up)
+                        elif method == "nearest" and mask_u[index_z[y,x],y,x-1] == 1.:
+                            # Pas d'interpolation, on prend le plus proche inférieur
+                            u_left = data_u[index_z[y,x],y,x-1];
 
-                    # apply rotation
-                    u_rot[y,x]=u[y,x]*gridrotcos_t[y,x]+v[y,x]*gridrotsin_t[y,x]
-                    v_rot[y,x]=-u[y,x]*gridrotsin_t[y,x]+v[y,x]*gridrotcos_t[y,x]
+                        # u_right
+                        u_right = 0
+                        if (method == "linear" and mask_u[index_z[y,x],y,x] == 1. and mask_u[index_z[y,x]+vert_inc,y,x] == 1.):
 
-        # We process boundaries points
+                            # On fait une interpolation linéaire sur la verticale
+                            r = (depth - depth_u[index_z[y,x],y,x]) / (depth_u[index_z[y,x]+vert_inc,y,x] - depth_u[index_z[y,x],y,x])
+                            u_right_z1 = data_u[index_z[y,x],y,x];
+                            u_right_z2 = data_u[index_z[y,x]+vert_inc,y,x];
+                            u_right = u_right_z2*r + (1-r)*u_right_z1
+
+                        elif method == "nearest" and mask_u[index_z[y,x],y,x] == 1.:
+                            # Pas d'interpolation, on prend le plus proche inférieur
+                            u_right = data_u[index_z[y,x],y,x];
+
+                        # v_down
+                        v_down = 0
+                        if (method == "linear" and mask_v[index_z[y,x],y-1,x] == 1. and mask_v[index_z[y,x]+vert_inc,y-1,x] == 1.):
+
+                            # On fait une interpolation linéaire sur la verticale
+                            r = (depth - depth_v[index_z[y,x],y,x]) / (depth_v[index_z[y,x]+vert_inc,y-1,x] - depth_v[index_z[y,x],y-1,x])
+                            v_down_z1 = data_v[index_z[y,x],y-1,x];
+                            v_down_z2 = data_v[index_z[y,x]+vert_inc,y-1,x];
+                            v_down = v_down_z2*r + (1-r)*v_down_z1
+                        elif method == "nearest" and mask_v[index_z[y,x],y-1,x] == 1.:
+                            # Pas d'interpolation, on prend le plus proche inférieur
+                            v_down = data_v[index_z[y,x],y-1,x];
+
+                        # v_up
+                        v_up = 0
+                        if (method == "linear" and mask_v[index_z[y,x],y,x] == 1. and mask_v[index_z[y,x]+vert_inc,y,x] == 1.):
+                            r = (depth - depth_v[index_z[y,x],y,x]) / (depth_v[index_z[y,x]+vert_inc,y,x] - depth_v[index_z[y,x],y,x])
+                            v_up_z1 = data_v[index_z[y,x],y,x];
+                            v_up_z2 = data_v[index_z[y,x]+vert_inc,y,x];
+                            v_up = v_up_z2*r + (1-r)*v_up_z1
+
+                        elif method == "nearest" and mask_v[index_z[y,x],y,x] == 1.:
+                            # Pas d'interpolation, on prend le plus proche inférieur
+                            v_up = data_v[index_z[y,x],y,x];
+
+                        # 1.3 On calcule la demi-somme
+                        u[y,x]=0.5*(u_left+u_right)
+                        v[y,x]=0.5*(v_down+v_up)
+
+                        # 1.4 On applique la rotation
+                        u_rot[y,x]=u[y,x]*gridrotcos_t[y,x]+v[y,x]*gridrotsin_t[y,x]
+                        v_rot[y,x]=-u[y,x]*gridrotsin_t[y,x]+v[y,x]*gridrotcos_t[y,x]
+
+        # 2. On duplique les points sur les bords.
         # bottom
         u_rot[0,0:xmax]=u_rot[1,0:xmax]
         v_rot[0,0:xmax]=v_rot[1,0:xmax]
