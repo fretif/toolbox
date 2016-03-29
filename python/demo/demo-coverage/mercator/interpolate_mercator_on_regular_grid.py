@@ -14,9 +14,10 @@
 
 # Lien vers le dossier de la lib
 import sys
-sys.path.append('../coverage-processing')
+sys.path.append('../../../coverage-processing')
 
 from coverage.TimeLevelCoverage import TimeLevelCoverage
+from coverage.LevelCoverage import LevelCoverage
 from coverage.operator.interpolator.CoverageInterpolator import CoverageInterpolator
 from coverage.io.netcdf.mercator.MercatorReader import MercatorReader
 import logging
@@ -25,6 +26,8 @@ if __name__ == "__main__":
     print("Transform/Interpole Symphonie to GMT")
     
     logging.basicConfig(format='[%(levelname)s] %(message)s',level=logging.INFO)
+
+
     
     # Read file
     reader = MercatorReader('/home/retf/work/fieldsites/med-cruesim/modelling/mercator/grid/mercator_grid.nc',
@@ -33,12 +36,13 @@ if __name__ == "__main__":
                             '/home/retf/work/fieldsites/med-cruesim/modelling/mercator/netcdf/pool/ext-PSY2V4R4_1dAV_20120706_20120707_gridU_R20120711.nc',
                             '/home/retf/work/fieldsites/med-cruesim/modelling/mercator/netcdf/pool/ext-PSY2V4R4_1dAV_20120706_20120707_gridV_R20120711.nc')
 
-
         
     coverage = TimeLevelCoverage(reader);
 
+    LevelCoverage.LEVEL_DELTA = 50.0 # On change le delta par défaut pour trouver une couche
+
     interpolator = CoverageInterpolator(coverage,0.01,0.01,'/home/retf/work/fieldsites/med-cruesim/modelling/mercator/netcdf/pool/test_resample.nc') # résolution voulue en degrès
-    interpolator.resample_variable_current_at_level(coverage,150.0) # on peut donner la profondeur en mètres positifs ou en index de couche verticale.
+    interpolator.resample_variable_current_at_level(coverage,155.0) # on peut donner la profondeur en mètres positifs (plus proche) ou en indice de couche verticale.
     interpolator.resample_variable_ssh(coverage)
     interpolator.close()
     

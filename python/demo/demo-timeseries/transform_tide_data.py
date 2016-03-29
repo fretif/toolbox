@@ -14,7 +14,7 @@
 
 # Lien vers le dossier de la lib
 import sys
-sys.path.append('../timeseries-processing')
+sys.path.append('../../timeseries-processing')
 
 from timeserie.TimeSerie import TimeSerie
 from timeserie.io.ascii.refmar.RefmarReader import RefmarReader

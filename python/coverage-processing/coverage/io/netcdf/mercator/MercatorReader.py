@@ -43,14 +43,18 @@ class MercatorReader:
     def read_variable_ssh_at_time(self,t):
         return self.grid2D.variables["sossheig"][t][:]
      
-    def read_variable_current_at_time_and_level(self,t,z):
+    def read_variable_current_at_time_and_level(self,index_t,index_z,depth,method="nearest"):
+
+        if method != "nearest":
+            raise ValueError("Only method 'nearest' is implemented yet.")
+
         mask_t = self.read_variable_mask();
         mask_u = self.mask.variables["umask"][:];
         mask_v = self.mask.variables["vmask"][:];
         lon_t = self.read_axis_x();
         lat_t = self.read_axis_y();
-        data_u = self.gridU.variables["vozocrtx"][t][::]
-        data_v = self.gridV.variables["vomecrty"][t][::]
+        data_u = self.gridU.variables["vozocrtx"][index_t][::]
+        data_v = self.gridV.variables["vomecrty"][index_t][::]
         
         # compute and apply rotation matrix
         xmax=np.shape(lon_t)[1]
@@ -78,24 +82,24 @@ class MercatorReader:
                 gridrotcos_t[y,x]=np.cos(x0)
                 gridrotsin_t[y,x]=np.sin(x0)
 
-                if (mask_t[0,z[y,x],y,x] == 1.):
+                if (mask_t[0,index_z[y,x],y,x] == 1.):
                     
                     u_left = 0
                     u_right = 0
                     v_down = 0
                     v_up = 0
                    
-                    if (mask_u[0,z[y,x-1],y,x-1] == 1.):
-                        u_left = data_u[z[y,x-1],y,x-1];
+                    if (mask_u[0,index_z[y,x-1],y,x-1] == 1.):
+                        u_left = data_u[index_z[y,x-1],y,x-1];
 
-                    if (mask_u[0,z[y,x],y,x] == 1.):
-                        u_right = data_u[z[y,x],y,x];
+                    if (mask_u[0,index_z[y,x],y,x] == 1.):
+                        u_right = data_u[index_z[y,x],y,x];
 
-                    if (mask_v[0,z[y-1,x],y-1,x] == 1.):
-                        v_down = data_v[z[y-1,x],y-1,x];
+                    if (mask_v[0,index_z[y-1,x],y-1,x] == 1.):
+                        v_down = data_v[index_z[y-1,x],y-1,x];
 
-                    if (mask_v[0,z[y,x],y,x] == 1.):
-                        v_up = data_v[z[y,x],y,x];
+                    if (mask_v[0,index_z[y,x],y,x] == 1.):
+                        v_up = data_v[index_z[y,x],y,x];
 
                     # compute an half-value
                     u[y,x]=0.5*(u_left+u_right)

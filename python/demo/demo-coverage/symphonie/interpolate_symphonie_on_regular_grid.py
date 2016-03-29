@@ -14,7 +14,7 @@
 
 # Lien vers le dossier de la lib
 import sys
-sys.path.append('../coverage-processing')
+sys.path.append('../../../coverage-processing')
 
 from coverage.TimeLevelCoverage import TimeLevelCoverage
 from coverage.operator.interpolator.CoverageInterpolator import CoverageInterpolator
@@ -33,7 +33,7 @@ if __name__ == "__main__":
     coverage = TimeLevelCoverage(reader);
 
     interpolator = CoverageInterpolator(coverage,0.01,0.01,'/home/retf/work/fieldsites/med-cruesim/modelling/hydro/gulf-of-lion/graphiques/test_resample.nc') # résolution voulue en degrès
-    interpolator.resample_variable_current_at_level(coverage,0) # on peut donner la profondeur en mètres positifs ou en index de couche verticale.
+    interpolator.resample_variable_current_at_level(coverage,5.0) # on peut donner la profondeur en mètres positifs ou en index de couche verticale.
     interpolator.resample_variable_ssh(coverage)
     interpolator.close()
     
