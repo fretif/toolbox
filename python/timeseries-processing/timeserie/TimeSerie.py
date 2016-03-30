@@ -24,6 +24,7 @@ class TimeSerie:
         self.x_coord = "Undefined"
         self.y_coord = "Undefined"
         self.vertical_datum = "Undefined"
+        self.meta_data = "Undefined"
         
     # Axis        
     def read_axis_time(self):         
