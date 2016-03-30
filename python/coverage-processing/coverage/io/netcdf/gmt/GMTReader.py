@@ -34,7 +34,7 @@ class GMTReader (File):
     def read_variable_ssh_at_time(self,t):
         return self.ncfile.variables["ssh"][t][:]
     
-    def read_variable__current_at_time(self,t):
+    def read_variable_current_at_time(self,t):
         logging.info('[GMTReader] Reading surface current')
         return [self.ncfile.variables["surface_ucur"][t][:],self.ncfile.variables["surface_vcur"][t][:]]
            

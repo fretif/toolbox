@@ -24,8 +24,19 @@ from numpy import float64
 import numpy as np
 
 class CoverageInterpolator(File):
+    """
+    Cette classe permet d'interpoler un coverage non régulier sur une grille régulière.
+    Cette classe écrit un fichier netcdf
+    """
 
     def __init__(self, cov,resX,resY,myFile):
+        """
+    Constructeur
+    @param cov : la coverage
+    @param resX : résolution souhaitée en X, en degrès
+    @param resY : résolution souhaitée en Y, en degrès
+    @param myFile : fichier de destination
+    """
         File.__init__(self,myFile);
         self.coverage = cov;
 
@@ -44,7 +55,7 @@ class CoverageInterpolator(File):
         targetAxisY= self.lat_reg[:,0]
 
         self.ncfile = Dataset(self.filename, 'w', format='NETCDF4')
-        self.ncfile.description = 'GMT Writer. Generated with Coverage Processing tools'
+        self.ncfile.description = 'Coverage Interpolator. Generated with Coverage Processing tools'
 
         # dimensions
         self.ncfile.createDimension('latitude', np.shape(targetAxisY)[0])
@@ -126,8 +137,13 @@ class CoverageInterpolator(File):
             wlv[time_index:time_index+1,:,:] = resample_2d_to_grid(coverage.read_axis_x(),coverage.read_axis_y(),self.lon_reg,self.lat_reg,coverage.read_variable_ssh_at_time(time))
             time_index += 1
 
-    def resample_variable_current_at_level(self,coverage,z,vertical_method="nearest"):
-
+    def resample_variable_current_at_level(self,coverage,depth,vertical_method="nearest"):
+        """
+        Interpole un champ de courant au niveau donnée en paramètre.
+        @param coverage: la coverage à interpoler
+        @param depth; profondeur souhaitée. Un flottant veut dire une profondeur (en m positif). Un entier = l'indice de la couche.
+        @vertical_method: méthode d'interpolation verticale. "nearest" ou "linear"
+        """
         if self.ncfile == None:
             raise IOError("Please call write_axis() first")
 
@@ -157,7 +173,7 @@ class CoverageInterpolator(File):
 
         time_index=0
         for time in coverage.read_axis_t():
-            cur = coverage.read_variable_current_at_time_and_level(time,z,vertical_method)
+            cur = coverage.read_variable_current_at_time_and_level(time,depth,vertical_method)
             ucur[time_index:time_index+1,:,:] = resample_2d_to_grid(coverage.read_axis_x(),coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[0])
             vcur[time_index:time_index+1,:,:] = resample_2d_to_grid(coverage.read_axis_x(),coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[1])
             time_index += 1

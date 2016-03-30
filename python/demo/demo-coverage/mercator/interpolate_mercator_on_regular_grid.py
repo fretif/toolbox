@@ -26,8 +26,6 @@ if __name__ == "__main__":
     print("Transform/Interpole Symphonie to GMT")
     
     logging.basicConfig(format='[%(levelname)s] %(message)s',level=logging.INFO)
-
-
     
     # Read file
     reader = MercatorReader('/home/retf/work/fieldsites/med-cruesim/modelling/mercator/grid/mercator_grid.nc',

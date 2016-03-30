@@ -41,7 +41,7 @@ if __name__ == "__main__":
     
     # Date range to be extracted
     dates = pandas.date_range(start='2011-03-19 23:00:00', end='2011-03-20 12:00:00',freq='3H')
-    z_level = 500.0 # 500 mètres de profondeur
+    depth = 500.0 # 500 mètres de profondeur
     
     # Prepare file to save
     file = open("/tmp/output", "w")  
@@ -52,7 +52,7 @@ if __name__ == "__main__":
         logging.info(date) 
         myDate = datetime(date.year,date.month,date.day,date.hour,date.minute,date.second)  
         
-        cur = coverage.read_variable_current_at_time_and_level(myDate,z_level)
+        cur = coverage.read_variable_current_at_time_and_level(myDate,depth)
         u_cur = cur[0][nearestPoint[0],nearestPoint[1]]
         v_cur = cur[1][nearestPoint[0],nearestPoint[1]]
         ssh = coverage.read_variable_ssh_at_time(myDate)[nearestPoint[0],nearestPoint[1]]

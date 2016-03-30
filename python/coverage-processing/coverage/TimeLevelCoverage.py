@@ -29,20 +29,20 @@ Elle rajoute les dimensions temporelle et verticale à la couverture horizontale
     # Variables
 
     # HYDRO
-    def read_variable_current_at_time_and_level(self,time,depth,method="nearest"):
+    def read_variable_current_at_time_and_level(self,time,depth,vertical_method="nearest"):
         """Retourne les composantes u,v du courant à la date souhaitée et au niveau souhaité sur toute la couverture horizontale.
     @type time: datetime ou l'index
     @param time: date souhaitée
     @type depth: profondeur en mètre (float) ou index (integer)
     @param depth: profondeur souhaitée. Si le z est un entier, on considère qu'il s'agit de l'index,
     si c'est un flottant on considère qu'il s'agit d'une profondeur
-    @param method: méthode d'interpolation verticale. "linear" ou "nearest"
+    @param vertical_method: méthode d'interpolation verticale. "linear" ou "nearest"
     @return: un tableau en deux dimensions [u_comp,v_comp] contenant chacun deux dimensions [y,x]."""
 
         index_t = self.find_time_index(time);
         index_z=self.find_level_index(depth);
             
-        return self.reader.read_variable_current_at_time_and_level(index_t,index_z,depth,method)
+        return self.reader.read_variable_current_at_time_and_level(index_t,index_z,depth,vertical_method)
     
        
 
