@@ -40,8 +40,8 @@ if __name__ == "__main__":
     LevelCoverage.LEVEL_DELTA = 50.0 # On change le delta par défaut pour trouver une couche
 
     interpolator = CoverageInterpolator(coverage,0.01,0.01,'/home/retf/work/fieldsites/med-cruesim/modelling/mercator/netcdf/pool/test_resample.nc') # résolution voulue en degrès
-    interpolator.resample_variable_current_at_level(coverage,155.0) # on peut donner la profondeur en mètres positifs (plus proche) ou en indice de couche verticale.
-    interpolator.resample_variable_ssh(coverage)
+    interpolator.resample_variable_current_at_level(155.0) # on peut donner la profondeur en mètres positifs (plus proche) ou en indice de couche verticale.
+    interpolator.resample_variable_ssh()
     interpolator.close()
     
     print 'End of programm'

@@ -35,8 +35,8 @@ if __name__ == "__main__":
     coverage = TimeCoverage(reader);
 
     interpolator = CoverageInterpolator(coverage,0.01,0.01,'/home/retf/work/fieldsites/med-cruesim/modelling/waves/med/outputs/netcdf/regular/ww3.201103.nc') # résolution voulue en degrès
-    interpolator.resample_variable_current(coverage)
-    interpolator.resample_variable_ssh(coverage)
+    interpolator.resample_variable_current()
+    interpolator.resample_variable_ssh()
     interpolator.close()
     
     print 'End of programm'

@@ -97,7 +97,7 @@ class CoverageInterpolator(File):
     def close(self):
         self.ncfile.close()
 
-    def resample_variable_topography(self,coverage):
+    def resample_variable_topography(self):
         if self.ncfile == None:
             raise IOError("Please call write_axis() first")
 
@@ -113,10 +113,10 @@ class CoverageInterpolator(File):
         #wlv.valid_min = "0f" ;
         #wlv.valid_max = 10000f ;
 
-        resample_2d_to_grid(coverage.read_axis_x(),coverage.read_axis_y(),self.lon_reg,self.lat_reg,coverage.read_variable_topography())
+        resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,self.coverage.read_variable_topography())
 
 
-    def resample_variable_ssh(self,coverage):
+    def resample_variable_ssh(self):
         if self.ncfile == None:
             raise IOError("Please call write_axis() first")
 
@@ -133,14 +133,13 @@ class CoverageInterpolator(File):
         #wlv.valid_max = 10000f ;
 
         time_index=0
-        for time in coverage.read_axis_t():
-            wlv[time_index:time_index+1,:,:] = resample_2d_to_grid(coverage.read_axis_x(),coverage.read_axis_y(),self.lon_reg,self.lat_reg,coverage.read_variable_ssh_at_time(time))
+        for time in self.coverage.read_axis_t():
+            wlv[time_index:time_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,self.coverage.read_variable_ssh_at_time(time))
             time_index += 1
 
-    def resample_variable_current_at_level(self,coverage,depth,vertical_method="nearest"):
+    def resample_variable_current_at_level(self,depth,vertical_method="nearest"):
         """
         Interpole un champ de courant au niveau donnée en paramètre.
-        @param coverage: la coverage à interpoler
         @param depth; profondeur souhaitée. Un flottant veut dire une profondeur (en m positif). Un entier = l'indice de la couche.
         @vertical_method: méthode d'interpolation verticale. "nearest" ou "linear"
         """
@@ -172,13 +171,13 @@ class CoverageInterpolator(File):
         vcur.comment = "cur=sqrt(U**2+V**2)" ;
 
         time_index=0
-        for time in coverage.read_axis_t():
-            cur = coverage.read_variable_current_at_time_and_level(time,depth,vertical_method)
-            ucur[time_index:time_index+1,:,:] = resample_2d_to_grid(coverage.read_axis_x(),coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[0])
-            vcur[time_index:time_index+1,:,:] = resample_2d_to_grid(coverage.read_axis_x(),coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[1])
+        for time in self.coverage.read_axis_t():
+            cur = self.coverage.read_variable_current_at_time_and_level(time,depth,vertical_method)
+            ucur[time_index:time_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[0])
+            vcur[time_index:time_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[1])
             time_index += 1
 
-    def resample_variable_current(self,coverage):
+    def resample_variable_current(self):
 
         if self.ncfile == None:
             raise IOError("Please call write_axis() first")
@@ -208,10 +207,10 @@ class CoverageInterpolator(File):
         vcur.comment = "cur=sqrt(U**2+V**2)" ;
 
         time_index=0
-        for time in coverage.read_axis_t():
-            cur = coverage.read_variable_current_at_time(time)
-            ucur[time_index:time_index+1,:,:] = resample_2d_to_grid(coverage.read_axis_x(),coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[0])
-            vcur[time_index:time_index+1,:,:] = resample_2d_to_grid(coverage.read_axis_x(),coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[1])
+        for time in self.coverage.read_axis_t():
+            cur = self.coverage.read_variable_current_at_time(time)
+            ucur[time_index:time_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[0])
+            vcur[time_index:time_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[1])
             time_index += 1
 
 
