@@ -53,7 +53,7 @@ class WW3Reader (File):
     def read_variable_bathy_at_time(self,t):         
         return self.ncfile.variables["dpt"][t][:]
     
-    def read_variable_wlv_at_time(self,t):         
+    def read_variable_ssh_at_time(self,t):
         return self.ncfile.variables["wlv"][t][:]
     
     def read_variable_hs_at_time(self,t):         
