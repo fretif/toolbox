@@ -23,7 +23,7 @@ def parse(y,m,d,H):
 
 class PuertosOceanReader:
     """
-    Lecteur des données océans (courant, température,...) du format PUERTOS
+    Lecteur des données océans (vagues, courant, température,...) du format PUERTOS
     """
 
     def __init__(self, myFilename):
@@ -34,7 +34,7 @@ class PuertosOceanReader:
         if not os.path.isfile(self.filename):
             raise IOError(self.filename+" doesn't exists. Abort")   
 
-        data = pandas.read_csv(self.filename,usecols=[0,1,2,3,14,15,16,17],names=['year','month','day','hour','sea_surface_temperature','sea_surface_salinity','sea_surface_current_speed','sea_surface_current_to_direction'],sep='\s+',header=100,na_values={"-99.9"},keep_default_na=False,parse_dates={'time':['year','month','day','hour']},date_parser=parse)
+        data = pandas.read_csv(self.filename,usecols=[0,1,2,3,4,5,6,10,11,14,15,16,17],names=['year','month','day','hour','sea_surface_wave_significant_height','sea_surface_wave_mean_period','sea_surface_wave_peak_period','sea_surface_wave_from_direction','sea_surface_wave_peak_from_direction','sea_surface_temperature','sea_surface_salinity','sea_surface_current_speed','sea_surface_current_to_direction'],sep='\s+',header=100,na_values={"-99.9"},keep_default_na=False,parse_dates={'time':['year','month','day','hour']},date_parser=parse)
         
         # we process time record (drop duplicate...)
         duplicates = np.where(data.time.duplicated()== True)[0]       

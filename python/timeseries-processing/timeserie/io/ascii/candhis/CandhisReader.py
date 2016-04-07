@@ -18,7 +18,7 @@ class CandhisReader:
         if not os.path.isfile(self.filename):
             raise IOError(self.filename+" doesn't exists. Abort")   
 
-        data = pandas.read_csv(self.filename,usecols=[0,1,23,28],names=['time','sea_surface_wave_significant_height','sea_surface_wave_mean_period','sea_surface_wave_from_direction'],sep=';',header=13)
+        data = pandas.read_csv(self.filename,usecols=[0,1,23,28],names=['time','sea_surface_wave_significant_height','sea_surface_wave_mean_period','sea_surface_wave_from_direction'],na_values={99.9},sep=';',header=13)
         
         # we process time record (drop duplicate...)
         duplicates = np.where(data.time.duplicated()== True)[0]       
