@@ -15,18 +15,52 @@ import os.path
 import pandas
 import logging
 import numpy as np
+import re
 
 class SiroccoReader:
 
     def __init__(self, myFilename):
         self.filename = myFilename   
-        
+
+    def read_metadata(self):
+        metadata = {};
+        with open(self.filename) as f:
+            line = f.readline()
+            while line and line.startswith("#"):
+
+                #TODO : gérer les espaces blancs
+
+                if "Station" in line:
+                    metadata['name_station'] = re.sub('[^a-zA-Z0-9-_*.]', '',line.rsplit(':', 1)[1])
+
+                if "Longitude" in line:
+                    metadata['x_coord'] = re.sub('[^a-zA-Z0-9-_*.]', '',line.rsplit(':', 1)[1])
+
+                if "Latitude" in line:
+                    metadata['y_coord'] = re.sub('[^a-zA-Z0-9-_*.]', '',line.rsplit(':', 1)[1])
+
+                if "Vertical datum" in line:
+                    metadata['vertical_datum'] = re.sub('[^a-zA-Z0-9-_*.]', '',line.rsplit(':', 1)[1])
+
+                if "Data source" in line:
+                    metadata['data_source'] = re.sub('[^a-zA-Z0-9-_*.]', '',line.rsplit(':', 1)[1])
+
+                line = f.readline()
+
+        return metadata
+
     def read_data(self):
         
         if not os.path.isfile(self.filename):
             raise IOError(self.filename+" doesn't exists. Abort")
 
-        # Lire et décoder l'entête pour trouver les colonnes.
+        # TODO Lire et décoder l'entête pour trouver les colonnes.
+        #with open(self.filename) as f:
+        #    line = f.readline()
+        #    while line and line.startswith("#"):
+        #         if "Columns" in line:
+        #            metadata['name_station'] = re.sub('[^a-zA-Z0-9-_*.]', '',line.rsplit(':', 1)[1])
+
 
         data = pandas.read_csv(self.filename,usecols=[0,1,2],names=['time','sea_surface_wave_significant_height','sea_surface_wave_mean_period'],sep='\t',index_col=0,parse_dates=True,comment='#')
 

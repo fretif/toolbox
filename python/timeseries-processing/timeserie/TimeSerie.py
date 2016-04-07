@@ -25,8 +25,26 @@ class TimeSerie:
         self.y_coord = "Undefined"
         self.vertical_datum = "Undefined"
         self.meta_data = "Undefined"
-        
-    # Axis        
+
+        # try to fill metadata
+        self.read_metadata()
+
+    # Read metadata
+    def read_metadata(self):
+        m = self.reader.read_metadata()
+
+        if 'name_station' in m:
+            self.name_station = m['name_station']
+        if 'data_source' in m:
+            self.data_source = m['data_source']
+        if 'x_coord' in m:
+            self.x_coord = float(m['x_coord'])
+        if 'y_coord' in m:
+            self.y_coord = float(m['y_coord'])
+        if 'vertical_datum' in m:
+            self.vertical_datum = m['vertical_datum']
+
+    # Axis
     def read_axis_time(self):         
         return self.time_range;
     
