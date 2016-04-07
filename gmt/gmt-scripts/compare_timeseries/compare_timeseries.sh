@@ -181,6 +181,25 @@ for index in "${!files[@]}"; do
 				       printf("%s %s\n",dateGMT,$'${columns[$index]}'); 	  
 				     }' $file > ${workingDir}/file.tmp				
 
+			elif [[ "${format}" == "ww3" ]] 
+			then
+
+				if [[ ! -n "${columns[$index]}" ]] 
+				then
+					echo "You need select a column for WW3."				
+				fi
+
+				# WW3 Format #   
+				awk 'NR > 3 { 
+				       year  = substr($1,1,4); 
+				       month = substr($1,5,2);
+				       day   = substr($1,7,2);
+				       hour  = substr($2,1,2);
+				       min   = substr($3,1,2);
+				       sec   = substr($4,1,2);
+				      dateGMT = year"-"month"-"day"T"hour":"min":"sec;
+				       printf("%s %s\n",dateGMT,$'${columns[$index]}'); 	  
+				     }' $file > ${workingDir}/file.tmp	
 			else
 				echo "Unknowed format for file $index."
 			fi
