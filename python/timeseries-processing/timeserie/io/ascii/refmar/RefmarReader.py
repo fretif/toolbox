@@ -17,13 +17,13 @@ class RefmarReader:
         if not os.path.isfile(self.filename):
             raise IOError(self.filename+" doesn't exists. Abort")   
 
-        data = pandas.read_csv(self.filename,usecols=[0,1],names=['time','sea_surface_elevation'],sep=';',header=13)
+        data = pandas.read_csv(self.filename,usecols=[0,1],names=['time','sea_surface_height'],sep=';',header=13)
         
         # we process time record (drop duplicate...)
         duplicates = np.where(data.time.duplicated()== True)[0]       
         count = np.shape(duplicates)[0]             
         if count > 0:
-            logging.warn('[CandhisReader] '+str(count)+' dates are duplicated. We drop them by keeping the first.') 
+            logging.warn('[RefmarReader] '+str(count)+' dates are duplicated. We drop them by keeping the first.')
             data= data.drop_duplicates(subset='time',keep='first')
         data = data.set_index(pandas.DatetimeIndex(data['time'])) 
         data = data.drop('time',1)     

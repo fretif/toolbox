@@ -1,6 +1,16 @@
-# To change this license header, choose License Headers in Project Properties.
-# To change this template file, choose Tools | Templates
-# and open the template in the editor.
+#! /usr/bin/env python2.7
+# -*- coding: utf-8 -*-
+#
+# CoverageProcessing is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# any later version.
+#
+# CoverageProcessing is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
 
 import numpy as np
 import pandas
@@ -31,18 +41,26 @@ class TimeSerie:
 
     # Read metadata
     def read_metadata(self):
-        m = self.reader.read_metadata()
+        """
+        Lit la metadonnée du fichier si le lecteur contient une fonction read_metadata()
+        Returns
+        -------
 
-        if 'name_station' in m:
-            self.name_station = m['name_station']
-        if 'data_source' in m:
-            self.data_source = m['data_source']
-        if 'x_coord' in m:
-            self.x_coord = float(m['x_coord'])
-        if 'y_coord' in m:
-            self.y_coord = float(m['y_coord'])
-        if 'vertical_datum' in m:
-            self.vertical_datum = m['vertical_datum']
+        """
+
+        if  "read_metadata" in dir(self.reader):
+            m = self.reader.read_metadata()
+
+            if 'name_station' in m:
+                self.name_station = m['name_station']
+            if 'data_source' in m:
+                self.data_source = m['data_source']
+            if 'x_coord' in m:
+                self.x_coord = float(m['x_coord'])
+            if 'y_coord' in m:
+                self.y_coord = float(m['y_coord'])
+            if 'vertical_datum' in m:
+                self.vertical_datum = m['vertical_datum']
 
     # Axis
     def read_axis_time(self):         
@@ -51,14 +69,26 @@ class TimeSerie:
     def get_time_size(self):
         return np.shape(self.time_range)[0]; 
     
-    def read_data(self):
+    def read_data(self,force=False):
+        """
 
-        self.data = self.reader.read_data();
+        Parameters
+        ----------
+        force : Force la lecture, sinon on retourne la donnée en mémoire self.data
 
-        if self.time_range is None:
-            self.time_range = pandas.date_range(start=self.data.index[0], end=self.data.index[self.data.index.size-1],freq=self.freq);
+        Returns
+        -------
 
-        self.data = self.data.reindex(self.time_range, fill_value=np.nan);
+        """
+
+        if self.data == None or force == True:
+
+            self.data = self.reader.read_data();
+
+            if self.time_range is None:
+                self.time_range = pandas.date_range(start=self.data.index[0], end=self.data.index[self.data.index.size-1],freq=self.freq);
+
+            self.data = self.data.reindex(self.time_range, fill_value=np.nan);
 
         return self.data;
         
@@ -98,10 +128,11 @@ class TimeSerie:
         else:
             raise ValueError("None sea_surface_wave_mean_period variable")
     
-    def resample(self,startTime,endTime):
-        idx = pandas.date_range(start=startTime, end=endTime,freq='H')
-        
-        data = self.read_data()      
-        return data.reindex(idx, fill_value=np.nan)
+    def resample(self,freq,startTime,endTime,method="fill_na"):
 
-        
+        self.time_range = pandas.date_range(start=startTime, end=endTime,freq=freq)
+        self.data = self.data.reindex(self.time_range, fill_value=np.nan)
+
+        if method=="linear":
+            self.data = self.data.interpolate(method='linear')
+

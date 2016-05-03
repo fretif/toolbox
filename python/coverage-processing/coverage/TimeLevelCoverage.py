@@ -29,7 +29,7 @@ Elle rajoute les dimensions temporelle et verticale à la couverture horizontale
     # Variables
 
     # HYDRO
-    def read_variable_current_at_time_and_level(self,time,depth,vertical_method="nearest"):
+    def read_variable_current_at_time_and_depth(self,time,depth,vertical_method="nearest"):
         """Retourne les composantes u,v du courant à la date souhaitée et au niveau souhaité sur toute la couverture horizontale.
     @type time: datetime ou l'index
     @param time: date souhaitée
@@ -40,9 +40,9 @@ Elle rajoute les dimensions temporelle et verticale à la couverture horizontale
     @return: un tableau en deux dimensions [u_comp,v_comp] contenant chacun deux dimensions [y,x]."""
 
         index_t = self.find_time_index(time);
-        index_z=self.find_level_index(depth);
+        index_z = self.find_level_index(depth);
             
-        return self.reader.read_variable_current_at_time_and_level(index_t,index_z,depth,vertical_method)
+        return self.reader.read_variable_current_at_time_and_depth(index_t,index_z,depth,vertical_method)
     
        
 

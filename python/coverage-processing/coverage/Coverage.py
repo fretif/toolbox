@@ -113,11 +113,11 @@ Soit l'axe y en premier puis l'axe x. Exemple : [y,x]
         else:
             return False
         
-    def find_point_index(self,x,y,method="classic"):
+    def find_point_index(self,target_lon,target_lat,method="classic"):
         """Retourne le point le plus proche du point donné en paramètre.
-    @param x: Coordonnée longitude du point
-    @param y: Coordonnée latitude du point
-    @param method : Méthode de calcul. "Classic" = On parcourt de toute la grille à la recherche du plus prêt.
+    @param target_lon: Coordonnée longitude du point
+    @param target_lat: Coordonnée latitude du point
+    @param method : Méthode de calcul. "Classic" = On parcourt toute la grille à la recherche du plus prêt.
     @return: un tableau contenant
      [0] : l'index x du point le plus proche
      [1] : l'index y du point le plus proche
@@ -127,26 +127,33 @@ Soit l'axe y en premier puis l'axe x. Exemple : [y,x]
         min_dist=10000000
         lon = self.read_axis_x()
         lat = self.read_axis_y()
+        mask = self.read_variable_2D_mask()
         
-        nearest_i_index = 0
-        nearest_j_index = 0
+        nearest_x_index = 0
+        nearest_y_index = 0
+        nearest_lon = np.nan
+        nearest_lat = np.nan
 
         if method=="classic":
         
-            for i in range(0, self.get_x_size()):
-                for j in range(0, self.get_y_size()):
+            for x in range(0, self.get_x_size()):
+                for y in range(0, self.get_y_size()):
 
-                    dist = distance_on_unit_sphere(x,y,lon[j,i],lat[j,i])
-                    if dist < min_dist:
-                        min_dist = dist
-                        nearest_lon = lon[j,i]
-                        nearest_lat = lat[j,i]
-                        nearest_i_index = i
-                        nearest_j_index = j
+                    if(mask[y,x] == 1): #=Terre
+                        dist = distance_on_unit_sphere(target_lon,target_lat,lon[y,x],lat[y,x])
+                        if dist < min_dist:
+                            min_dist = dist
+                            nearest_lon = lon[y,x]
+                            nearest_lat = lat[y,x]
+                            nearest_y_index = y
+                            nearest_x_index = x
         else:
             raise RuntimeError("Method "+str(method)+" is not implemented yet.")
+
+        if nearest_lon == np.nan or nearest_lat == np.nan:
+            raise RuntimeError("No nearest points found.")
 		
-        return [nearest_i_index,nearest_j_index,nearest_lon,nearest_lat,min_dist]
+        return [nearest_x_index,nearest_y_index,nearest_lon,nearest_lat,min_dist]
     
     # Variables
     # HYDRO    
@@ -160,10 +167,13 @@ Soit l'axe y en premier puis l'axe x. Exemple : [y,x]
     @return: un tableau en deux dimensions [y,x]."""
         return self.reader.read_variable_mesh_size()
     
-    def read_variable_mask(self):     
-        """Retourne le masque terre/mer sur toute la couverture selon la profondeur z
-    @return: un tableau en trois dimensions [z,y,x]."""
-        return self.reader.read_variable_mask()
+    def read_variable_2D_mask(self):
+        """Retourne le masque terre/mer sur toute la couverture
+    @return: un tableau en deux dimensions [y,x].
+            0 = Terre
+            1 = Mer
+    """
+        return self.reader.read_variable_2D_mask()
     
     # ATMOS    
     def read_variable_topography(self):     

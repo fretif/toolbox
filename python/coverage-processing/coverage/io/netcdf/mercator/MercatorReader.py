@@ -37,13 +37,16 @@ class MercatorReader:
         return self.gridT.variables['deptht']
     
     # Data    
-    def read_variable_mask(self): 
-        return self.mask.variables["tmask"][:]
+    def read_variable_2D_mask(self):
+        return self.mask.variables["tmask"][0][0][:]
+
+    def read_variable_3D_mask(self):
+        return self.mask.variables["tmask"][0][:]
     
     def read_variable_ssh_at_time(self,t):
         return self.grid2D.variables["sossheig"][t][:]
      
-    def read_variable_current_at_time_and_level(self,index_t,index_z,depth,method="nearest"):
+    def read_variable_current_at_time_and_depth(self,index_t,index_z,depth,method="nearest"):
 
         if method != "nearest":
             raise ValueError("Only method 'nearest' is implemented yet.")

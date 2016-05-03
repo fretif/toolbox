@@ -98,6 +98,14 @@ Elle rajoute une dimension verticale à la couverture horizontale classique.
 
         # On retourne le tableau d'index
         return vert_coord
+
+    def read_variable_3D_mask(self):
+        """Retourne le masque terre/mer sur toute la couverture selon la profondeur z
+    @return: un tableau en deux dimensions [z,y,x].
+            0 = Terre
+            1 = Mer
+    """
+        return self.reader.read_variable_3D_mask()
         
         
     

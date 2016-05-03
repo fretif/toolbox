@@ -31,7 +31,7 @@ La classe SymphonieReader permet de lire les données du format Symphonie
     # Axis
     def read_axis_t(self,timestamp=0):
         data = self.ncfile.variables['time'][:]         
-        result = num2date(data, units = self.ncfile.variables['time'].units.replace('from','since').replace('mar','03'), calendar = self.ncfile.variables['time'].calendar)
+        result = num2date(data, units = self.ncfile.variables['time'].units.replace('from','since').replace('mar','03').replace('feb','02'), calendar = self.ncfile.variables['time'].calendar)
         
         if timestamp ==1:           
             return [ (t - TimeCoverage.TIME_DATUM).total_seconds() \
@@ -51,8 +51,11 @@ La classe SymphonieReader permet de lire les données du format Symphonie
         return lev
         
     # Data    
-    def read_variable_mask(self): 
-        return self.grid.variables["mask_t"][:]
+    def read_variable_2D_mask(self):
+        return self.grid.variables["mask_t"][0][:]
+
+    def read_variable_3D_mask(self):
+        return self.grid.variables["mask_t"][::]
     
     def read_variable_mesh_size(self): 
         return self.grid.variables["sqrt_dxdy"][:]    
@@ -63,8 +66,8 @@ La classe SymphonieReader permet de lire les données du format Symphonie
     def read_variable_ssh_at_time(self,t):
         return self.ncfile.variables["ssh_w"][t][:]
 
-    def read_variable_current_at_time_and_level(self,index_t,index_z,depth,method="nearest"):
-        mask_t = self.read_variable_mask();
+    def read_variable_current_at_time_and_depth(self,index_t,index_z,depth,method="nearest"):
+        mask_t = self.read_variable_3D_mask();
         mask_u = self.grid.variables["mask_u"][:];
         mask_v = self.grid.variables["mask_v"][:];
         lon_t = self.read_axis_x();

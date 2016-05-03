@@ -47,8 +47,11 @@ class WW3Reader (File):
         return self.ncfile.variables['latitude'][:]
     
     # Scalar 
-    def read_variable_mask(self):         
-        return self.ncfile.variables["MAPSTA"][:]
+    def read_variable_2D_mask(self):
+        mask = self.ncfile.variables["MAPSTA"][:]
+        #mask += 1.0 # inverse le mask
+        #mask %= 2 # inverse le mask
+        return mask
     
     def read_variable_bathy_at_time(self,t):         
         return self.ncfile.variables["dpt"][t][:]
@@ -70,25 +73,16 @@ class WW3Reader (File):
     
     # Vector
     def read_variable_current_at_time(self,t):
-        logging.info('[WWReader] Reading surface current')
+        logging.info('[WW3Reader] Reading surface current')
         return [self.ncfile.variables["ucur"][t][:], self.ncfile.variables["vcur"][t][:]]
 
-    def read_variable_u_taw_at_time(self,t):         
-        return self.ncfile.variables["utaw"][t][:]
-    
-    def read_variable_v_taw_at_time(self,t):         
-        return self.ncfile.variables["vtaw"][t][:]
-    
-    def read_variable_u_two_at_time(self,t):         
-        return self.ncfile.variables["utwo"][t][:]
-    
-    def read_variable_v_two_at_time(self,t):         
-        return self.ncfile.variables["vtwo"][t][:]
-    
-    def read_variable_u_surface_stokes_drift_at_time(self,t):         
-        return self.ncfile.variables["uuss"][t][:]
-    
-    def read_variable_v_surface_stokes_drift_at_time(self,t):         
-        return self.ncfile.variables["vuss"][t][:]
+    def read_variable_taw_at_time(self,t):
+        return [self.ncfile.variables["utaw"][t][:],self.ncfile.variables["vtaw"][t][:]]
+
+    def read_variable_two_at_time(self,t):
+        return [self.ncfile.variables["utwo"][t][:],self.ncfile.variables["vtwo"][t][:]]
+
+    def read_variable_surface_stokes_drift_at_time(self,t):
+        return [self.ncfile.variables["uuss"][t][:],self.ncfile.variables["vuss"][t][:]]
            
     

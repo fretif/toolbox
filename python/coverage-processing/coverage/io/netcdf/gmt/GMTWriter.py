@@ -8,6 +8,7 @@ from netCDF4 import date2num
 from numpy import float32
 from numpy import float64
 import numpy as np
+import logging
 
 class GMTWriter (File):
 
@@ -61,7 +62,7 @@ class GMTWriter (File):
         longitudes[:] = coverage.read_axis_x(); 
         times[:] = date2num(coverage.read_axis_t(), units = times.units, calendar = times.calendar)        
             
-    def write_variable_sshv(self,coverage):
+    def write_variable_ssh(self,coverage):
         if self.ncfile == None:
             raise IOError("Please call write_axis() first")   
             
@@ -115,7 +116,42 @@ class GMTWriter (File):
             time_index += 1 
             
 
-        
+    def write_variable_hs(self,coverage):
+        if self.ncfile == None:
+            raise IOError("Please call write_axis() first")
+
+        var = self.ncfile.createVariable('hs', float32, ('time', 'latitude', 'longitude',),fill_value=np.nan)
+        var.long_name = "sea surface wave height" ;
+        var.standard_name = "sea_surface_wave_height" ;
+        var.globwave_name = "sea_surface_wave_height" ;
+        var.units = "m" ;
+        #wlv.scale_factor = "1.f" ;
+        #wlv.add_offset = "0.f" ;
+        #wlv.valid_min = "0f" ;
+        #wlv.valid_max = 10000f ;
+
+        time_index=0
+        for time in coverage.read_axis_t():
+            logging.info('[GMTWriter] Writing variable \'hs\' at time \''+str(time)+'\'')
+            var[time_index:time_index+1,:] = coverage.read_variable_hs_at_time(time)
+            time_index += 1
+
+    def write_variable_2D_mask(self,coverage):
+        if self.ncfile == None:
+            raise IOError("Please call write_axis() first")
+
+        var = self.ncfile.createVariable('mask', float32, ('latitude', 'longitude',),fill_value=np.nan)
+        var.long_name = "land/sea mask" ;
+        var.standard_name = "land_sea_mask" ;
+        var.globwave_name = "land_sea_mask" ;
+        var.units = "m" ;
+        #wlv.scale_factor = "1.f" ;
+        #wlv.add_offset = "0.f" ;
+        #wlv.valid_min = "0f" ;
+        #wlv.valid_max = 10000f ;
+
+        logging.info('[GMTWriter] Writing variable \'2D mask\'')
+        var[:] = coverage.read_variable_2D_mask()
       
        
     

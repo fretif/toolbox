@@ -48,14 +48,21 @@ class SymphonieOldReader(File):
     def read_variable_ssh_at_time(self,t):
         return self.ncfile.variables["ssh_w"][t][:]
 
-    def read_variable_current_at_time_and_level(self,t,z):
+    def read_variable_current_at_time_and_depth(self,index_t,index_z,depth,method="nearest"):
         mask_t = self.read_variable_mask();
         #mask_u = self.grid.variables["mask_u"][:];
         #mask_v = self.grid.variables["mask_v"][:];
         lon_t = self.read_axis_x();
         lat_t = self.read_axis_y();
-        data_u = self.ncfile.variables["u"][t][::]
-        data_v = self.ncfile.variables["v"][t][::]
+        depth_t = self.read_axis_z()
+        size_depth_t = np.shape(depth_t)[0];
+        depth_u = self.grid.variables['depth_u'][::]
+        depth_u[::] *= -1.0 # inverse la profondeur
+        depth_v = self.grid.variables['depth_v'][::]
+        depth_v[::] *= -1.0 # inverse la profondeur
+
+        data_u = self.ncfile.variables["u"][index_t][::]
+        data_v = self.ncfile.variables["v"][index_t][::]
 
         # compute and apply rotation matrix
         xmax=np.shape(lon_t)[1]
@@ -85,32 +92,34 @@ class SymphonieOldReader(File):
                 gridrotcos_t[y,x]=np.cos(x0)
                 gridrotsin_t[y,x]=np.sin(x0)
 
-                if (mask_t[z[y,x],y,x] == 1.):
+                if index_z[y,x] != -999 : # Le point (x,y) a une couche de profondeur depth
 
-                    #u_left = 0
-                    #u_right = 0
-                    #v_down = 0
-                    #v_up = 0
+                    if mask_t[index_z[y,x],y,x] == 1.:
 
-                    #if (mask_u[z[y,x-1],y,x-1] == 1.):
-                    u_left = data_u[z[y,x-1],y,x-1];
+                        #u_left = 0
+                        #u_right = 0
+                        #v_down = 0
+                        #v_up = 0
 
-                    #if (mask_u[z[y,x],y,x] == 1.):
-                    u_right = data_u[z[y,x],y,x];
+                        #if (mask_u[z[y,x-1],y,x-1] == 1.):
+                        u_left = data_u[index_z[y,x],y,x-1];
 
-                    #if (mask_v[z[y-1,x],y-1,x] == 1.):
-                    v_down = data_v[z[y-1,x],y-1,x];
+                        #if (mask_u[z[y,x],y,x] == 1.):
+                        u_right = data_u[index_z[y,x],y,x];
 
-                    #if (mask_v[z[y,x],y,x] == 1.):
-                    v_up = data_v[z[y,x],y,x];
+                        #if (mask_v[z[y-1,x],y-1,x] == 1.):
+                        v_down = data_v[index_z[y,x],y-1,x];
 
-                    # compute an half-value
-                    u[y,x]=0.5*(u_left+u_right)
-                    v[y,x]=0.5*(v_down+v_up)
+                        #if (mask_v[z[y,x],y,x] == 1.):
+                        v_up = data_v[index_z[y,x],y,x];
 
-                    # apply rotation
-                    u_rot[y,x]=u[y,x]*gridrotcos_t[y,x]+v[y,x]*gridrotsin_t[y,x]
-                    v_rot[y,x]=-u[y,x]*gridrotsin_t[y,x]+v[y,x]*gridrotcos_t[y,x]
+                        # compute an half-value
+                        u[y,x]=0.5*(u_left+u_right)
+                        v[y,x]=0.5*(v_down+v_up)
+
+                        # apply rotation
+                        u_rot[y,x]=u[y,x]*gridrotcos_t[y,x]+v[y,x]*gridrotsin_t[y,x]
+                        v_rot[y,x]=-u[y,x]*gridrotsin_t[y,x]+v[y,x]*gridrotcos_t[y,x]
 
         # We process boundaries points
         # bottom

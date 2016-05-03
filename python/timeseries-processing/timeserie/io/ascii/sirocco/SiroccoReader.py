@@ -61,8 +61,10 @@ class SiroccoReader:
         #         if "Columns" in line:
         #            metadata['name_station'] = re.sub('[^a-zA-Z0-9-_*.]', '',line.rsplit(':', 1)[1])
 
-
+        # waves
         data = pandas.read_csv(self.filename,usecols=[0,1,2],names=['time','sea_surface_wave_significant_height','sea_surface_wave_mean_period'],sep='\t',index_col=0,parse_dates=True,comment='#')
+        # sea-level
+        #data = pandas.read_csv(self.filename,usecols=[0,1],names=['time','sea_surface_height'],sep='\t',index_col=0,parse_dates=True,comment='#')
 
         # we process time record (drop duplicate...)
         #duplicates = np.where(data.time.duplicated()== True)[0]

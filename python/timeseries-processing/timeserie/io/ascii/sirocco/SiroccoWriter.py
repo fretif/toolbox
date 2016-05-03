@@ -89,8 +89,8 @@ class SiroccoWriter:
         file.close()
         
     def write_tide(self,serie):
-        
-        data = serie.read_data();
+
+        data = serie.data
         var = []
         
         if 'sea_surface_elevation' in data: 

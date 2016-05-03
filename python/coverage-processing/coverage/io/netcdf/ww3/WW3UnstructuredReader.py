@@ -22,9 +22,10 @@ import logging
 
 class WW3UnstructuredReader (File):
 
-    def __init__(self, myFile):
+    def __init__(self, symphonieGridFile,myFile):
         File.__init__(self,myFile);         
         self.ncfile = Dataset(self.filename, 'r')
+        self.grid = Dataset(symphonieGridFile, 'r')
         
     # Axis
     def read_axis_t(self,timestamp):
@@ -41,16 +42,19 @@ class WW3UnstructuredReader (File):
             return result;
     
     def read_axis_x(self):        
-        return self.ncfile.variables['longitude'][:]
+        return self.grid.variables['longitude_t'][:]
     
-    def read_axis_y(self):        
-        return self.ncfile.variables['latitude'][:]
+    def read_axis_y(self):
+        return self.grid.variables['latitude_t'][:]
     
     # Scalar 
-    def read_variable_mask(self):         
+    def read_variable_2D_mask(self):
         return self.ncfile.variables["MAPSTA"][:]
     
-    def read_variable_bathy_at_time(self,t):         
+    def read_variable_bathymetry(self):
+        return self.ncfile.variables["dpt"][0][:]
+
+    def read_variable_bathymetry_at_time(self,t):
         return self.ncfile.variables["dpt"][t][:]
     
     def read_variable_wlv_at_time(self,t):         
@@ -73,22 +77,13 @@ class WW3UnstructuredReader (File):
         logging.info('[WWReader] Reading surface current')
         return [self.ncfile.variables["ucur"][t][:], self.ncfile.variables["vcur"][t][:]]
 
-    def read_variable_u_taw_at_time(self,t):         
-        return self.ncfile.variables["utaw"][t][:]
+    def read_variable_taw_at_time(self,t):
+        return [self.ncfile.variables["utaw"][t][:],self.ncfile.variables["vtaw"][t][:]]
     
-    def read_variable_v_taw_at_time(self,t):         
-        return self.ncfile.variables["vtaw"][t][:]
-    
-    def read_variable_u_two_at_time(self,t):         
-        return self.ncfile.variables["utwo"][t][:]
-    
-    def read_variable_v_two_at_time(self,t):         
-        return self.ncfile.variables["vtwo"][t][:]
-    
-    def read_variable_u_surface_stokes_drift_at_time(self,t):         
-        return self.ncfile.variables["uuss"][t][:]
-    
-    def read_variable_v_surface_stokes_drift_at_time(self,t):         
-        return self.ncfile.variables["vuss"][t][:]
+    def read_variable_two_at_time(self,t):
+        return [self.ncfile.variables["utwo"][t][:],self.ncfile.variables["vtwo"][t][:]]
+
+    def read_variable_surface_stokes_drift_at_time(self,t):
+        return [self.ncfile.variables["uuss"][t][:],self.ncfile.variables["vuss"][t][:]]
            
     
