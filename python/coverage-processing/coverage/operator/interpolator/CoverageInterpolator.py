@@ -234,6 +234,43 @@ class CoverageInterpolator(File):
             vcur[time_index:time_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[1])
             time_index += 1
 
+    def resample_variable_taw(self):
+
+        if self.ncfile == None:
+            raise IOError("Please call write_axis() first")
+
+        logging.info('[CoverageInterpolator] Resample variable \'taw\' to the resolution '+str(self.targetResX)+'/'+str(self.targetResY)+'.')
+
+        ucur = self.ncfile.createVariable('utaw', float32, ('time', 'latitude', 'longitude',),fill_value=np.nan)
+        ucur.long_name = "eastward current" ;
+        ucur.standard_name = "eastward_sea_water_velocity" ;
+        ucur.globwave_name = "eastward_sea_water_velocity" ;
+        ucur.units = "m s-1" ;
+        #ucur.scale_factor = 1.f ;
+        #ucur.add_offset = 0.f ;
+        #ucur.valid_min = -990 ;
+        #ucur.valid_max = 990 ;
+        ucur.comment = "cur=sqrt(U**2+V**2)" ;
+
+        vcur = self.ncfile.createVariable('vtaw', float32, ('time', 'latitude', 'longitude',),fill_value=np.nan)
+        vcur.long_name = "northward current" ;
+        vcur.standard_name = "northward_sea_water_velocity" ;
+        vcur.globwave_name = "northward_sea_water_velocity" ;
+        vcur.units = "m s-1" ;
+        #ucur.scale_factor = 1.f ;
+        #ucur.add_offset = 0.f ;
+        #ucur.valid_min = -990 ;
+        #ucur.valid_max = 990 ;
+        vcur.comment = "cur=sqrt(U**2+V**2)" ;
+
+        time_index=0
+        for time in self.coverage.read_axis_t():
+            cur = self.coverage.read_variable_taw_at_time(time)
+            ucur[time_index:time_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[0])
+            vcur[time_index:time_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[1])
+            time_index += 1
+
+
 
     def resample_variable_hs(self):
         if self.ncfile == None:
@@ -255,6 +292,29 @@ class CoverageInterpolator(File):
         for time in self.coverage.read_axis_t():
             var[time_index:time_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,self.coverage.read_variable_hs_at_time(time))
             time_index += 1
+
+
+    def resample_variable_waves_dir(self):
+        if self.ncfile == None:
+            raise IOError("Please call write_axis() first")
+
+        logging.info('[CoverageInterpolator] Resample variable \'waves dir\' at resolution '+str(self.targetResX)+'/'+str(self.targetResY)+'.')
+
+        var = self.ncfile.createVariable('waves_dir', float32, ('time', 'latitude', 'longitude',),fill_value=np.nan)
+        var.long_name = "surface wave dir" ;
+        var.standard_name = "surface_wave_dir" ;
+        var.globwave_name = "surface_wave_dir" ;
+        var.units = "deg" ;
+        #wlv.scale_factor = "1.f" ;
+        #wlv.add_offset = "0.f" ;
+        #wlv.valid_min = "0f" ;
+        #wlv.valid_max = 10000f ;
+
+        time_index=0
+        for time in self.coverage.read_axis_t():
+            var[time_index:time_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,self.coverage.read_variable_waves_dir_at_time(time))
+            time_index += 1
+
 
     def resample_variable_2D_mask(self):
         if self.ncfile == None:

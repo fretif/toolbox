@@ -140,11 +140,20 @@ Soit l'axe y en premier puis l'axe x. Exemple : [y,x]
                 for y in range(0, self.get_y_size()):
 
                     if(mask[y,x] == 1): #=Terre
-                        dist = distance_on_unit_sphere(target_lon,target_lat,lon[y,x],lat[y,x])
+
+                        if self.is_regular_grid():
+                            dist = distance_on_unit_sphere(target_lon,target_lat,lon[x],lat[y])
+                        else:
+                            dist = distance_on_unit_sphere(target_lon,target_lat,lon[y,x],lat[y,x])
+
                         if dist < min_dist:
                             min_dist = dist
-                            nearest_lon = lon[y,x]
-                            nearest_lat = lat[y,x]
+                            if self.is_regular_grid():
+                                nearest_lon = lon[x]
+                                nearest_lat = lat[y]
+                            else:
+                                nearest_lon = lon[y,x]
+                                nearest_lat = lat[y,x]
                             nearest_y_index = y
                             nearest_x_index = x
         else:

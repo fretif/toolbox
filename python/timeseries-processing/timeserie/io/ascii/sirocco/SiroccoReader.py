@@ -62,9 +62,11 @@ class SiroccoReader:
         #            metadata['name_station'] = re.sub('[^a-zA-Z0-9-_*.]', '',line.rsplit(':', 1)[1])
 
         # waves
-        data = pandas.read_csv(self.filename,usecols=[0,1,2],names=['time','sea_surface_wave_significant_height','sea_surface_wave_mean_period'],sep='\t',index_col=0,parse_dates=True,comment='#')
+        #data = pandas.read_csv(self.filename,usecols=[0,1,2],names=['time','sea_surface_wave_significant_height','sea_surface_wave_mean_period'],sep='\t',index_col=0,parse_dates=True,comment='#')
         # sea-level
-        #data = pandas.read_csv(self.filename,usecols=[0,1],names=['time','sea_surface_height'],sep='\t',index_col=0,parse_dates=True,comment='#')
+        data = pandas.read_csv(self.filename,usecols=[0,1],names=['time','sea_surface_height'],sep='\t',index_col=0,parse_dates=True,comment='#')
+        # meteo
+        data = pandas.read_csv(self.filename,usecols=[0,1,2,3],names=['time','sea_surface_presure','wind_speed_10m','wind_direction_10m'],sep='\t',index_col=0,parse_dates=True,comment='#')
 
         # we process time record (drop duplicate...)
         #duplicates = np.where(data.time.duplicated()== True)[0]

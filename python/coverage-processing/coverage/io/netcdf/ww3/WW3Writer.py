@@ -77,8 +77,11 @@ class WW3Writer (File):
         
         time_index=0
         for time in coverage.read_axis_t():
-            logging.info('[WW3Writer] Writing variable \'wlv\' at time \''+str(time)+'\'') 
-            wlv[time_index:time_index+1,:] = coverage.read_variable_ssh_at_time(time)
+            logging.info('[WW3Writer] Writing variable \'wlv\' at time \''+str(time)+'\'')
+            #wlv[time_index:time_index+1,:] = coverage.read_variable_ssh_at_time(time)
+            s = coverage.read_variable_ssh_at_time(time)
+            s += 0.4466
+            wlv[time_index:time_index+1,:] = s
             time_index += 1
             
     def write_variable_current_at_level(self,coverage,z):
@@ -113,6 +116,43 @@ class WW3Writer (File):
 
             logging.info('[WW3Writer] Writing variable \'current\' at time \''+str(time)+'\'')
             cur = coverage.read_variable_current_at_time_and_level(time,z)
+
+            ucur[time_index:time_index+1,:,:] = cur[0]
+            vcur[time_index:time_index+1,:,:] = cur[1]
+            time_index += 1
+
+    def write_variable_current(self,coverage):
+
+        if self.ncfile == None:
+            raise IOError("Please call write_axis() first")
+
+        ucur = self.ncfile.createVariable('ucur', float32, ('time', 'latitude', 'longitude',),fill_value="NaN")
+        ucur.long_name = "eastward current" ;
+        ucur.standard_name = "eastward_sea_water_velocity" ;
+        ucur.globwave_name = "eastward_sea_water_velocity" ;
+        ucur.units = "m s-1" ;
+        #ucur.scale_factor = 1.f ;
+        #ucur.add_offset = 0.f ;
+        #ucur.valid_min = -990 ;
+        #ucur.valid_max = 990 ;
+        ucur.comment = "cur=sqrt(U**2+V**2)" ;
+
+        vcur = self.ncfile.createVariable('vcur', float32, ('time', 'latitude', 'longitude',),fill_value="NaN")
+        vcur.long_name = "northward current" ;
+        vcur.standard_name = "northward_sea_water_velocity" ;
+        vcur.globwave_name = "northward_sea_water_velocity" ;
+        vcur.units = "m s-1" ;
+        #ucur.scale_factor = 1.f ;
+        #ucur.add_offset = 0.f ;
+        #ucur.valid_min = -990 ;
+        #ucur.valid_max = 990 ;
+        vcur.comment = "cur=sqrt(U**2+V**2)" ;
+
+        time_index=0
+        for time in coverage.read_axis_t():
+
+            logging.info('[WW3Writer] Writing variable \'current\' at time \''+str(time)+'\'')
+            cur = coverage.read_variable_current_at_time(time)
 
             ucur[time_index:time_index+1,:,:] = cur[0]
             vcur[time_index:time_index+1,:,:] = cur[1]

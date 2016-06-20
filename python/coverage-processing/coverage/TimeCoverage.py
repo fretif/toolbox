@@ -158,7 +158,26 @@ Elle rajoute une dimension temporelle à la couverture horizontale classique.
 
         return self.reader.read_variable_two_at_time(index_t)
     
-    # METEO 
+    # METEO
+    def read_variable_sp_at_time(self,t):
+        """Retourne la pression à la surface à la date souhaitée sur toute la couverture horizontale.
+    @type t: datetime ou l'index
+    @param t: date souhaitée
+    @return: un tableau en deux dimensions [y,x]."""
+
+        index_t = self.find_time_index(t);
+
+        return self.reader.read_variable_sp_at_time(index_t)
+
+    def read_variable_wind_at_time(self,t):
+        """Retourne les composantes u,v du vent à la date souhaitée
+    @type t: datetime ou l'index
+    @param t: date souhaitée
+    @return: un tableau en deux dimensions [u_comp,v_comp] contenant chacun deux dimensions [y,x]."""
+
+        index_t = self.find_time_index(t);
+
+        return self.reader.read_variable_wind_at_time(index_t)
 
             
         

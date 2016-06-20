@@ -18,17 +18,21 @@ class SiroccoWriter:
     UNITS['sea_surface_wave_significant_height'] = "(m)"
     UNITS['sea_surface_wave_mean_period'] = "(s)"
     UNITS['sea_surface_wave_peak_period'] = "(s)"
-    UNITS['sea_surface_wave_from_direction'] = "(deg from North)"
-    UNITS['sea_surface_wave_peak_from_direction'] = "(deg from North)"
-    UNITS['sea_surface_wave_to_direction'] = "(deg from North)"
-    UNITS['sea_surface_wave_peak_to_direction'] = "(deg from North)"
+    UNITS['sea_surface_wave_from_direction'] = "(deg from North=0 / East=90)"
+    UNITS['sea_surface_wave_peak_from_direction'] = "(deg from North=0 / East=90)"
+    UNITS['sea_surface_wave_to_direction'] = "(deg from North=0 / East=90)"
+    UNITS['sea_surface_wave_peak_to_direction'] = "(deg from North=0 / East=90)"
     UNITS['sea_surface_elevation'] = "(m)"
     UNITS['sea_surface_height'] = "(m)"
     UNITS['sea_surface_temperature'] = "(C)"
     UNITS['sea_surface_salinity'] = "(psu)"
     UNITS['sea_surface_current_speed'] = "(m/s)"
-    UNITS['sea_surface_current_from_direction'] = "(deg from North)"
+    UNITS['sea_surface_current_from_direction'] = "(deg from North=0)"
     UNITS['sea_surface_current_to_direction'] = "(deg from North)"
+    UNITS['water_volume_transport_into_sea_water_from_rivers'] = "m3/s"
+    UNITS['sea_surface_pressure'] = "Pa"
+    UNITS['wind_speed_10m'] = "m/s"
+    UNITS['wind_to_direction_10m'] = "(deg from North=0 / East=90)"
 
     def __init__(self, myFilename):
         self.filename = myFilename   
@@ -90,7 +94,7 @@ class SiroccoWriter:
         
     def write_tide(self,serie):
 
-        data = serie.data
+        data = serie.read_data();
         var = []
         
         if 'sea_surface_elevation' in data: 
@@ -161,6 +165,90 @@ class SiroccoWriter:
 # Vertical datum : "+str(serie.vertical_datum)+" \n\
 # Meta Data : "+str(serie.meta_data)+" \n\
 # Time zone : UTC \n\
+# Separator: Tabulation \\t \n\
+# Column 1: year-month-day hour:minute:second UTC \n")
+
+        column = 2
+        for key in var:
+            file.write("# Column "+str(column)+": "+str(key)+" "+str(SiroccoWriter.UNITS[key])+" FillValue: NaN \n")
+            column = column + 1
+
+        file.write("############################################################\n")
+
+        file.write(old) # write the new line before
+        file.close()
+
+    def write_rivers(self,serie):
+
+        data = serie.read_data();
+        var = []
+
+        if 'water_volume_transport_into_sea_water_from_rivers' in data:
+            var.append('water_volume_transport_into_sea_water_from_rivers')
+
+        if len(var) == 0:
+             raise ValueError("None water_volume_transport_into_sea_water_from_rivers variable")
+
+        data.to_csv(self.filename, sep='\t',columns=var,header=False, encoding='utf-8',na_rep="NaN")
+
+        file = open(self.filename, "r+")
+        old = file.read() # read everything in the file
+        file.seek(0) # rewind
+
+        file.write("############################################################ \n\
+# Station : "+str(serie.name_station)+" \n\
+# Coordinate Reference System : WGS84 \n\
+# Longitude : "+str(serie.x_coord)+" \n\
+# Latitude : "+str(serie.y_coord)+" \n\
+# Data source : "+str(serie.data_source)+" \n\
+# Time zone : UTC \n\
+# Meta Data : "+str(serie.meta_data)+" \n\
+# Separator: Tabulation \\t \n\
+# Column 1: year-month-day hour:minute:second UTC \n")
+
+        column = 2
+        for key in var:
+            file.write("# Column "+str(column)+": "+str(key)+" "+str(SiroccoWriter.UNITS[key])+" FillValue: NaN \n")
+            column = column + 1
+
+        file.write("############################################################\n")
+
+        file.write(old) # write the new line before
+        file.close()
+
+    def write_meteo(self,serie):
+
+        data = serie.read_data();
+        var = []
+
+        if 'sea_surface_pressure' in data:
+            var.append('sea_surface_pressure')
+        if 'wind_speed_10m' in data:
+            var.append('wind_speed_10m')
+        if 'wind_to_direction_10m' in data:
+            var.append('wind_to_direction_10m')
+
+
+
+
+        if len(var) == 0:
+             raise ValueError("None meteo variable")
+
+        data.to_csv(self.filename, sep='\t',columns=var,header=False, encoding='utf-8',na_rep="NaN")
+
+        file = open(self.filename, "r+")
+        old = file.read() # read everything in the file
+        file.seek(0) # rewind
+
+        file.write("############################################################ \n\
+# Station : "+str(serie.name_station)+" \n\
+# Coordinate Reference System : WGS84 \n\
+# Longitude : "+str(serie.x_coord)+" \n\
+# Latitude : "+str(serie.y_coord)+" \n\
+# Data source : "+str(serie.data_source)+" \n\
+# Time zone : UTC \n\
+# Vertical datum : "+str(serie.vertical_datum)+" \n\
+# Meta Data : "+str(serie.meta_data)+" \n\
 # Separator: Tabulation \\t \n\
 # Column 1: year-month-day hour:minute:second UTC \n")
 

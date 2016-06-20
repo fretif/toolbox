@@ -14,6 +14,7 @@
 
 import numpy as np
 import pandas
+from pandas import DatetimeIndex
 
 class TimeSerie:  
     """"""
@@ -88,7 +89,10 @@ class TimeSerie:
             if self.time_range is None:
                 self.time_range = pandas.date_range(start=self.data.index[0], end=self.data.index[self.data.index.size-1],freq=self.freq);
 
-            self.data = self.data.reindex(self.time_range, fill_value=np.nan);
+            if isinstance(self.data.index,DatetimeIndex):
+                self.data = self.data.reindex(self.time_range, fill_value=np.nan);
+            else:
+                self.data = self.data.set_index(pandas.DatetimeIndex(self.time_range))
 
         return self.data;
         
