@@ -54,6 +54,11 @@ class ECMWFReader (File):
         sp = self.ncfile.variables["SP"][t][:]
         sp *= 0.01 # Pa to hPa
         return sp
+
+    def read_variable_ssp_at_time(self,t):
+        sp = self.ncfile.variables["MSL"][t][:]
+        sp *= 0.01 # Pa to hPa
+        return sp
     
     # Vector
     def read_variable_wind_at_time(self,t):

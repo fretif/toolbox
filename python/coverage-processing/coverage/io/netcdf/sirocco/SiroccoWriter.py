@@ -20,7 +20,7 @@ class SiroccoWriter (File):
         self.coverage = cov;
         self.targetDepths = depths
         self.ncfile = Dataset(self.filename, 'w', format='NETCDF4')
-        self.ncfile.description = 'WaveWatch III Writer. Generated with Coverage Processing tools'
+        self.ncfile.description = 'Sirocco Writer. Generated with Coverage Processing tools'
 
         # dimensions
         self.ncfile.createDimension('latitude', self.coverage.get_y_size())

@@ -169,6 +169,16 @@ Elle rajoute une dimension temporelle à la couverture horizontale classique.
 
         return self.reader.read_variable_sp_at_time(index_t)
 
+    def read_variable_ssp_at_time(self,t):
+        """Retourne la pression à la surface de la mer (sea surface pressure) à la date souhaitée sur toute la couverture horizontale.
+    @type t: datetime ou l'index
+    @param t: date souhaitée
+    @return: un tableau en deux dimensions [y,x]."""
+
+        index_t = self.find_time_index(t);
+
+        return self.reader.read_variable_ssp_at_time(index_t)
+
     def read_variable_wind_at_time(self,t):
         """Retourne les composantes u,v du vent à la date souhaitée
     @type t: datetime ou l'index

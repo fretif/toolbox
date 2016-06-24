@@ -258,14 +258,19 @@ for index in "${!files[@]}"; do
 			#fi
 			
 			if [[ "${style}" == "circle" ]] 
-			then
+			then			    
 				psxy ${workingDir}/file.tmp $paramR $paramJ -Sc0.1 -G$color -O -K >> ${outfile}.ps
 			else
 				psxy ${workingDir}/file.tmp $paramR $paramJ -W1p,$color,$style -O -K >> ${outfile}.ps #-Y`echo "0.3 * $index" | bc -l`
 				#psxy ${workingDir}/file.tmp $paramR $paramJ -W1p,$color,$style -O -K -Y`echo "0.5 * $index" | bc -l` >> ${outfile}.ps
 			fi			
 
-			echo "S 0.1i - 0.15i - thin,$color,$style 0.3i $fileTitle" >> ${workingDir}/legend
+			if [[ "${style}" == "circle" ]] 
+			then
+			  echo "S 0.1i - 0.15i - thin,$color,solid 0.3i $fileTitle" >> ${workingDir}/legend
+			else
+			  echo "S 0.1i - 0.15i - thin,$color,$style 0.3i $fileTitle" >> ${workingDir}/legend
+			fi
 			(( countFiles ++))
 
 		else

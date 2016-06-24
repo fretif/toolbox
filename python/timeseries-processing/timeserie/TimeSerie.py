@@ -82,7 +82,7 @@ class TimeSerie:
 
         """
 
-        if self.data == None or force == True:
+        if self.data is None or force == True:
 
             self.data = self.reader.read_data();
 

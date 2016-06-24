@@ -75,8 +75,24 @@ Soit l'axe y en premier puis l'axe x. Exemple : [y,x]
 """
     def __init__(self, myReader):          
             
-        self.reader = myReader; 
-        
+        self.reader = myReader;
+        self.regular_grid = None
+
+        # try to fill metadata
+        self.read_metadata()
+
+    # Read metadata
+    def read_metadata(self):
+        """
+        Lit la metadonnée du fichier si le lecteur contient une fonction read_metadata()
+        Returns
+        -------
+
+        """
+
+        if  "read_metadata" in dir(self.reader):
+            m = self.reader.read_metadata()
+
     # Axis        
     def read_axis_x(self):
         """Retourne les valeurs (souvent la longitude) de l'axe x.
@@ -108,10 +124,14 @@ Soit l'axe y en premier puis l'axe x. Exemple : [y,x]
     def is_regular_grid(self):
         """Retourne vrai si la maille est régulière, sinon faux.
     @return:  vrai si la maille est régulière sinon faux."""
-        if self.read_axis_x().ndim == 1:
-            return True
-        else:
-            return False
+
+        if self.regular_grid is None:
+            if self.read_axis_x().ndim == 1:
+                self.regular_grid = True
+            else:
+                self.regular_grid = False
+
+        return self.regular_grid
         
     def find_point_index(self,target_lon,target_lat,method="classic"):
         """Retourne le point le plus proche du point donné en paramètre.
@@ -146,6 +166,7 @@ Soit l'axe y en premier puis l'axe x. Exemple : [y,x]
                         else:
                             dist = distance_on_unit_sphere(target_lon,target_lat,lon[y,x],lat[y,x])
 
+
                         if dist < min_dist:
                             min_dist = dist
                             if self.is_regular_grid():
@@ -154,6 +175,7 @@ Soit l'axe y en premier puis l'axe x. Exemple : [y,x]
                             else:
                                 nearest_lon = lon[y,x]
                                 nearest_lat = lat[y,x]
+
                             nearest_y_index = y
                             nearest_x_index = x
         else:
