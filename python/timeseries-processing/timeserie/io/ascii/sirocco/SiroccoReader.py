@@ -16,6 +16,7 @@ import pandas
 import logging
 import numpy as np
 import re
+from os.path import basename
 
 class SiroccoReader:
 
@@ -54,19 +55,44 @@ class SiroccoReader:
         if not os.path.isfile(self.filename):
             raise IOError(self.filename+" doesn't exists. Abort")
 
-        # TODO Lire et décoder l'entête pour trouver les colonnes.
-        #with open(self.filename) as f:
-        #    line = f.readline()
-        #    while line and line.startswith("#"):
-        #         if "Columns" in line:
-        #            metadata['name_station'] = re.sub('[^a-zA-Z0-9-_*.]', '',line.rsplit(':', 1)[1])
+        reader = 0
 
-        # waves
-        #data = pandas.read_csv(self.filename,usecols=[0,1,2],names=['time','sea_surface_wave_significant_height','sea_surface_wave_mean_period'],sep='\t',index_col=0,parse_dates=True,comment='#')
-        # sea-level
-        data = pandas.read_csv(self.filename,usecols=[0,1],names=['time','sea_surface_height'],sep='\t',index_col=0,parse_dates=True,comment='#')
-        # meteo
-        data = pandas.read_csv(self.filename,usecols=[0,1,2,3],names=['time','sea_surface_presure','wind_speed_10m','wind_direction_10m'],sep='\t',index_col=0,parse_dates=True,comment='#')
+        # Recherche basée sur le nom du fichier
+        name = basename(self.filename)
+
+        if "sea_surface_height" in name or "sea_surface_elevation" in name or "ssh" in name or "tide" in name:
+            reader = 1
+
+        if "waves" in name :
+            reader = 2
+
+        if "meteo" in name :
+            reader = 3
+
+        # Si on ne trouve pas, alors on ouvre le fichier pour lire l'entête
+        if reader == 0:
+            with open(self.filename) as f:
+                line = f.readline()
+                while line and line.strip().startswith("#"):
+                    if "sea_surface_height" in line or "sea_surface_elevation" in line :
+                        reader = 1
+
+                    if "sea_surface_waves" in line :
+                        reader = 2
+
+                    if "sea_surface_pressure" in line or "wind" in line :
+                        reader = 3
+
+                    line = f.readline()
+
+        if reader == 1:
+            data = pandas.read_csv(self.filename,usecols=[0,1],names=['time','sea_surface_height'],sep='\t',index_col=0,parse_dates=True,comment='#')
+        elif reader == 2:
+            data = pandas.read_csv(self.filename,usecols=[0,1,2],names=['time','sea_surface_wave_significant_height','sea_surface_wave_mean_period'],sep='\t',index_col=0,parse_dates=True,comment='#')
+        elif reader == 3:
+            data = pandas.read_csv(self.filename,usecols=[0,1,2,3],names=['time','sea_surface_presure','wind_speed_10m','wind_direction_10m'],sep='\t',index_col=0,parse_dates=True,comment='#')
+        else:
+            raise IOError("Unable to decode the reader format.")
 
         # we process time record (drop duplicate...)
         #duplicates = np.where(data.time.duplicated()== True)[0]
