@@ -63,7 +63,7 @@ class SiroccoReader:
         if "sea_surface_height" in name or "sea_surface_elevation" in name or "ssh" in name or "tide" in name:
             reader = 1
 
-        if "waves" in name :
+        if "waves" in name or "wave" in name :
             reader = 2
 
         if "meteo" in name :
@@ -77,7 +77,7 @@ class SiroccoReader:
                     if "sea_surface_height" in line or "sea_surface_elevation" in line :
                         reader = 1
 
-                    if "sea_surface_waves" in line :
+                    if "sea_surface_wave" in line :
                         reader = 2
 
                     if "sea_surface_pressure" in line or "wind" in line :
