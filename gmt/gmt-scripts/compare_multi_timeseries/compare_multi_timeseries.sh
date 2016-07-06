@@ -124,6 +124,21 @@ for ((group=1;group<=$maxGroup;group++)) do
   then   
     psbasemap $paramR $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontY:3} -BWS -X10.5 -Y0 -O -K >> ${outfile}.ps
   fi
+  
+   if [[ $group == 10 ]]
+  then   
+    psbasemap $paramR $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontY}+l"${titleY}"  -BWS -X-21 -Y6 -O -K >> ${outfile}.ps
+  fi
+  
+   if [[ $group == 11 ]]
+  then   
+    psbasemap $paramR $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontY:3} -BWS -X10.5 -Y0 -O -K >> ${outfile}.ps
+  fi
+  
+   if [[ $group == 12 ]]
+  then   
+    psbasemap $paramR $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontY:3} -BWS -X10.5 -Y0 -O -K >> ${outfile}.ps
+  fi
 
   countFiles=0
 
@@ -311,7 +326,7 @@ for ((group=1;group<=$maxGroup;group++)) do
 			  
 			  if [[ -f "${statFileGroup["$group$index"]}" ]]
 			  then 
-			    pstext ${statFileGroup["$group$index"]} -R0/10/0/10 $paramJText -Gwhite -F+f10p -W0.5p,$color,solid -M -O -K >> ${outfile}.ps
+			    pstext ${statFileGroup["$group$index"]} -R0/10/0/10 $paramJText -Gwhite -F+f10p -W0.7p,$color,solid -M -O -K >> ${outfile}.ps
 			  fi
 			  
 			  (( countFiles ++))
@@ -333,7 +348,7 @@ done
 #echo "5 9.5 $startTimeTitle - $endTimeTitle" | pstext -R0/10/0/10 $paramJText -X-12 -Y2 -O -K >> ${outfile}.ps
 #echo "5 9.5 $title" | pstext -R -J -Y1.2 -O -K >> ${outfile}.ps
 
-pslegend ${workingDir}/legend $paramR $paramJ -Dx-0.2i/`echo "0.2*$countFiles" | bc -l`i/5i/3.3i/BL -X-21 -Y-3 -O >> ${outfile}.ps
+pslegend ${workingDir}/legend $paramR $paramJ -Dx-0.2i/`echo "0.2*$countFiles" | bc -l`i/5i/3.3i/BL -X-10.5 -Y-3 -O >> ${outfile}.ps
 
 
 ps2raster ${outfile}.ps -A -E300 -Tg -P
