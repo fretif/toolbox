@@ -66,7 +66,7 @@ class GMTWriter (File):
         if self.ncfile == None:
             raise IOError("Please call write_axis() first")   
             
-        wlv = self.ncfile.createVariable('ssh', float32, ('time', 'latitude', 'longitude',),fill_value="NaN")
+        wlv = self.ncfile.createVariable('ssh', float32, ('time', 'latitude', 'longitude',),fill_value=9.96921e+36)
         wlv.long_name = "sea surface height above sea level" ;
         wlv.standard_name = "sea_surface_height_above_sea_level" ;
         wlv.globwave_name = "sea_surface_height_above_sea_level" ;
@@ -86,7 +86,7 @@ class GMTWriter (File):
         if self.ncfile == None:
             raise IOError("Please call write_axis() first")   
             
-        ucur = self.ncfile.createVariable('ucur', float32, ('time', 'latitude', 'longitude',),fill_value="NaN")
+        ucur = self.ncfile.createVariable('ucur', float32, ('time', 'latitude', 'longitude',),fill_value=9.96921e+36)
         ucur.long_name = "eastward current" ;
         ucur.standard_name = "eastward_sea_water_velocity" ;
         ucur.globwave_name = "eastward_sea_water_velocity" ;
@@ -97,7 +97,7 @@ class GMTWriter (File):
         #ucur.valid_max = 990 ;
         ucur.comment = "cur=sqrt(U**2+V**2)" ;
         
-        vcur = self.ncfile.createVariable('vcur', float32, ('time', 'latitude', 'longitude',),fill_value="NaN")
+        vcur = self.ncfile.createVariable('vcur', float32, ('time', 'latitude', 'longitude',),fill_value=9.96921e+36)
         vcur.long_name = "northward current" ;
         vcur.standard_name = "northward_sea_water_velocity" ;
         vcur.globwave_name = "northward_sea_water_velocity" ;
@@ -120,7 +120,7 @@ class GMTWriter (File):
         if self.ncfile == None:
             raise IOError("Please call write_axis() first")
 
-        var = self.ncfile.createVariable('hs', float32, ('time', 'latitude', 'longitude',),fill_value=np.nan)
+        var = self.ncfile.createVariable('hs', float32, ('time', 'latitude', 'longitude',),fill_value=9.96921e+36)
         var.long_name = "sea surface wave height" ;
         var.standard_name = "sea_surface_wave_height" ;
         var.globwave_name = "sea_surface_wave_height" ;
@@ -140,7 +140,7 @@ class GMTWriter (File):
         if self.ncfile == None:
             raise IOError("Please call write_axis() first")
 
-        var = self.ncfile.createVariable('mask', float32, ('latitude', 'longitude',),fill_value=np.nan)
+        var = self.ncfile.createVariable('mask', int, ('latitude', 'longitude',),fill_value=-9999)
         var.long_name = "land/sea mask" ;
         var.standard_name = "land_sea_mask" ;
         var.globwave_name = "land_sea_mask" ;

@@ -58,7 +58,9 @@ La classe SymphonieReader permet de lire les données du format Symphonie
         return self.grid.variables["mask_t"][::]
     
     def read_variable_mesh_size(self): 
-        return self.grid.variables["sqrt_dxdy"][:]    
+        data= self.grid.variables["sqrt_dxdy"][:]
+        data[data < 0] = np.nan
+        return data
     
     def read_variable_bathymetry(self): 
         return self.grid.variables["hm_w"][:]

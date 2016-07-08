@@ -59,7 +59,7 @@ class WW3Reader (File):
     def read_variable_ssh_at_time(self,t):
         return self.ncfile.variables["wlv"][t][:]
     
-    def read_variable_hs_at_time(self,t):         
+    def read_variable_hs_at_time(self,t):
         return self.ncfile.variables["hs"][t][:]
     
     def read_variable_waves_dir_at_time(self,t):         
@@ -84,5 +84,8 @@ class WW3Reader (File):
 
     def read_variable_surface_stokes_drift_at_time(self,t):
         return [self.ncfile.variables["uuss"][t][:],self.ncfile.variables["vuss"][t][:]]
+
+    def read_variable_wind_at_time(self,t):
+        return [self.ncfile.variables["uwnd"][t][:],self.ncfile.variables["vwnd"][t][:]]
            
     

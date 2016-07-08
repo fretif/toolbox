@@ -117,18 +117,35 @@ class CoverageInterpolator(File):
 
         logging.info('[CoverageInterpolator] Resample variable \'topography\' to the resolution '+str(self.targetResX)+'/'+str(self.targetResY)+'.')
 
-        wlv = self.ncfile.createVariable('topo', float32, ('latitude', 'longitude',),fill_value=np.nan)
-        wlv.long_name = "topography" ;
-        wlv.standard_name = "topography" ;
-        wlv.globwave_name = "topography" ;
-        wlv.units = "m" ;
+        var = self.ncfile.createVariable('topo', float32, ('latitude', 'longitude',),fill_value=9.96921e+36)
+        var.long_name = "topography" ;
+        var.standard_name = "topography" ;
+        var.globwave_name = "topography" ;
+        var.units = "m" ;
         #wlv.scale_factor = "1.f" ;
         #wlv.add_offset = "0.f" ;
         #wlv.valid_min = "0f" ;
         #wlv.valid_max = 10000f ;
 
-        resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,self.coverage.read_variable_topography())
+        var[:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,self.coverage.read_variable_topography())
 
+    def resample_variable_mesh_size(self):
+        if self.ncfile == None:
+            raise IOError("Please call write_axis() first")
+
+        logging.info('[CoverageInterpolator] Resample variable \'mesh_size\' to the resolution '+str(self.targetResX)+'/'+str(self.targetResY)+'.')
+
+        var = self.ncfile.createVariable('mesh_size', float32, ('latitude', 'longitude',),fill_value=9.96921e+36)
+        var.long_name = "mesh_size" ;
+        var.standard_name = "mesh_size" ;
+        var.globwave_name = "mesh_size" ;
+        var.units = "m" ;
+        #wlv.scale_factor = "1.f" ;
+        #wlv.add_offset = "0.f" ;
+        #wlv.valid_min = "0f" ;
+        #wlv.valid_max = 10000f ;
+
+        var[:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,self.coverage.read_variable_mesh_size())
 
     def resample_variable_ssh(self):
         if self.ncfile == None:
@@ -136,7 +153,7 @@ class CoverageInterpolator(File):
 
         logging.info('[CoverageInterpolator] Resample variable \'ssh\' at resolution '+str(self.targetResX)+'/'+str(self.targetResY)+'.')
 
-        wlv = self.ncfile.createVariable('ssh', float32, ('time', 'latitude', 'longitude',),fill_value=np.nan)
+        wlv = self.ncfile.createVariable('ssh', float32, ('time', 'latitude', 'longitude',),fill_value=9.96921e+36)
         wlv.long_name = "sea surface height above sea level" ;
         wlv.standard_name = "sea_surface_height_above_sea_level" ;
         wlv.globwave_name = "sea_surface_height_above_sea_level" ;
@@ -159,7 +176,7 @@ class CoverageInterpolator(File):
         if self.ncfile == None:
             raise IOError("Please call write_axis() first")
 
-        ucur = self.ncfile.createVariable('ucur', float32, ('time', 'depth', 'latitude', 'longitude',),fill_value=np.nan)
+        ucur = self.ncfile.createVariable('ucur', float32, ('time', 'depth', 'latitude', 'longitude',),fill_value=9.96921e+36)
         ucur.long_name = "eastward current" ;
         ucur.standard_name = "eastward_sea_water_velocity" ;
         ucur.globwave_name = "eastward_sea_water_velocity" ;
@@ -170,7 +187,7 @@ class CoverageInterpolator(File):
         #ucur.valid_max = 990 ;
         ucur.comment = "cur=sqrt(U**2+V**2)" ;
 
-        vcur = self.ncfile.createVariable('vcur', float32, ('time', 'depth', 'latitude', 'longitude',),fill_value=np.nan)
+        vcur = self.ncfile.createVariable('vcur', float32, ('time', 'depth', 'latitude', 'longitude',),fill_value=9.96921e+36)
         vcur.long_name = "northward current" ;
         vcur.standard_name = "northward_sea_water_velocity" ;
         vcur.globwave_name = "northward_sea_water_velocity" ;
@@ -205,7 +222,7 @@ class CoverageInterpolator(File):
 
         logging.info('[CoverageInterpolator] Resample variable \'current\' to the resolution '+str(self.targetResX)+'/'+str(self.targetResY)+'.')
 
-        ucur = self.ncfile.createVariable('ucur', float32, ('time', 'latitude', 'longitude',),fill_value=np.nan)
+        ucur = self.ncfile.createVariable('ucur', float32, ('time', 'latitude', 'longitude',),fill_value=9.96921e+36)
         ucur.long_name = "eastward current" ;
         ucur.standard_name = "eastward_sea_water_velocity" ;
         ucur.globwave_name = "eastward_sea_water_velocity" ;
@@ -216,7 +233,7 @@ class CoverageInterpolator(File):
         #ucur.valid_max = 990 ;
         ucur.comment = "cur=sqrt(U**2+V**2)" ;
 
-        vcur = self.ncfile.createVariable('vcur', float32, ('time', 'latitude', 'longitude',),fill_value=np.nan)
+        vcur = self.ncfile.createVariable('vcur', float32, ('time', 'latitude', 'longitude',),fill_value=9.96921e+36)
         vcur.long_name = "northward current" ;
         vcur.standard_name = "northward_sea_water_velocity" ;
         vcur.globwave_name = "northward_sea_water_velocity" ;
@@ -241,7 +258,7 @@ class CoverageInterpolator(File):
 
         logging.info('[CoverageInterpolator] Resample variable \'taw\' to the resolution '+str(self.targetResX)+'/'+str(self.targetResY)+'.')
 
-        ucur = self.ncfile.createVariable('utaw', float32, ('time', 'latitude', 'longitude',),fill_value=np.nan)
+        ucur = self.ncfile.createVariable('utaw', float32, ('time', 'latitude', 'longitude',),fill_value=9.96921e+36)
         ucur.long_name = "eastward current" ;
         ucur.standard_name = "eastward_sea_water_velocity" ;
         ucur.globwave_name = "eastward_sea_water_velocity" ;
@@ -252,7 +269,7 @@ class CoverageInterpolator(File):
         #ucur.valid_max = 990 ;
         ucur.comment = "cur=sqrt(U**2+V**2)" ;
 
-        vcur = self.ncfile.createVariable('vtaw', float32, ('time', 'latitude', 'longitude',),fill_value=np.nan)
+        vcur = self.ncfile.createVariable('vtaw', float32, ('time', 'latitude', 'longitude',),fill_value=9.96921e+36)
         vcur.long_name = "northward current" ;
         vcur.standard_name = "northward_sea_water_velocity" ;
         vcur.globwave_name = "northward_sea_water_velocity" ;
@@ -270,7 +287,41 @@ class CoverageInterpolator(File):
             vcur[time_index:time_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[1])
             time_index += 1
 
+    def resample_variable_two(self):
 
+        if self.ncfile == None:
+            raise IOError("Please call write_axis() first")
+
+        logging.info('[CoverageInterpolator] Resample variable \'two\' to the resolution '+str(self.targetResX)+'/'+str(self.targetResY)+'.')
+
+        ucur = self.ncfile.createVariable('utwo', float32, ('time', 'latitude', 'longitude',),fill_value=9.96921e+36)
+        ucur.long_name = "eastward current" ;
+        ucur.standard_name = "eastward_sea_water_velocity" ;
+        ucur.globwave_name = "eastward_sea_water_velocity" ;
+        ucur.units = "m s-1" ;
+        #ucur.scale_factor = 1.f ;
+        #ucur.add_offset = 0.f ;
+        #ucur.valid_min = -990 ;
+        #ucur.valid_max = 990 ;
+        ucur.comment = "cur=sqrt(U**2+V**2)" ;
+
+        vcur = self.ncfile.createVariable('vtwo', float32, ('time', 'latitude', 'longitude',),fill_value=9.96921e+36)
+        vcur.long_name = "northward current" ;
+        vcur.standard_name = "northward_sea_water_velocity" ;
+        vcur.globwave_name = "northward_sea_water_velocity" ;
+        vcur.units = "m s-1" ;
+        #ucur.scale_factor = 1.f ;
+        #ucur.add_offset = 0.f ;
+        #ucur.valid_min = -990 ;
+        #ucur.valid_max = 990 ;
+        vcur.comment = "cur=sqrt(U**2+V**2)" ;
+
+        time_index=0
+        for time in self.coverage.read_axis_t():
+            cur = self.coverage.read_variable_two_at_time(time)
+            ucur[time_index:time_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[0])
+            vcur[time_index:time_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[1])
+            time_index += 1
 
     def resample_variable_hs(self):
         if self.ncfile == None:
@@ -278,7 +329,7 @@ class CoverageInterpolator(File):
 
         logging.info('[CoverageInterpolator] Resample variable \'hs\' at resolution '+str(self.targetResX)+'/'+str(self.targetResY)+'.')
 
-        var = self.ncfile.createVariable('hs', float32, ('time', 'latitude', 'longitude',),fill_value=np.nan)
+        var = self.ncfile.createVariable('hs', float32, ('time', 'latitude', 'longitude',),fill_value=9.96921e+36)
         var.long_name = "surface wave height" ;
         var.standard_name = "surface_wave_height" ;
         var.globwave_name = "surface_wave_height" ;
@@ -300,7 +351,7 @@ class CoverageInterpolator(File):
 
         logging.info('[CoverageInterpolator] Resample variable \'waves dir\' at resolution '+str(self.targetResX)+'/'+str(self.targetResY)+'.')
 
-        var = self.ncfile.createVariable('waves_dir', float32, ('time', 'latitude', 'longitude',),fill_value=np.nan)
+        var = self.ncfile.createVariable('waves_dir', float32, ('time', 'latitude', 'longitude',),fill_value=9.96921e+36)
         var.long_name = "surface wave dir" ;
         var.standard_name = "surface_wave_dir" ;
         var.globwave_name = "surface_wave_dir" ;
@@ -322,7 +373,7 @@ class CoverageInterpolator(File):
 
         logging.info('[CoverageInterpolator] Resample variable \'mask\' at resolution '+str(self.targetResX)+'/'+str(self.targetResY)+'.')
 
-        var = self.ncfile.createVariable('mask', float32, ('latitude', 'longitude',),fill_value=np.nan)
+        var = self.ncfile.createVariable('mask', float32, ('latitude', 'longitude',),fill_value=9.96921e+36)
         var.long_name = "land/sea mask" ;
         var.standard_name = "land_sea_mask" ;
         var.globwave_name = "land_sea_mask" ;
@@ -333,6 +384,42 @@ class CoverageInterpolator(File):
         #wlv.valid_max = 10000f ;
 
         var[:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,self.coverage.read_variable_2D_mask())
+
+    def resample_variable_wind(self):
+
+        if self.ncfile == None:
+            raise IOError("Please call write_axis() first")
+
+        logging.info('[CoverageInterpolator] Resample variable \'wind\' to the resolution '+str(self.targetResX)+'/'+str(self.targetResY)+'.')
+
+        ucur = self.ncfile.createVariable('uwind', float32, ('time', 'latitude', 'longitude',),fill_value=9.96921e+36)
+        ucur.long_name = "eastward wind" ;
+        ucur.standard_name = "eastward_wind_velocity" ;
+        ucur.globwave_name = "eastward_wind_velocity" ;
+        ucur.units = "m s-1" ;
+        #ucur.scale_factor = 1.f ;
+        #ucur.add_offset = 0.f ;
+        #ucur.valid_min = -990 ;
+        #ucur.valid_max = 990 ;
+        ucur.comment = "cur=sqrt(U**2+V**2)" ;
+
+        vcur = self.ncfile.createVariable('vwind', float32, ('time', 'latitude', 'longitude',),fill_value=9.96921e+36)
+        vcur.long_name = "northward wind" ;
+        vcur.standard_name = "northward_wind_velocity" ;
+        vcur.globwave_name = "northward_wind_velocity" ;
+        vcur.units = "m s-1" ;
+        #ucur.scale_factor = 1.f ;
+        #ucur.add_offset = 0.f ;
+        #ucur.valid_min = -990 ;
+        #ucur.valid_max = 990 ;
+        vcur.comment = "cur=sqrt(U**2+V**2)" ;
+
+        time_index=0
+        for time in self.coverage.read_axis_t():
+            cur = self.coverage.read_variable_wind_at_time(time)
+            ucur[time_index:time_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[0])
+            vcur[time_index:time_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[1])
+            time_index += 1
 
 
 

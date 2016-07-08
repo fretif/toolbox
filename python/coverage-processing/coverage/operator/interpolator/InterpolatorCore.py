@@ -21,7 +21,7 @@ def resample_2d_to_grid(sourceAxisX,sourceAxisY,targetAxisX, targetAixsY,data):
     logging.info('[InterpolatorCore] Source grid size : '+str(np.shape(sourceAxisX)))
     logging.info('[InterpolatorCore] Target grid size : '+str(np.shape(targetAxisX)))
     
-    return griddata((sourceAxisX.ravel(),sourceAxisY.ravel()), data.ravel(),(targetAxisX, targetAixsY), method='nearest')
+    return griddata((sourceAxisX.ravel(),sourceAxisY.ravel()), data.ravel(),(targetAxisX, targetAixsY), method='nearest', fill_value=9.96921e+36)
 
 def resample_2d_to_resolution(sourceAxisX,sourceAxisY,targetResX, targetResY,data):
     
