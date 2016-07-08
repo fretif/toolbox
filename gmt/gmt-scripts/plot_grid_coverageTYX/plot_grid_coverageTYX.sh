@@ -31,11 +31,10 @@ source $1
 
 # 2. Set environement
 
-if [[ ! -n "$scanDir" ]] 
+if [[ ! -n "$infile" ]] 
 then
-	path=`pwd`
-else
-	path=$scanDir
+	echo "Please define 'infile' variable. Abort"
+	exit
 fi
 
 #outDir
@@ -57,156 +56,147 @@ startSecondTime=`date -u --date="$parsedStartTime" "+%s"`
 parsedEndTime="${endTime:0:4}-${endTime:5:2}-${endTime:8:2} ${endTime:11:2}:${endTime:14:2}:${endTime:17:2}"
 endSecondTime=`date -u --date="$parsedEndTime" "+%s"`
 
-# 3. Scan file directory
-for infile in ${path}/*.nc; do 
+file=$(basename "$infile")
+filename="${file%.*}"
 
-	file=$(basename "$infile")
-	filename="${file%.*}"
+#Compute envelope
 
-	#Compute envelope
+#Select variable according to the name
+grdinfo -C $infile?hs > ${workingDir}/minmax 
 
-	#Select variable according to the name
-	if [[ "$filename" == *"sea-surface-height"* ]] || [[ "$filename" == *"inverse-barometer"* ]] || [[ "$filename" == *"hs-wave"* ]];
-	then		
-		grdinfo -C $infile?z > ${workingDir}/minmax 
-	else
-		grdinfo -C $infile?u > ${workingDir}/minmax 
+if [[ ! -n "$Xmin" && ! -n "$Xmax" && ! -n "$Ymin" && ! -n "$Ymax" ]]
+then		
+	Xmin=`cat ${workingDir}/minmax | cut -f "2"`
+	Xmax=`cat ${workingDir}/minmax | cut -f "3"`
+	Ymin=`cat ${workingDir}/minmax | cut -f "4"`
+	Ymax=`cat ${workingDir}/minmax | cut -f "5"`
+fi		
+	
+Xincr=`cat ${workingDir}/minmax | cut -f "8"`		
+Yincr=`cat ${workingDir}/minmax | cut -f "9"`	
+Xsize=`cat ${workingDir}/minmax | cut -f "10"`		
+Ysize=`cat ${workingDir}/minmax | cut -f "11"`	
+
+envelope="-R$Xmin/$Xmax/$Ymin/$Ymax"	
+
+if [[ -n "$mapRatioSize" ]]
+then 
+  projection=-JX`echo "($Xmax - $Xmin)*$mapRatioSize" | bc -l`d/`echo "($Ymax - $Ymin)*$mapRatioSize" | bc -l`d
+elif [[ -n "$mapWidth" ]]
+then
+  projection=-Jm$mapWidth
+fi
+
+#For each time
+tIndex=0
+gmtconvert $infile?time | while read currentSecondTime
+do
+  currentTime=`date -u --date="@$currentSecondTime" "+%d-%B-%Y_%H-%M-%S"`
+
+  if test $currentSecondTime -ge $startSecondTime && test $currentSecondTime -le $endSecondTime
+  then
+
+	echo "Current file : $filename - $currentTime"	
+
+	var="sea-surface-height"
+	if test $ssh -eq 1;
+	then				
+		source $basedir/gmt-scripts/ssh.sh
 	fi
 
-	if [[ ! -n "$Xmin" && ! -n "$Xmax" && ! -n "$Ymin" && ! -n "$Ymax" ]]
-	then		
-		Xmin=`cat ${workingDir}/minmax | cut -f "2"`
-		Xmax=`cat ${workingDir}/minmax | cut -f "3"`
-		Ymin=`cat ${workingDir}/minmax | cut -f "4"`
-		Ymax=`cat ${workingDir}/minmax | cut -f "5"`
-	fi		
-		
-	Xincr=`cat ${workingDir}/minmax | cut -f "8"`		
-	Yincr=`cat ${workingDir}/minmax | cut -f "9"`	
-	Xsize=`cat ${workingDir}/minmax | cut -f "10"`		
-	Ysize=`cat ${workingDir}/minmax | cut -f "11"`	
-
-	envelope="-R$Xmin/$Xmax/$Ymin/$Ymax"	
-	projection=-JX`echo "($Xmax - $Xmin)*$mapRatioSize" | bc -l`d/`echo "($Ymax - $Ymin)*$mapRatioSize" | bc -l`d
-
-	#For each time
-	tIndex=0
-	gmtconvert $infile?time | while read currentSecondTime
-	do
-		currentTime=`date -u --date="@$currentSecondTime" "+%d-%B-%Y_%H-%M-%S"`
-
-		if test $currentSecondTime -ge $startSecondTime && test $currentSecondTime -le $endSecondTime
-		then
-
-			echo "Current file : $filename - $currentTime"	
-	
-			var="sea-surface-height"
-			if test $ssh -eq 1 && [[ "$filename" == *"$var"* ]];
-			then				
-				source $basedir/gmt-scripts/ssh.sh
-			fi
-	
-			var="barotropic-current"	
-			if test $barotropicCurrent -eq 1 && [[ "$filename" == *"$var"* ]];
-			then
-						
-				source $basedir/gmt-scripts/barotropicCurrent.sh
-			fi
-			
-			var="surface-current"			
-			if test $surfaceCurrent -eq 1 && [[ "$filename" == *"$var"* ]];
-			then									
-				source $basedir/gmt-scripts/surfaceCurrent.sh
-			fi
-	
-			var="surface-temperature"	
-			if test $surfaceTemperature -eq 1 && [[ "$filename" == *"$var"* ]];
-			then	
+	var="barotropic-current"	
+	if test $barotropicCurrent -eq 1;
+	then
 				
-				source $basedir/gmt-scripts/temperature.sh
-			fi
+		source $basedir/gmt-scripts/barotropicCurrent.sh
+	fi
 	
-			var="surface-salinity"	
-			if test $surfaceSalinity -eq 1 && [[ "$filename" == *"$var"* ]];
-			then					
-				source $basedir/gmt-scripts/salinity.sh
-			fi
+	var="surface-current"			
+	if test $surfaceCurrent -eq 1;
+	then									
+		source $basedir/gmt-scripts/surfaceCurrent.sh
+	fi
+
+	var="surface-temperature"	
+	if test $surfaceTemperature -eq 1 ;
+	then	
+		
+		source $basedir/gmt-scripts/temperature.sh
+	fi
+
+	var="surface-salinity"	
+	if test $surfaceSalinity -eq 1;
+	then					
+		source $basedir/gmt-scripts/salinity.sh
+	fi
+
+	var="middle-current"	
+	if test $middleCurrent -eq 1;
+	then				
+		source $basedir/gmt-scripts/middleCurrent.sh
+	fi
+
+	var="bottom-current"	
+	if test $bottomCurrent -eq 1;
+	then				
+		source $basedir/gmt-scripts/bottomCurrent.sh
+	fi
+
+	var="wind-stress"	
+	if test $windStress -eq 1;
+	then				
+		source $basedir/gmt-scripts/windStress.sh
+	fi
+
+	var="inverse-barometer"	
+	if test $inverseBarometer -eq 1;
+	then				
+		source $basedir/gmt-scripts/ib.sh
+	fi
+
+	var="hs-wave"	
+	if test $hs -eq 1;
+	then					
+		source $basedir/gmt-scripts/hs.sh
+	fi
 	
-			var="middle-current"	
-			if test $middleCurrent -eq 1 && [[ "$filename" == *"$var"* ]];
-			then				
-				source $basedir/gmt-scripts/middleCurrent.sh
-			fi
+	var="two"	
+	if test $two -eq 1;
+	then					
+		source $basedir/gmt-scripts/two.sh
+	fi
+	
+	var="two-momentum-flux"	
+	if test $twoMomentumFlux -eq 1;
+	then					
+		source $basedir/gmt-scripts/two-momentum-flux.sh
+	fi
+	
+	var="taw"	
+	if test $taw -eq 1;
+	then					
+		source $basedir/gmt-scripts/taw.sh
+	fi
+	
+	var="taw-momentum-flux"	
+	if test $tawMomentumFlux -eq 1;
+	then					
+		source $basedir/gmt-scripts/taw-momentum-flux.sh
+	fi 
+	
+	var="wind"	
+	if test $wind -eq 1;
+	then					
+		source $basedir/gmt-scripts/wind.sh
+	fi
+  fi
 
-			var="bottom-current"	
-			if test $bottomCurrent -eq 1 && [[ "$filename" == *"$var"* ]];
-			then				
-				source $basedir/gmt-scripts/bottomCurrent.sh
-			fi
+  ((tIndex ++))
 
-			var="wind-stress"	
-			if test $windStress -eq 1 && [[ "$filename" == *"$var"* ]];
-			then				
-				source $basedir/gmt-scripts/windStress.sh
-			fi
-
-			var="inverse-barometer"	
-			if test $ib -eq 1 && [[ "$filename" == *"$var"* ]];
-			then				
-				source $basedir/gmt-scripts/ib.sh
-			fi
-
-			var="hs-wave"	
-			if test $hs -eq 1 && [[ "$filename" == *"$var"* ]];
-			then					
-				source $basedir/gmt-scripts/hs.sh
-			fi
-			
-			var="two"	
-			if test $two -eq 1 && [[ "$filename" == *"$var."* ]];
-			then					
-				source $basedir/gmt-scripts/two.sh
-			fi
-			
-			var="two-momentum-flux"	
-			if test $twoMomentumFlux -eq 1 && [[ "$filename" == *"$var"* ]];
-			then					
-				source $basedir/gmt-scripts/two-momentum-flux.sh
-			fi
-			
-			var="taw"	
-			if test $taw -eq 1 && [[ "$filename" == *"$var."* ]];
-			then					
-				source $basedir/gmt-scripts/taw.sh
-			fi
-			
-			var="taw-momentum-flux"	
-			if test $tawMomentumFlux -eq 1 && [[ "$filename" == *"$var"* ]];
-			then					
-				source $basedir/gmt-scripts/taw-momentum-flux.sh
-			fi
-			
-			var="tsub"	
-			if test $twoSubTaw -eq 1 && [[ "$filename" == *"$var"* ]];
-			then					
-				source $basedir/gmt-scripts/two-taw.sh
-			fi
-			
-			var="wind"	
-			if test $wind -eq 1 && [[ "$filename" == *"$var"* ]];
-			then					
-				source $basedir/gmt-scripts/wind.sh
-			fi
-		fi
-
-		((tIndex ++))
-
-	done	
-
-done
+done	
 
 # Plot 2D
-if test $bathy -eq 1
+if test $bathymetry -eq 1
 then
 	source $basedir/gmt-scripts/bathy.sh
 fi
@@ -214,108 +204,6 @@ fi
 if test $meshSize -eq 1
 then
 	source $basedir/gmt-scripts/meshSize.sh
-fi
-
-#Export to MOV
-if test $ssh -eq 1
-then
-	var="sea-surface-height"		
-
-	if test $exportToMov -eq 1
-	then
-		source $basedir/exportToMov.sh
-	fi
-fi
-
-if test $barotropicCurrent -eq 1
-then
-	var="barotropic-current"		
-
-	if test $exportToMov -eq 1
-	then
-		source $basedir/exportToMov.sh
-	fi
-fi	
-
-if test $surfaceCurrent -eq 1
-then
-	var="surface-current"		
-
-	if test $exportToMov -eq 1
-	then
-		source $basedir/exportToMov.sh
-	fi
-fi
-
-if test $surfaceTemperature -eq 1
-then
-	var="surface-temperature"		
-
-	if test $exportToMov -eq 1
-	then
-		source $basedir/exportToMov.sh
-	fi
-fi
-
-if test $surfaceSalinity -eq 1
-then
-	var="surface-salinity"
-	source $basedir/gmt-scripts/salinity.sh
-
-	if test $exportToMov -eq 1
-	then
-		source $basedir/exportToMov.sh
-	fi
-fi
-
-if test $middleCurrent -eq 1
-then
-	var="middle-current"		
-
-	if test $exportToMov -eq 1
-	then
-		source $basedir/exportToMov.sh
-	fi
-fi
-
-if test $bottomCurrent -eq 1
-then
-	var="bottom-current"		
-
-	if test $exportToMov -eq 1
-	then
-		source $basedir/exportToMov.sh
-	fi
-fi
-
-if test $windStress -eq 1
-then
-	var="wind-stress"		
-
-	if test $exportToMov -eq 1
-	then
-		source $basedir/exportToMov.sh
-	fi
-fi
-
-if test $ib -eq 1
-then
-	var="inverse-barometer"		
-
-	if test $exportToMov -eq 1
-	then
-		source $basedir/exportToMov.sh
-	fi
-fi
-
-if test $hs -eq 1
-then
-	var="hs-wave"	
-
-	if test $exportToMov -eq 1
-	then
-		source $basedir/exportToMov.sh
-	fi
 fi
 
 rm *.eps

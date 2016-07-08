@@ -10,11 +10,11 @@ else
 
 	echo "-> TAW (momentum flux)..."
 	
-	grdmath ${infile}?u[$tIndex] SQR ${infile}?v[$tIndex] SQR ADD SQRT = ${workingDir}/L2.grd
+	grdmath ${infile}?utaw[$tIndex] SQR ${infile}?vtaw[$tIndex] SQR ADD SQRT = ${workingDir}/L2.grd
 	grdmath ${workingDir}/L2.grd $minVector GT = ${workingDir}/mask.grd
 	grdmath ${workingDir}/L2.grd ${workingDir}/mask.grd MUL = ${workingDir}/plot.grd
-	grdmath ${infile}?u[$tIndex] ${workingDir}/mask.grd MUL = ${workingDir}/current_u.grd
-	grdmath ${infile}?v[$tIndex] ${workingDir}/mask.grd MUL = ${workingDir}/current_v.grd
+	grdmath ${infile}?utaw[$tIndex] ${workingDir}/mask.grd MUL = ${workingDir}/current_u.grd
+	grdmath ${infile}?vtaw[$tIndex] ${workingDir}/mask.grd MUL = ${workingDir}/current_v.grd
 
 	#
 	# Color palette configuration
@@ -33,7 +33,7 @@ else
 	grdsample ${workingDir}/current_u.grd -G${workingDir}/current_u_light.grd -I$[$Xsize*$vectorRatio/100]+/$[$Ysize*$vectorRatio/100]+
 	grdsample ${workingDir}/current_v.grd -G${workingDir}/current_v_light.grd -I$[$Xsize*$vectorRatio/100]+/$[$Ysize*$vectorRatio/100]+
 
-	grdvector ${workingDir}/current_u_light.grd ${workingDir}/current_v_light.grd  -J -R -Gblack -S${vectorLength}i -Q0.08i+e -O -K >> ${outfile}.ps
+	grdvector ${workingDir}/current_u_light.grd ${workingDir}/current_v_light.grd  -J -R -Gblack -S${tauVectorLength}i -Q0.08i+e -O -K >> ${outfile}.ps
 
 	if [[ -n "$typhonFile" ]] 
 	then
@@ -46,7 +46,7 @@ else
 	fi
 	
 	psbasemap $envelope $projection $mapAnnotation -P -O -K >> ${outfile}.ps
-	psscale -D`echo "($Xmax - $Xmin)*$mapRatioSize + 1" | bc -l`/`echo "(($Ymax - $Ymin)*$mapRatioSize)/2" | bc -l`/`echo "($Ymax - $Ymin)*$mapRatioSize" | bc -l`/`echo "(($Ymax - $Ymin)*$mapRatioSize)/40" | bc -l` -C$tawMomentumFluxPalFile -B0.0001:"":/:"": -E -O -K >> ${outfile}.ps	
+	psscale -D`echo "($Xmax - $Xmin)*$mapRatioSize + 1" | bc -l`/`echo "(($Ymax - $Ymin)*$mapRatioSize)/2" | bc -l`/`echo "($Ymax - $Ymin)*$mapRatioSize" | bc -l`/`echo "(($Ymax - $Ymin)*$mapRatioSize)/40" | bc -l` -C$tawMomentumFluxPalFile -B$tauPalScale:"":/:"": -E -O -K >> ${outfile}.ps	
 	echo "5 9 12 0 5 BC TAW (momentum flux m 2 s -2)" > ${workingDir}/legend	
 	echo "5 8.5 8 0 5 BC ${currentTime:0:`expr index "$currentTime" "_"`-1} ${currentTime: -8:2} h ${currentTime: -5:2}" >> ${workingDir}/legend
  	cat ${workingDir}/legend | pstext -R0/10/0/10 -J -Y`echo "(($Ymax - $Ymin)*$mapRatioSize)/4" | bc -l` -O >> ${outfile}.ps

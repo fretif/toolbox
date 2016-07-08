@@ -10,11 +10,11 @@ else
 
 	echo "-> Wind..."
 
-	grdmath ${infile}?u[$tIndex] SQR ${infile}?v[$tIndex] SQR ADD SQRT = ${workingDir}/L2.grd
+	grdmath ${infile}?uwind[$tIndex] SQR ${infile}?vwind[$tIndex] SQR ADD SQRT = ${workingDir}/L2.grd	
 	grdmath ${workingDir}/L2.grd $minVector GT = ${workingDir}/mask.grd
 	grdmath ${workingDir}/L2.grd ${workingDir}/mask.grd MUL = ${workingDir}/plot.grd
-	grdmath ${infile}?u[$tIndex] ${workingDir}/mask.grd MUL = ${workingDir}/current_u.grd
-	grdmath ${infile}?v[$tIndex] ${workingDir}/mask.grd MUL = ${workingDir}/current_v.grd
+	grdmath ${infile}?uwind[$tIndex] ${workingDir}/mask.grd MUL = ${workingDir}/current_u.grd
+	grdmath ${infile}?vwind[$tIndex] ${workingDir}/mask.grd MUL = ${workingDir}/current_v.grd
 
 	#
 	# Color palette configuration

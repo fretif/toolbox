@@ -15,15 +15,18 @@ else
 	#
 	if [[ ! -n "$hsPalFile" ]] 
 	then		
-		grd2cpt -C${colorPalPath}pasadena.cpt ${infile}?z[$tIndex] -Z > ${workingDir}/colorPal.cpt
+		grd2cpt -C${colorPalPath}pasadena.cpt ${infile}?hs[$tIndex] -Z > ${workingDir}/colorPal.cpt
 		hsPalFile="${workingDir}/colorPal.cpt"	
 		#cp ${workingDir}/colorPal.cpt ./regional/meteo-ib.cpt		
 	fi	  
 	
+	grdsample ${infile}?waves_dir[$tIndex] -G${workingDir}/dir_light.grd -I$[$Xsize*$vectorRatio/100]+/$[$Ysize*$vectorRatio/100]+
+	grd2xyz ${workingDir}/dir_light.grd > ${workingDir}/dir
+
 	#
 	# Plotting
 	#	
-	grdimage ${infile}?z[$tIndex] $envelope $projection -C$hsPalFile -P -K > ${outfile}.ps
+	grdimage ${infile}?hs[$tIndex] $envelope $projection -C$hsPalFile -P -K > ${outfile}.ps
 
 	if [[ -n "$instrumentFile" ]] 
 	then
@@ -35,6 +38,7 @@ else
 		source ./gmt-scripts/typhon_track.sh
 	fi
 
+	awk '{print $1, $2, $3,1}' ${workingDir}/dir  | psxy $envelope $projection -Sv0.08i+b -Gblack -O -K -P >> ${outfile}.ps
 	#grdcontour ${workingDir}/ssh.grd ${envelope} -J -C5 -Wcthin,black,solid -P -O -K >> ${outfile}.ps
 	psbasemap $envelope $projection $mapAnnotation -P -O -K >> ${outfile}.ps
 	psscale -D`echo "($Xmax - $Xmin)*$mapRatioSize + 1" | bc -l`/`echo "(($Ymax - $Ymin)*$mapRatioSize)/2" | bc -l`/`echo "($Ymax - $Ymin)*$mapRatioSize" | bc -l`/`echo "(($Ymax - $Ymin)*$mapRatioSize)/40" | bc -l` -C$hsPalFile -B1:"":/:"": -E -O -K >> ${outfile}.ps	
