@@ -16,12 +16,15 @@ from scipy.interpolate import griddata
 import logging
 import numpy as np
 
+INTERPOLATION_METHOD = "nearest";
+#INTERPOLATION_METHOD = "linear";
+
 def resample_2d_to_grid(sourceAxisX,sourceAxisY,targetAxisX, targetAixsY,data):
     
     logging.info('[InterpolatorCore] Source grid size : '+str(np.shape(sourceAxisX)))
     logging.info('[InterpolatorCore] Target grid size : '+str(np.shape(targetAxisX)))
     
-    return griddata((sourceAxisX.ravel(),sourceAxisY.ravel()), data.ravel(),(targetAxisX, targetAixsY), method='nearest', fill_value=9.96921e+36)
+    return griddata((sourceAxisX.ravel(),sourceAxisY.ravel()), data.ravel(),(targetAxisX, targetAixsY), method=INTERPOLATION_METHOD, fill_value=9.96921e+36)
 
 def resample_2d_to_resolution(sourceAxisX,sourceAxisY,targetResX, targetResY,data):
     
@@ -34,7 +37,7 @@ def resample_2d_to_resolution(sourceAxisX,sourceAxisY,targetResX, targetResY,dat
     
     lon_reg,lat_reg=np.meshgrid(np.arange(Xmin, Xmax, res),np.arange(Ymin, Ymax, res))
 
-    return griddata((sourceAxisX.ravel(),sourceAxisY.ravel()), data.ravel(),(lon_reg, lat_reg), method='nearest')
+    return griddata((sourceAxisX.ravel(),sourceAxisY.ravel()), data.ravel(),(lon_reg, lat_reg), method=INTERPOLATION_METHOD)
 
 def resample_2d(sourceAxisX,sourceAxisY,data):
     
@@ -54,4 +57,4 @@ def resample_2d(sourceAxisX,sourceAxisY,data):
     logging.info('[InterpolatorCore] Source grid size : '+str(np.shape(sourceAxisX)))
     logging.info('[InterpolatorCore] Target grid size : '+str(np.shape(lon_reg)))
 
-    return griddata((sourceAxisX.ravel(),sourceAxisY.ravel()), data.ravel(),(lon_reg, lat_reg), method='nearest')
+    return griddata((sourceAxisX.ravel(),sourceAxisY.ravel()), data.ravel(),(lon_reg, lat_reg), method=INTERPOLATION_METHOD)

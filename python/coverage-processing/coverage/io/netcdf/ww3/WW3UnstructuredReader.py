@@ -22,10 +22,11 @@ import logging
 
 class WW3UnstructuredReader (File):
 
-    def __init__(self, symphonieGridFile,myFile):
+    def __init__(self, xsize, ysize,myFile):
         File.__init__(self,myFile);         
         self.ncfile = Dataset(self.filename, 'r')
-        self.grid = Dataset(symphonieGridFile, 'r')
+        self.x_size = xsize
+        self.y_size = ysize
         
     # Axis
     def read_axis_t(self,timestamp):
@@ -42,48 +43,48 @@ class WW3UnstructuredReader (File):
             return result;
     
     def read_axis_x(self):        
-        return self.grid.variables['longitude_t'][:]
+        return np.reshape(self.ncfile.variables['longitude'][:], (self.x_size, self.y_size))
     
     def read_axis_y(self):
-        return self.grid.variables['latitude_t'][:]
+        return np.reshape(self.ncfile.variables['latitude'][:], (self.x_size, self.y_size))
     
     # Scalar 
     def read_variable_2D_mask(self):
-        return self.ncfile.variables["MAPSTA"][:]
+        return np.reshape(self.ncfile.variables["MAPSTA"][:], (self.x_size, self.y_size))
     
     def read_variable_bathymetry(self):
-        return self.ncfile.variables["dpt"][0][:]
+        return np.reshape(self.ncfile.variables["dpt"][0][:], (self.x_size, self.y_size))
 
     def read_variable_bathymetry_at_time(self,t):
-        return self.ncfile.variables["dpt"][t][:]
+        return np.reshape(self.ncfile.variables["dpt"][t][:], (self.x_size, self.y_size))
     
     def read_variable_wlv_at_time(self,t):         
-        return self.ncfile.variables["wlv"][t][:]
+        return np.reshape(self.ncfile.variables["wlv"][t][:], (self.x_size, self.y_size))
     
     def read_variable_hs_at_time(self,t):         
-        return self.ncfile.variables["hs"][t][:]
+        return np.reshape(self.ncfile.variables["hs"][t][:], (self.x_size, self.y_size))
     
     def read_variable_waves_dir_at_time(self,t):         
-        return self.ncfile.variables["dir"][t][:]
+        return np.reshape(self.ncfile.variables["dir"][t][:], (self.x_size, self.y_size))
     
     def read_variable_waves_mean_period_at_time(self,t):         
-        return self.ncfile.variables["t01"][t][:]
+        return np.reshape(self.ncfile.variables["t01"][t][:], (self.x_size, self.y_size))
     
     def read_variable_j_pressure_at_time(self,t):         
-        return self.ncfile.variables["bhd"][t][:]
+        return np.reshape(self.ncfile.variables["bhd"][t][:], (self.x_size, self.y_size))
     
     # Vector
     def read_variable_current_at_time(self,t):
-        logging.info('[WWReader] Reading surface current')
-        return [self.ncfile.variables["ucur"][t][:], self.ncfile.variables["vcur"][t][:]]
+        logging.info('[WW3Reader] Reading surface current')
+        return [np.reshape(self.ncfile.variables["ucur"][t][:], (self.x_size, self.y_size)) , np.reshape(self.ncfile.variables["vcur"][t][:], (self.x_size, self.y_size)) ]
 
     def read_variable_taw_at_time(self,t):
-        return [self.ncfile.variables["utaw"][t][:],self.ncfile.variables["vtaw"][t][:]]
+        return [np.reshape(self.ncfile.variables["utaw"][t][:], (self.x_size, self.y_size)) ,np.reshape(self.ncfile.variables["vtaw"][t][:], (self.x_size, self.y_size)) ]
     
     def read_variable_two_at_time(self,t):
-        return [self.ncfile.variables["utwo"][t][:],self.ncfile.variables["vtwo"][t][:]]
+        return [np.reshape(self.ncfile.variables["utwo"][t][:], (self.x_size, self.y_size)) ,np.reshape(self.ncfile.variables["vtwo"][t][:], (self.x_size, self.y_size)) ]
 
     def read_variable_surface_stokes_drift_at_time(self,t):
-        return [self.ncfile.variables["uuss"][t][:],self.ncfile.variables["vuss"][t][:]]
+        return [np.reshape(self.ncfile.variables["uuss"][t][:], (self.x_size, self.y_size)) ,np.reshape(self.ncfile.variables["vuss"][t][:], (self.x_size, self.y_size)) ]
            
     

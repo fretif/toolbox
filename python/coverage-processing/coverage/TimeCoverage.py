@@ -189,6 +189,16 @@ Elle rajoute une dimension temporelle à la couverture horizontale classique.
 
         return self.reader.read_variable_wind_at_time(index_t)
 
+    def read_variable_wetmask_at_time(self,t):
+        """Retourne le masque de bancs découvrant à la date souhaitée
+    @type t: datetime ou l'index
+    @param t: date souhaitée
+    @return: un tableau [y,x]."""
+
+        index_t = self.find_time_index(t);
+
+        return self.reader.read_variable_wetmask_at_time(index_t)
+
             
         
         

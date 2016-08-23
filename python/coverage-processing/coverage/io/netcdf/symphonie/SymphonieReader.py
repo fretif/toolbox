@@ -68,6 +68,9 @@ La classe SymphonieReader permet de lire les données du format Symphonie
     def read_variable_ssh_at_time(self,t):
         return self.ncfile.variables["ssh_w"][t][:]
 
+    def read_variable_wetmask_at_time(self,t):
+        return self.ncfile.variables["wetmask_t"][t][:]
+
     def read_variable_current_at_time_and_depth(self,index_t,index_z,depth,method="nearest"):
         mask_t = self.read_variable_3D_mask();
         mask_u = self.grid.variables["mask_u"][:];

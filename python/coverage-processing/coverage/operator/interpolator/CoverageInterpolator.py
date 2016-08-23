@@ -422,5 +422,26 @@ class CoverageInterpolator(File):
             time_index += 1
 
 
+    def resample_variable_wetmask(self):
+        if self.ncfile == None:
+            raise IOError("Please call write_axis() first")
+
+        logging.info('[CoverageInterpolator] Resample variable \'wetmask\' at resolution '+str(self.targetResX)+'/'+str(self.targetResY)+'.')
+
+        var = self.ncfile.createVariable('wetmask', float32, ('time', 'latitude', 'longitude',),fill_value=9.96921e+36)
+        var.long_name = "wet_mask" ;
+        var.standard_name = "wet_mask" ;
+        var.globwave_name = "wet_mask" ;
+        var.units = "m" ;
+        #wlv.scale_factor = "1.f" ;
+        #wlv.add_offset = "0.f" ;
+        #wlv.valid_min = "0f" ;
+        #wlv.valid_max = 10000f ;
+
+        time_index=0
+        for time in self.coverage.read_axis_t():
+            var[time_index:time_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,self.coverage.read_variable_wetmask_at_time(time))
+            time_index += 1
+
 
 
