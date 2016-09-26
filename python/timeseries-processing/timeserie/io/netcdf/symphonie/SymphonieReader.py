@@ -20,7 +20,7 @@ from time import strftime
 import logging
 import pandas
 
-class WW3Reader:
+class SymphonieReader:
 
     def __init__(self, myFilename):
         self.filename = Dataset(myFilename, 'r')
@@ -28,18 +28,16 @@ class WW3Reader:
     def read_data(self):
 
         data = self.filename.variables['time'][:]
-        temp = num2date(data, units = self.filename.variables['time'].units, calendar = "julian")
+        temp = num2date(data, units = self.filename.variables['time'].units,  calendar = "gregorian") #self.filename.variables['time'].calendar)
 
         time = [ datetime.strptime(str(t), '%Y-%m-%d %H:%M:%S') \
                 for t in temp];
 
         index = pandas.DatetimeIndex(time)
 
-        hs = self.filename.variables['hs'][:,0]
-        #sea_surface_wave_mean_period
-        dir = self.filename.variables['th1m'][:,0]
+        ssh = self.filename.variables['ssh'][:,0,0]
 
-        data = pandas.DataFrame({'sea_surface_wave_significant_height' : pandas.Series(hs, index=index),'sea_surface_wave_from_direction' : pandas.Series(dir, index=index)})
+        data = pandas.DataFrame({'sea_surface_height' : pandas.Series(ssh, index=index)})
         return data
 
 
