@@ -444,4 +444,38 @@ class CoverageInterpolator(File):
             time_index += 1
 
 
+    def resample_variable_salinity_at_depths(self,vertical_method="nearest"):
+        """
+        Interpole un champ de courant au niveau donnée à la construction
+        @vertical_method: méthode d'interpolation verticale. "nearest" ou "linear"
+        """
+        if self.ncfile == None:
+            raise IOError("Please call write_axis() first")
+
+        var = self.ncfile.createVariable('salinity', float32, ('time', 'depth', 'latitude', 'longitude',),fill_value=9.96921e+36)
+        var.long_name = "salinity" ;
+        var.standard_name = "salinity" ;
+        var.globwave_name = "salinity" ;
+        var.units = "psu" ;
+        #ucur.scale_factor = 1.f ;
+        #ucur.add_offset = 0.f ;
+        #ucur.valid_min = -990 ;
+        #ucur.valid_max = 990 ;
+
+        time_index=0
+        for time in self.coverage.read_axis_t():
+
+            logging.info('[CoverageInterpolator] Resample variable \'salinity\' at time '+str(time)+' to the resolution '+str(self.targetResX)+'/'+str(self.targetResY)+'.')
+
+            level_index = 0
+            for level in self.targetDepths:
+
+                logging.info('[CoverageInterpolator] At depth '+str(level)+' m.')
+
+                var[time_index:time_index+1,level_index:level_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,self.coverage.read_variable_salinity_at_time_and_depth(time,level,vertical_method))
+
+                level_index+= 1
+
+
+            time_index += 1
 

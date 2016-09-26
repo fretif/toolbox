@@ -67,6 +67,9 @@ class WW3Reader (File):
     
     def read_variable_waves_mean_period_at_time(self,t):         
         return self.ncfile.variables["t01"][t][:]
+
+    def read_variable_waves_peak_frequency_at_time(self,t):
+        return self.ncfile.variables["fp"][t][:]
     
     def read_variable_j_pressure_at_time(self,t):         
         return self.ncfile.variables["bhd"][t][:]

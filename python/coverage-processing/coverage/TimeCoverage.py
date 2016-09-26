@@ -113,6 +113,16 @@ Elle rajoute une dimension temporelle à la couverture horizontale classique.
         index_t = self.find_time_index(t);
 
         return self.reader.read_variable_waves_mean_period_at_time(index_t)
+
+    def read_variable_waves_peak_frequency_at_time(self,t):
+        """Retourne la fréquence du pic des vagues à la date souhaitée sur toute la couverture horizontale.
+    @type t: datetime ou l'index
+    @param t: date souhaitée
+    @return: un tableau en deux dimensions [y,x]."""
+
+        index_t = self.find_time_index(t);
+
+        return self.reader.read_variable_waves_peak_frequency_at_time(index_t)
     
     def read_variable_j_pressure_at_time(self,t):    
         """Retourne la pression J due aux vagues à la date souhaitée sur toute la couverture horizontale.

@@ -68,8 +68,34 @@ La classe SymphonieReader permet de lire les données du format Symphonie
     def read_variable_ssh_at_time(self,t):
         return self.ncfile.variables["ssh_w"][t][:]
 
+    def read_variable_hs_at_time(self,t):
+        return self.ncfile.variables["hs_wave_t"][t][:]
+
+    def read_variable_waves_mean_period_at_time(self,t):
+        return self.ncfile.variables["t_wave_t"][t][:]
+
     def read_variable_wetmask_at_time(self,t):
         return self.ncfile.variables["wetmask_t"][t][:]
+
+    def read_variable_salinity_at_time_and_depth(self,index_t,index_z,depth,method="nearest"):
+        mask_t = self.read_variable_3D_mask();
+        lon_t = self.read_axis_x();
+        lat_t = self.read_axis_y();
+        xmax=np.shape(lon_t)[1]
+        ymax=np.shape(lon_t)[0]
+        data = self.ncfile.variables["sal"][index_t][:]
+        sal = np.zeros([ymax,xmax])
+        sal[:] = np.NAN
+
+        for y in range(1,ymax-1):
+            for x in range(1,xmax-1):
+
+               if index_z[y,x] != -999 : # Le point (x,y) a une couche de profondeur depth
+
+                    if mask_t[index_z[y,x],y,x] == 1.:
+                        sal[y,x] = data[index_z[y,x],y,x]
+
+        return sal
 
     def read_variable_current_at_time_and_depth(self,index_t,index_z,depth,method="nearest"):
         mask_t = self.read_variable_3D_mask();

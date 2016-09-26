@@ -43,6 +43,21 @@ Elle rajoute les dimensions temporelle et verticale à la couverture horizontale
         index_z = self.find_level_index(depth);
             
         return self.reader.read_variable_current_at_time_and_depth(index_t,index_z,depth,vertical_method)
+
+    def read_variable_salinity_at_time_and_depth(self,time,depth,vertical_method="nearest"):
+        """Retourne la salinité à la date souhaitée et au niveau souhaité sur toute la couverture horizontale.
+    @type time: datetime ou l'index
+    @param time: date souhaitée
+    @type depth: profondeur en mètre (float) ou index (integer)
+    @param depth: profondeur souhaitée. Si le z est un entier, on considère qu'il s'agit de l'index,
+    si c'est un flottant on considère qu'il s'agit d'une profondeur
+    @param vertical_method: méthode d'interpolation verticale. "linear" ou "nearest"
+    @return: un tableau en deux dimensions [y,x]."""
+
+        index_t = self.find_time_index(time);
+        index_z = self.find_level_index(depth);
+
+        return self.reader.read_variable_salinity_at_time_and_depth(index_t,index_z,depth,vertical_method)
     
        
 
