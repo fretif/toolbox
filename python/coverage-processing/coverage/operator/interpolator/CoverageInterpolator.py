@@ -366,6 +366,27 @@ class CoverageInterpolator(File):
             var[time_index:time_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,self.coverage.read_variable_waves_dir_at_time(time))
             time_index += 1
 
+    def resample_variable_waves_mean_period(self):
+        if self.ncfile == None:
+            raise IOError("Please call write_axis() first")
+
+        logging.info('[CoverageInterpolator] Resample variable \'waves_mean_period\' at resolution '+str(self.targetResX)+'/'+str(self.targetResY)+'.')
+
+        var = self.ncfile.createVariable('waves_mean_period', float32, ('time', 'latitude', 'longitude',),fill_value=9.96921e+36)
+        var.long_name = "surface wave mean period" ;
+        var.standard_name = "surface_wave_mean_period" ;
+        var.globwave_name = "surface_wave_mean_period" ;
+        var.units = "deg" ;
+        #wlv.scale_factor = "1.f" ;
+        #wlv.add_offset = "0.f" ;
+        #wlv.valid_min = "0f" ;
+        #wlv.valid_max = 10000f ;
+
+        time_index=0
+        for time in self.coverage.read_axis_t():
+            var[time_index:time_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,self.coverage.read_variable_waves_mean_period_at_time(time))
+            time_index += 1
+
 
     def resample_variable_2D_mask(self):
         if self.ncfile == None:
@@ -470,7 +491,10 @@ class CoverageInterpolator(File):
             level_index = 0
             for level in self.targetDepths:
 
-                logging.info('[CoverageInterpolator] At depth '+str(level)+' m.')
+                if type(level) == int:
+                    logging.info('[CoverageInterpolator] At index level '+str(level)+'')
+                else:
+                    logging.info('[CoverageInterpolator] At depth '+str(level)+' m.')
 
                 var[time_index:time_index+1,level_index:level_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,self.coverage.read_variable_salinity_at_time_and_depth(time,level,vertical_method))
 

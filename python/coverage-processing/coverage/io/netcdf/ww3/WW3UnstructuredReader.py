@@ -86,5 +86,8 @@ class WW3UnstructuredReader (File):
 
     def read_variable_surface_stokes_drift_at_time(self,t):
         return [np.reshape(self.ncfile.variables["uuss"][t][:], (self.x_size, self.y_size)) ,np.reshape(self.ncfile.variables["vuss"][t][:], (self.x_size, self.y_size)) ]
+
+    def read_variable_wind_at_time(self,t):
+        return [np.reshape(self.ncfile.variables["uwnd"][t][:], (self.x_size, self.y_size)) ,np.reshape(self.ncfile.variables["vwnd"][t][:], (self.x_size, self.y_size)) ]
            
     
