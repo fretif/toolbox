@@ -21,12 +21,19 @@ gmtset MAP_TICK_PEN_PRIMARY 0.01c
 gmtset MAP_GRID_PEN_SECONDARY 0.015c,0/0/0,solid
 gmtset MAP_GRID_CROSS_SIZE_SECONDARY 0
 gmtset MAP_TICK_PEN_SECONDARY 0.01c
-gmtset FONT_ANNOT_SECONDARY white
+
+gmtset FONT_ANNOT_PRIMARY 10p,Helvetica,black
+gmtset FONT_ANNOT_SECONDARY black
+
+gmtset MAP_TICK_LENGTH_SECONDARY 5p
 
 gmtset PS_LINE_JOIN miter
 gmtset PS_LINE_CAP butt
 gmtset PS_MITER_LIMIT 180
 LANG=en_us_8859_1
+
+gmtset FORMAT_DATE_MAP=dd/mm
+gmtset FORMAT_CLOCK_MAP=hh:mm
 
 #################
 #	CONFIG File	#
@@ -56,15 +63,20 @@ then
 fi
 
 paramR="-R$startTime/$endTime/$Zmin/$Zmax"
+
 paramJ="-JX25cT/10c"
 paramJText="-JX25c/10c"
+
+#paramJ="-JX10cT/5c"
+#paramJText="-JX10c/5c"
 
 parsedTime="${startTime:0:4}-${startTime:5:2}-${startTime:8:2}"
 startTimeTitle=`date --date="$parsedTime" "+%d %B %Y"`
 parsedTime="${endTime:0:4}-${endTime:5:2}-${endTime:8:2}"
 endTimeTitle=`date --date="$parsedTime" "+%d %B %Y"`
 
-psbasemap $paramR $paramJ -Bsx${secondAnnotX} -Bpx${annontX}+l"${titleX}" -Bpy${annontY}+l"${titleY}" -BWS  -K > ${outfile}.ps
+#psbasemap $paramR $paramJ -Bsx${secondAnnotX} -Bpx${annontX}+l"${titleX}" -Bpy${annontY}+l"${titleY}" -BWS  -K > ${outfile}.ps
+psbasemap $paramR $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontY}+l"${titleY}" -BWS  -K > ${outfile}.ps
 
 # Plot typhoons
 #	nb=0
@@ -179,7 +191,7 @@ for index in "${!files[@]}"; do
 				       sec   = substr($1,18,2);      
 				       dateGMT = year"-"month"-"day"T"hour":"min":"sec;				       
 				       printf("%s %s\n",dateGMT,$'${columns[$index]}'); 	  
-				     }' $file > ${workingDir}/file.tmp				
+				     }' $file > ${workingDir}/file.tmp					     
 
 			elif [[ "${format}" == "ww3" ]] 
 			then
@@ -256,21 +268,24 @@ for index in "${!files[@]}"; do
 			#then
 			#	cp ${workingDir}/file.tmp .
 			#fi
-			
 			if [[ "${style}" == "circle" ]] 
 			then			    
-				psxy ${workingDir}/file.tmp $paramR $paramJ -Sc0.1 -G$color -O -K >> ${outfile}.ps
+				  psxy ${workingDir}/file.tmp $paramR $paramJ -Sc0.1 -W0.3p,$color,solid -O -K >> ${outfile}.ps
+			  
+			elif [[ "${style}" == "circlef" ]] 
+			then			    
+				  psxy ${workingDir}/file.tmp $paramR $paramJ -Sc0.1 -G$color -W0.3p,$color,solid -O -K >> ${outfile}.ps
 			else
-				psxy ${workingDir}/file.tmp $paramR $paramJ -W1p,$color,$style -O -K >> ${outfile}.ps #-Y`echo "0.3 * $index" | bc -l`
-				#psxy ${workingDir}/file.tmp $paramR $paramJ -W1p,$color,$style -O -K -Y`echo "0.5 * $index" | bc -l` >> ${outfile}.ps
-			fi			
+				  psxy ${workingDir}/file.tmp $paramR $paramJ -W1p,$color,$style -O -K >> ${outfile}.ps #-Y`echo "0.3 * $index" | bc -l`
+				  #psxy ${workingDir}/file.tmp $paramR $paramJ -W1p,$color,$style -O -K -Y`echo "0.5 * $index" | bc -l` >> ${outfile}.ps
+			fi				
 
-			if [[ "${style}" == "circle" ]] 
-			then
-			  echo "S 0.1i - 0.15i - thin,$color,solid 0.3i $fileTitle" >> ${workingDir}/legend
-			else
-			  echo "S 0.1i - 0.15i - thin,$color,$style 0.3i $fileTitle" >> ${workingDir}/legend
-			fi
+			if [[ "${style}" == "circle" ]] || [[ "${style}" == "circlef" ]] 
+			    then
+			      echo "S 0.1i c 0.1i - thin,$color,solid 0.3i $fileTitle" >> ${workingDir}/legend
+			    else
+			      echo "S 0.1i - 0.15i - thin,$color,$style 0.3i $fileTitle" >> ${workingDir}/legend
+			 fi
 			(( countFiles ++))
 
 		else
@@ -283,10 +298,11 @@ for index in "${!files[@]}"; do
 
 done
 
-echo "5 9.5 $startTimeTitle - $endTimeTitle" | pstext -R0/10/0/10 $paramJText -Y1 -O -K >> ${outfile}.ps
-echo "5 9 $title" | pstext -R -J -Y1.2 -O -K >> ${outfile}.ps
+#echo "5 9.5 $startTimeTitle - $endTimeTitle" | pstext -R0/10/0/10 $paramJText -Y1 -O -K >> ${outfile}.ps
+#echo "5 9 $title" | pstext -R -J -Y1.2 -O -K >> ${outfile}.ps
 
-pslegend ${workingDir}/legend $paramR $paramJ -Dx-0.2i/`echo "0.2*$countFiles" | bc -l`i/5i/3.3i/BL -O >> ${outfile}.ps
+#pslegend ${workingDir}/legend $paramR $paramJ -Dx-0.2i/`echo "0.2*$countFiles" | bc -l`i/5i/3.3i/BL -O >> ${outfile}.ps
+pslegend ${workingDir}/legend $paramR $paramJ -Dx0.1i/0i+w4.2i/0.9i+jBL+l1.2 -F+p0.3p+gwhite -Y8 -O >> ${outfile}.ps
 
 ps2raster ${outfile}.ps -A -E300 -Tg -P
 
