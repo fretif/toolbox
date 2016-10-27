@@ -27,14 +27,27 @@ if __name__ == "__main__":
     logging.basicConfig(format='[%(levelname)s] %(message)s',level=logging.INFO)
     
     # Read file
-    reader = SymphonieReader('/home/retf/work/fieldsites/med-cruesim/modelling/hydro/gulf-of-lion/graphiques/grid.nc',
-                             '/home/retf/work/fieldsites/med-cruesim/modelling/hydro/gulf-of-lion/graphiques/20110320_000002.nc')
-        
+    reader = SymphonieReader('GRAPHIQUES/grid.nc',
+                             'GRAPHIQUES/20110320_000002.nc')
+
     coverage = TimeLevelCoverage(reader);
 
-    interpolator = CoverageInterpolator(coverage,0.01,0.01,'/home/retf/work/fieldsites/med-cruesim/modelling/hydro/gulf-of-lion/graphiques/test_resample.nc') # résolution voulue en degrès
-    interpolator.resample_variable_current_at_level(5.0) # on peut donner la profondeur en mètres positifs ou en index de couche verticale.
-    interpolator.resample_variable_ssh()
+    interpolator = CoverageInterpolator(coverage,0.02,0.02,'GRAPHIQUES/20110220_regular.nc',
+                                        []) # résolution voulue en degrès
+    #interpolator = CoverageInterpolator(coverage,0.02,0.02,'GRAPHIQUES/20110220_regular.nc',
+    #                                    [0.0,10.0,50.0,150.0,200.0,250.0,300.0,350.0,400.0,450.0,500.0,550.0,600.0,650.0,700.0,750.0,850.0,900.0,950.0,1000.0,1100.0,1200.0,1300.0,1400.0,1500.0,1600.0,1700.0,1800.0,1900.0,2000.0,2300.0,2400.0,2500.0,2600.0,2700.0,2850.0,2870.0]) # résolution voulue en degrès
+
+
+    #interpolator.resample_variable_current_at_depths()
+    interpolator.resample_variable_salinity_at_depths()
+    #interpolator.resample_variable_ssh()
+    #interpolator.resample_variable_current()
+    #interpolator.resample_variable_2D_mask()
+    #interpolator.resample_variable_waves_dir()
+    #interpolator.resample_variable_hs()
+    #interpolator.resample_variable_wind()
+    #interpolator.resample_variable_mesh_size()
+    #interpolator.resample_variable_wetmask()
     interpolator.close()
     
     print 'End of programm'
