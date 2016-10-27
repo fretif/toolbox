@@ -20,11 +20,12 @@ class LevelCoverage(Coverage):
 La classe LevelCoverage est une extension de la classe Coverage.
 Elle rajoute une dimension verticale à la couverture horizontale classique.
 """
-    LEVEL_DELTA = 0.1; #meters
+    LEVEL_DELTA = 5; #meters
     
     def __init__(self, myReader):
         Coverage.__init__(self,myReader);
         self.levels = self.read_axis_z();
+        self.last_index = None
         
     # Axis
     def read_axis_z(self):
@@ -48,13 +49,17 @@ Elle rajoute une dimension verticale à la couverture horizontale classique.
     @return:  un entier correspondant à la taille de l'axe z."""
         return np.shape(self.levels)[0];
     
-    def find_level_index(self,depth):
+    def find_level_index(self,depth,force=False):
         """Retourne l'index de la profondeur la plus proche selon le point le plus proche.
     @type depth : integer ou flottant
     @param depth: Profondeur en mètre souhaitée ou index de la profondeur souhaitée
     @method : Méthode de calcul pour converger.
+    @force : Force un recalcul des indices
     @return:  un tableau de l'indice de la couche verticale inférieur la plus proche en chacun point de la grille. z < vert_coord[y,x] et z > vert_coord[y,x]+1.
     Les valeurs masquées valent -999."""
+
+        if not force and not self.last_index is None:
+            return self.last_index
 
         xmax=self.get_x_size()
         ymax=self.get_y_size()
@@ -96,6 +101,8 @@ Elle rajoute une dimension verticale à la couverture horizontale classique.
         if found == False:
                 raise ValueError(""+str(depth)+" was not found. Maybe the LevelCoverage.LEVEL_DELTA ("+ str(LevelCoverage.LEVEL_DELTA)+"m) is too small or the depth is out the range.")
 
+        # On sauvegarde les index
+        self.last_index = vert_coord
         # On retourne le tableau d'index
         return vert_coord
 
