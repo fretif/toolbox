@@ -15,10 +15,13 @@
 import numpy as np
 import pandas
 from pandas import DatetimeIndex
+from datetime import timedelta
 
-class TimeSerie:  
+class TimeSerie:
     """"""
-   
+
+    TIME_DELTA = timedelta(minutes = 15)
+
     def __init__(self,myReader,freq,start=None,end=None):
             
         self.reader = myReader;
@@ -70,12 +73,13 @@ class TimeSerie:
     def get_time_size(self):
         return np.shape(self.time_range)[0]; 
     
-    def read_data(self,force=False):
+    def read_data(self,force=False,raw=False):
         """
 
         Parameters
         ----------
         force : Force la lecture, sinon on retourne la donnée en mémoire self.data
+        raw : Force à renvoyer la donnes brute du lecteur, sans bouchage des trous, sans reindexation du temps.
 
         Returns
         -------
@@ -86,13 +90,18 @@ class TimeSerie:
 
             self.data = self.reader.read_data();
 
+            if raw == True:
+                return self.data;
+
             if self.time_range is None:
                 self.time_range = pandas.date_range(start=self.data.index[0], end=self.data.index[self.data.index.size-1],freq=self.freq);
 
             if isinstance(self.data.index,DatetimeIndex):
-                self.data = self.data.reindex(self.time_range, fill_value=np.nan);
+                self.data = self.data.reindex(self.time_range,method="nearest", fill_value=np.nan, tolerance=TimeSerie.TIME_DELTA);
             else:
                 self.data = self.data.set_index(pandas.DatetimeIndex(self.time_range))
+
+        print self.data
 
         return self.data;
         
@@ -132,11 +141,16 @@ class TimeSerie:
         else:
             raise ValueError("None sea_surface_wave_mean_period variable")
     
-    def resample(self,freq,startTime,endTime,method="fill_na"):
+    def resample(self,freq,start,end,method="fill_na"):
 
-        self.time_range = pandas.date_range(start=startTime, end=endTime,freq=freq)
-        self.data = self.data.reindex(self.time_range, fill_value=np.nan)
+        if self.data is None:
+            self.data = self.reader.read_data();
+
+        self.time_range = pandas.date_range(start=start, end=end,freq=freq)
+        self.data = self.data.reindex(self.time_range,method="nearest", fill_value=np.nan, tolerance=TimeSerie.TIME_DELTA);
 
         if method=="linear":
             self.data = self.data.interpolate(method='linear')
+
+        return self.data
 
