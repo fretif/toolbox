@@ -147,6 +147,24 @@ class CoverageInterpolator(File):
 
         var[:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,self.coverage.read_variable_mesh_size())
 
+    def resample_variable_Ha(self):
+        if self.ncfile == None:
+            raise IOError("Please call write_axis() first")
+
+        logging.info('[CoverageInterpolator] Resample variable \'Ha\' to the resolution '+str(self.targetResX)+'/'+str(self.targetResY)+'.')
+
+        var = self.ncfile.createVariable('Ha', float32, ('latitude', 'longitude',),fill_value=9.96921e+36)
+        var.long_name = "Amplitude tide comp" ;
+        var.standard_name = "amp_tide_comp" ;
+        var.globwave_name = "amp_tide_comp" ;
+        var.units = "m" ;
+        #wlv.scale_factor = "1.f" ;
+        #wlv.add_offset = "0.f" ;
+        #wlv.valid_min = "0f" ;
+        #wlv.valid_max = 10000f ;
+
+        var[:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,self.coverage.read_variable_Ha())
+
     def resample_variable_ssh(self):
         if self.ncfile == None:
             raise IOError("Please call write_axis() first")
@@ -502,4 +520,5 @@ class CoverageInterpolator(File):
 
 
             time_index += 1
+
 

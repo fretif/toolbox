@@ -64,6 +64,9 @@ La classe SymphonieReader permet de lire les données du format Symphonie
     
     def read_variable_bathymetry(self): 
         return self.grid.variables["hm_w"][:]
+
+    def read_variable_Ha(self):
+        return self.ncfile.variables["Ha"][:]
     
     def read_variable_ssh_at_time(self,t):
         return self.ncfile.variables["ssh_w"][t][:]

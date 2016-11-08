@@ -205,6 +205,11 @@ Soit l'axe y en premier puis l'axe x. Exemple : [y,x]
             1 = Mer
     """
         return self.reader.read_variable_2D_mask()
+
+    def read_variable_Ha(self):
+        """Retourne l'amplitude de la réanalyse
+    @return: un tableau en deux dimensions [y,x]."""
+        return self.reader.read_variable_Ha()
     
     # ATMOS    
     def read_variable_topography(self):     
