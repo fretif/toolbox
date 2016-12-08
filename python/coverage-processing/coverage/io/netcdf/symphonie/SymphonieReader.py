@@ -344,14 +344,75 @@ La classe SymphonieReader permet de lire les données du format Symphonie
 
     def read_variable_wind_at_time(self,index_t):
         mask_t = self.read_variable_2D_mask();
+        lon_t = self.read_axis_x();
+        lat_t = self.read_axis_y();
+        data_u = self.ncfile.variables["uwind_t"][index_t][::]
+        data_v = self.ncfile.variables["vwind_t"][index_t][::]
+
+        xmax=np.shape(lon_t)[1]
+        ymax=np.shape(lon_t)[0]
+        gridrotcos_t = np.zeros([ymax,xmax])
+        gridrotsin_t = np.zeros([ymax,xmax])
+
+        u = np.zeros([ymax,xmax])
+        u[:] = np.NAN
+        v = np.zeros([ymax,xmax])
+        v[:] = np.NAN
+        u_rot = np.zeros([ymax,xmax])
+        u_rot[:] = np.NAN
+        v_rot = np.zeros([ymax,xmax])
+        v_rot[:] = np.NAN
+
+        # 1. On calcule les points à l'intérieur du domaine en excluant les bords
+        for y in range(1,ymax-1):
+            for x in range(1,xmax-1):
+
+                # 1.1 On calcule la matrice de rotation
+                x1=(lon_t[y,x+1]-lon_t[y,x-1])*np.pi/180.
+                if(x1<-np.pi): x1=x1+2.*np.pi
+                if(x1> np.pi): x1=x1-2.*np.pi
+                x0=-np.arctan2((lat_t[y,x+1]-lat_t[y,x-1])*np.pi/180.,x1*np.cos(lat_t[y,x]*np.pi/180.))
+                gridrotcos_t[y,x]=np.cos(x0)
+                gridrotsin_t[y,x]=np.sin(x0)
+
+                if mask_t[y,x] == 1.:
+
+                    # 1.4 On applique la rotation
+                    u_rot[y,x]=u[y,x]*gridrotcos_t[y,x]+v[y,x]*gridrotsin_t[y,x]
+                    v_rot[y,x]=-u[y,x]*gridrotsin_t[y,x]+v[y,x]*gridrotcos_t[y,x]
+
+        # 2. On duplique les points sur les bords.
+        # bottom
+        u_rot[0,0:xmax]=u_rot[1,0:xmax]
+        v_rot[0,0:xmax]=v_rot[1,0:xmax]
+        # up
+        u_rot[ymax-1,0:xmax]=u_rot[ymax-2,0:xmax]
+        v_rot[ymax-1,0:xmax]=v_rot[ymax-2,0:xmax]
+
+        # left
+        u_rot[0:ymax,0]=u_rot[0:ymax,1]
+        v_rot[0:ymax,0]=v_rot[0:ymax,1]
+        # right
+        u_rot[0:ymax,xmax-1]=u_rot[0:ymax,xmax-2]
+        v_rot[0:ymax,xmax-1]=v_rot[0:ymax,xmax-2]
+
+        return [u_rot,v_rot]
+
+    def read_variable_taw_at_time(self,index_t):
+        mask_t = self.read_variable_2D_mask();
         mask_u = self.grid.variables["mask_u"][:];
         mask_v = self.grid.variables["mask_v"][:];
         lon_t = self.read_axis_x();
         lat_t = self.read_axis_y();
         depth_t = self.read_axis_z()
         size_depth_t = np.shape(depth_t)[0];
-        data_u = self.ncfile.variables["uwind_t"][index_t][::]
-        data_v = self.ncfile.variables["vwind_t"][index_t][::]
+        depth_u = self.grid.variables['depth_u'][::]
+        depth_u[::] *= -1.0 # inverse la profondeur
+        depth_v = self.grid.variables['depth_v'][::]
+        depth_v[::] *= -1.0 # inverse la profondeur
+
+        data_u = self.ncfile.variables["wstress_u"][index_t][::]
+        data_v = self.ncfile.variables["wstress_v"][index_t][::]
 
         xmax=np.shape(lon_t)[1]
         ymax=np.shape(lon_t)[0]

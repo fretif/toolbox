@@ -101,7 +101,7 @@ class TimeSerie:
             else:
                 self.data = self.data.set_index(pandas.DatetimeIndex(self.time_range))
 
-        print self.data
+
 
         return self.data;
         

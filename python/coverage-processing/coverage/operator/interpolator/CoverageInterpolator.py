@@ -460,6 +460,42 @@ class CoverageInterpolator(File):
             vcur[time_index:time_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[1])
             time_index += 1
 
+    def resample_variable_surface_stokes_drift(self):
+
+        if self.ncfile == None:
+            raise IOError("Please call write_axis() first")
+
+        logging.info('[CoverageInterpolator] Resample variable \'surface_stokes_drift\' to the resolution '+str(self.targetResX)+'/'+str(self.targetResY)+'.')
+
+        ucur = self.ncfile.createVariable('uuss', float32, ('time', 'latitude', 'longitude',),fill_value=9.96921e+36)
+        ucur.long_name = "eastward surface stokes drift" ;
+        ucur.standard_name = "eastward_surface_stokes_drift" ;
+        ucur.globwave_name = "eastward_surface_stokes_drift" ;
+        ucur.units = "m s-1" ;
+        #ucur.scale_factor = 1.f ;
+        #ucur.add_offset = 0.f ;
+        #ucur.valid_min = -990 ;
+        #ucur.valid_max = 990 ;
+        ucur.comment = "cur=sqrt(U**2+V**2)" ;
+
+        vcur = self.ncfile.createVariable('vuss', float32, ('time', 'latitude', 'longitude',),fill_value=9.96921e+36)
+        vcur.long_name = "northward surface stokes drift" ;
+        vcur.standard_name = "northward_surface_stokes_drift" ;
+        vcur.globwave_name = "northward_surface_stokes_drift" ;
+        vcur.units = "m s-1" ;
+        #ucur.scale_factor = 1.f ;
+        #ucur.add_offset = 0.f ;
+        #ucur.valid_min = -990 ;
+        #ucur.valid_max = 990 ;
+        vcur.comment = "cur=sqrt(U**2+V**2)" ;
+
+        time_index=0
+        for time in self.coverage.read_axis_t():
+            cur = self.coverage.read_variable_surface_stokes_drift_at_time(time)
+            ucur[time_index:time_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[0])
+            vcur[time_index:time_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[1])
+            time_index += 1
+
 
     def resample_variable_wetmask(self):
         if self.ncfile == None:
