@@ -3,24 +3,26 @@
 #########################
 #	Better looklike		#
 #########################
-#gmtset COLOR_BACKGROUND  220/220/220
-#gmtset COLOR_FOREGROUND 50/50/20
-#gmtset COLOR_NAN 255/255/255
-gmtset MAP_FRAME_TYPE fancy
-gmtset MAP_FRAME_WIDTH 0.1c
-gmtset MAP_FRAME_PEN 0.05c
-gmtset MAP_TICK_PEN_PRIMARY 0.01c
-gmtset MAP_ANNOT_OFFSET_PRIMARY 0.05c
-gmtset MAP_LABEL_OFFSET 0.25c
-gmtset MAP_ANNOT_OBLIQUE 32
-gmtset MAP_ANNOT_MIN_SPACING 1c
-gmtset MAP_GRID_CROSS_SIZE_PRIMARY 0
-gmtset MAP_GRID_PEN_PRIMARY 0.015c,0/0/0,.
-gmtset MAP_GRID_PEN_SECONDARY 0.015c,0/0/0
-gmtset PS_LINE_JOIN miter
-gmtset PS_LINE_CAP butt
-gmtset PS_MITER_LIMIT 180
+function set_default_style {
+  gmtset COLOR_BACKGROUND  255/255/255
+  gmtset COLOR_FOREGROUND 255/255/255
+  gmtset COLOR_NAN 255/255/255
+  gmtset MAP_FRAME_TYPE fancy
+  gmtset MAP_FRAME_WIDTH 0.1c
+  gmtset MAP_FRAME_PEN 0.05c
+  gmtset MAP_TICK_PEN_PRIMARY 0.01c
+  gmtset MAP_ANNOT_OFFSET_PRIMARY 0.05c
+  gmtset MAP_LABEL_OFFSET 0.25c
+  gmtset MAP_ANNOT_OBLIQUE 32
+  gmtset MAP_ANNOT_MIN_SPACING 4c
+  gmtset MAP_GRID_PEN_PRIMARY 0.015c,black,. # dotted-line
+  gmtset PS_LINE_JOIN miter
+  gmtset PS_LINE_CAP butt
+  gmtset PS_MITER_LIMIT 180
+}
+
 LANG=en_us_8859_1
+set_default_style
 
 # 1. Import config file
 
@@ -59,10 +61,45 @@ endSecondTime=`date -u --date="$parsedEndTime" "+%s"`
 file=$(basename "$infile")
 filename="${file%.*}"
 
-#Compute envelope
+#Check variables
+gmtconvert $infile?ssh > /dev/null 2> ${workingDir}/check_variable
+if [[ `cat ${workingDir}/check_variable | grep "Variable not found" -c` -eq 0 ]]
+then
+  var=ssh
+fi
 
-#Select variable according to the name
-grdinfo -C $infile?hs > ${workingDir}/minmax 
+gmtconvert $infile?hs > /dev/null 2> ${workingDir}/check_variable
+if [[ `cat ${workingDir}/check_variable | grep "Variable not found" -c` -eq 0 ]]
+then
+  var=hs
+fi
+
+gmtconvert $infile?uwind > /dev/null 2> ${workingDir}/check_variable
+if [[ `cat ${workingDir}/check_variable | grep "Variable not found" -c` -eq 0 ]]
+then
+  var=uwind
+fi
+
+gmtconvert $infile?ucur > /dev/null 2> ${workingDir}/check_variable
+if [[ `cat ${workingDir}/check_variable | grep "Variable not found" -c` -eq 0 ]]
+then
+  var=ucur
+fi
+
+gmtconvert $infile?utaw > /dev/null 2> ${workingDir}/check_variable
+if [[ `cat ${workingDir}/check_variable | grep "Variable not found" -c` -eq 0 ]]
+then
+  var=utaw
+fi
+
+if [[ ! -n $var ]]
+then
+  echo "No ssh or hs variables found. Unable to compute the envelope. Abort"
+  exit
+fi
+
+#Compute envelope
+grdinfo -C $infile?$var > ${workingDir}/minmax 
 
 if [[ ! -n "$Xmin" && ! -n "$Xmax" && ! -n "$Ymin" && ! -n "$Ymax" ]]
 then		
@@ -100,20 +137,22 @@ do
 
 	var="sea-surface-height"
 	if test $ssh -eq 1;
-	then				
+	then	
+		set_default_style #reset style
 		source $basedir/gmt-scripts/ssh.sh
 	fi
 
 	var="barotropic-current"	
 	if test $barotropicCurrent -eq 1;
 	then
-				
+		set_default_style #reset style		
 		source $basedir/gmt-scripts/barotropicCurrent.sh
 	fi
 	
 	var="surface-current"			
 	if test $surfaceCurrent -eq 1;
 	then									
+		set_default_style #reset style
 		source $basedir/gmt-scripts/surfaceCurrent.sh
 	fi
 
@@ -121,76 +160,96 @@ do
 	if test $surfaceTemperature -eq 1 ;
 	then	
 		
+		set_default_style #reset style
 		source $basedir/gmt-scripts/temperature.sh
 	fi
 
 	var="surface-salinity"	
 	if test $surfaceSalinity -eq 1;
 	then					
+		set_default_style #reset style
 		source $basedir/gmt-scripts/salinity.sh
 	fi
 
 	var="middle-current"	
 	if test $middleCurrent -eq 1;
 	then				
+		set_default_style #reset style
 		source $basedir/gmt-scripts/middleCurrent.sh
 	fi
 
 	var="bottom-current"	
 	if test $bottomCurrent -eq 1;
 	then				
+		set_default_style #reset style
 		source $basedir/gmt-scripts/bottomCurrent.sh
 	fi
 
 	var="wind-stress"	
 	if test $windStress -eq 1;
 	then				
+		set_default_style #reset style
 		source $basedir/gmt-scripts/windStress.sh
 	fi
 
 	var="inverse-barometer"	
 	if test $inverseBarometer -eq 1;
 	then				
+		set_default_style #reset style
 		source $basedir/gmt-scripts/ib.sh
 	fi
 
 	var="hs-wave"	
 	if test $hs -eq 1;
 	then					
+		set_default_style #reset style
 		source $basedir/gmt-scripts/hs.sh
 	fi
 	
 	var="two"	
 	if test $two -eq 1;
 	then					
+		set_default_style #reset style
 		source $basedir/gmt-scripts/two.sh
 	fi
 	
 	var="two-momentum-flux"	
 	if test $twoMomentumFlux -eq 1;
 	then					
+		set_default_style #reset style		
 		source $basedir/gmt-scripts/two-momentum-flux.sh
 	fi
 	
 	var="taw"	
 	if test $taw -eq 1;
 	then					
+		set_default_style #reset style
 		source $basedir/gmt-scripts/taw.sh
 	fi
 	
 	var="taw-momentum-flux"	
 	if test $tawMomentumFlux -eq 1;
 	then					
+		set_default_style #reset style
 		source $basedir/gmt-scripts/taw-momentum-flux.sh
 	fi 
 	
 	var="wind"	
 	if test $wind -eq 1;
 	then					
+		set_default_style #reset style
 		source $basedir/gmt-scripts/wind.sh
+	fi
+	
+	var="surfaceStokesDrift"	
+	if test $stokesDrift -eq 1;
+	then					
+		set_default_style #reset style
+		source $basedir/gmt-scripts/surfaceStokesDrift.sh
 	fi
   fi
 
+  
   ((tIndex ++))
 
 done	
@@ -204,6 +263,28 @@ fi
 if test $meshSize -eq 1
 then
 	source $basedir/gmt-scripts/meshSize.sh
+fi
+
+#Export to MOV
+if test $surfaceTemperature -eq 1
+then
+	var="surface-temperature"		
+
+	if test $exportToMov -eq 1
+	then
+		source $basedir/exportToMov.sh
+	fi
+fi
+
+if test $surfaceSalinity -eq 1
+then
+	var="surface-salinity"
+	source $basedir/gmt-scripts/salinity.sh
+
+	if test $exportToMov -eq 1
+	then
+		source $basedir/exportToMov.sh
+	fi
 fi
 
 rm *.eps

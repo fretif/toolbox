@@ -4,8 +4,8 @@ if [[ ! -n "${workingDir}" ]]
 then
 	echo "You execute this script outside the master script. We use the configuration below."
 	workingDir="/tmp"
-	outDir="/NAS/data/fieldsites/taiwan/modelling/hydro/simulations/regional/KRC-WIND-001/basic-processing/png/saola/total/"
-	var="wind-stress"
+	outDir="/home/retf/work/fieldsites/med-cruesim/modelling/hydro/gulf-of-lion/processing/mars-2013/map/png/"
+	var="surface-salinity"
 	echo "Output dir = $outDir"
 	echo "Variable = $var"
 fi
