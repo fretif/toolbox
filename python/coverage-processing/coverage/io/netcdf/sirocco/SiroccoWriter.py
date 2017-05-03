@@ -362,3 +362,40 @@ class SiroccoWriter (File):
             ucur[time_index:time_index+1,:,:] = cur[0]
             vcur[time_index:time_index+1,:,:] = cur[1]
             time_index += 1
+
+    def write_variable_wind(self):
+
+        if self.ncfile == None:
+            raise IOError("Please call write_axis() first")
+
+        ucur = self.ncfile.createVariable('uwind', float32, ('time','latitude', 'longitude',),fill_value=9.96921e+36)
+        ucur.long_name = "eastward wind 10m" ;
+        ucur.standard_name = "eastward_wind_velocity" ;
+        ucur.globwave_name = "eastward_wind_velocity" ;
+        ucur.units = "m s-1" ;
+        #ucur.scale_factor = 1.f ;
+        #ucur.add_offset = 0.f ;
+        #ucur.valid_min = -990 ;
+        #ucur.valid_max = 990 ;
+
+
+        vcur = self.ncfile.createVariable('vwind', float32, ('time', 'latitude', 'longitude',),fill_value=9.96921e+36)
+        vcur.long_name = "northward wind 10m" ;
+        vcur.standard_name = "northward_wind_velocity" ;
+        vcur.globwave_name = "northward_wind_velocity" ;
+        vcur.units = "m s-1" ;
+        #ucur.scale_factor = 1.f ;
+        #ucur.add_offset = 0.f ;
+        #ucur.valid_min = -990 ;
+        #ucur.valid_max = 990 ;
+
+        time_index=0
+        for time in self.coverage.read_axis_t():
+
+            logging.info('[SiroccoWriter] Writing variable \'wind\' at time \''+str(time)+'\'')
+
+            cur = self.coverage.read_variable_wind_at_time(time)
+
+            ucur[time_index:time_index+1,:,:] = cur[0]
+            vcur[time_index:time_index+1,:,:] = cur[1]
+            time_index += 1

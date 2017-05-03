@@ -129,6 +129,24 @@ class CoverageInterpolator(File):
 
         var[:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,self.coverage.read_variable_topography())
 
+    def resample_variable_bathymetry(self):
+        if self.ncfile == None:
+            raise IOError("Please call write_axis() first")
+
+        logging.info('[CoverageInterpolator] Resample variable \'bathymetry\' to the resolution '+str(self.targetResX)+'/'+str(self.targetResY)+'.')
+
+        var = self.ncfile.createVariable('bathy', float32, ('latitude', 'longitude',),fill_value=9.96921e+36)
+        var.long_name = "bathymetry" ;
+        var.standard_name = "bathymetry" ;
+        var.globwave_name = "bathymetry" ;
+        var.units = "m" ;
+        #wlv.scale_factor = "1.f" ;
+        #wlv.add_offset = "0.f" ;
+        #wlv.valid_min = "0f" ;
+        #wlv.valid_max = 10000f ;
+
+        var[:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,self.coverage.read_variable_bathymetry())
+
     def resample_variable_mesh_size(self):
         if self.ncfile == None:
             raise IOError("Please call write_axis() first")
@@ -165,6 +183,27 @@ class CoverageInterpolator(File):
 
         var[:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,self.coverage.read_variable_Ha())
 
+    def resample_variable_waves_bottom_dissipation(self):
+        if self.ncfile == None:
+            raise IOError("Please call write_axis() first")
+
+        logging.info('[CoverageInterpolator] Resample variable \'waves_bottom_dissipation\' at resolution '+str(self.targetResX)+'/'+str(self.targetResY)+'.')
+
+        wlv = self.ncfile.createVariable('waves_bottom_dissipation', float32, ('time', 'latitude', 'longitude',),fill_value=9.96921e+36)
+        wlv.long_name = "waves bottom dissipation" ;
+        wlv.standard_name = "waves_bottom_dissipation" ;
+        wlv.globwave_name = "waves_bottom_dissipation" ;
+        wlv.units = "W m-2" ;
+        #wlv.scale_factor = "1.f" ;
+        #wlv.add_offset = "0.f" ;
+        #wlv.valid_min = "0f" ;
+        #wlv.valid_max = 10000f ;
+
+        time_index=0
+        for time in self.coverage.read_axis_t():
+            wlv[time_index:time_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,self.coverage.read_variable_waves_bottom_dissipation_at_time(time))
+            time_index += 1
+
     def resample_variable_ssh(self):
         if self.ncfile == None:
             raise IOError("Please call write_axis() first")
@@ -184,6 +223,27 @@ class CoverageInterpolator(File):
         time_index=0
         for time in self.coverage.read_axis_t():
             wlv[time_index:time_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,self.coverage.read_variable_ssh_at_time(time))
+            time_index += 1
+
+    def resample_variable_bathy_ssh(self):
+        if self.ncfile == None:
+            raise IOError("Please call write_axis() first")
+
+        logging.info('[CoverageInterpolator] Resample variable \'bathy_ssh\' at resolution '+str(self.targetResX)+'/'+str(self.targetResY)+'.')
+
+        wlv = self.ncfile.createVariable('bathy_ssh', float32, ('time', 'latitude', 'longitude',),fill_value=9.96921e+36)
+        wlv.long_name = "sea surface height above sea level" ;
+        wlv.standard_name = "sea_surface_height_above_sea_level" ;
+        wlv.globwave_name = "sea_surface_height_above_sea_level" ;
+        wlv.units = "m" ;
+        #wlv.scale_factor = "1.f" ;
+        #wlv.add_offset = "0.f" ;
+        #wlv.valid_min = "0f" ;
+        #wlv.valid_max = 10000f ;
+
+        time_index=0
+        for time in self.coverage.read_axis_t():
+            wlv[time_index:time_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,self.coverage.read_variable_bathy_ssh_at_time(time))
             time_index += 1
 
     def resample_variable_current_at_depths(self,vertical_method="nearest"):

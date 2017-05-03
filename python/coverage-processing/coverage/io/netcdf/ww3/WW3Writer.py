@@ -12,16 +12,12 @@ import logging
 
 class WW3Writer (File):
 
-    def __init__(self, myFile):   
-        File.__init__(self,myFile); 
+    def __init__(self, cov,myFile):
+        File.__init__(self,myFile);
+        self.coverage = cov;
         self.ncfile = None
-        
-    def close(self):
-        self.ncfile.close() 
-        
-    def write_axis(self,coverage):
-        
-        if coverage.is_regular_grid()==True:
+
+        if self.coverage.is_regular_grid()==True:
             raise IOError("This writer is specific to non-regular grid.")   
         
         self.ncfile = Dataset(self.filename, 'w', format='NETCDF4')
@@ -29,8 +25,8 @@ class WW3Writer (File):
 
         # dimensions
         self.ncfile.createDimension('time', None)
-        self.ncfile.createDimension('latitude', coverage.get_y_size())
-        self.ncfile.createDimension('longitude', coverage.get_x_size())
+        self.ncfile.createDimension('latitude', self.coverage.get_y_size())
+        self.ncfile.createDimension('longitude', self.coverage.get_x_size())
 
         # variables
         times = self.ncfile.createVariable('time', float64, ('time',))
@@ -57,11 +53,14 @@ class WW3Writer (File):
         longitudes.axis = "X" ; 
         
          # data
-        latitudes[:,:] = coverage.read_axis_y();
-        longitudes[:,:] = coverage.read_axis_x(); 
-        times[:] = date2num(coverage.read_axis_t(), units = times.units, calendar = times.calendar)        
+        latitudes[:,:] = self.coverage.read_axis_y();
+        longitudes[:,:] = self.coverage.read_axis_x();
+        times[:] = date2num(self.coverage.read_axis_t(), units = times.units, calendar = times.calendar)
+
+    def close(self):
+        self.ncfile.close()
             
-    def write_variable_ssh(self,coverage):
+    def write_variable_ssh(self):
         if self.ncfile == None:
             raise IOError("Please call write_axis() first") 
             
@@ -76,15 +75,15 @@ class WW3Writer (File):
         #wlv.valid_max = 10000f ;
         
         time_index=0
-        for time in coverage.read_axis_t():
+        for time in self.coverage.read_axis_t():
             logging.info('[WW3Writer] Writing variable \'wlv\' at time \''+str(time)+'\'')
             #wlv[time_index:time_index+1,:] = coverage.read_variable_ssh_at_time(time)
-            s = coverage.read_variable_ssh_at_time(time)
+            s = self.coverage.read_variable_ssh_at_time(time)
             s += 0.4466
             wlv[time_index:time_index+1,:] = s
             time_index += 1
             
-    def write_variable_current_at_level(self,coverage,z):
+    def write_variable_current_at_level(self,z):
         
         if self.ncfile == None:
             raise IOError("Please call write_axis() first")   
@@ -112,16 +111,16 @@ class WW3Writer (File):
         vcur.comment = "cur=sqrt(U**2+V**2)" ;
 
         time_index=0
-        for time in coverage.read_axis_t():
+        for time in self.coverage.read_axis_t():
 
             logging.info('[WW3Writer] Writing variable \'current\' at time \''+str(time)+'\'')
-            cur = coverage.read_variable_current_at_time_and_level(time,z)
+            cur = self.coverage.read_variable_current_at_time_and_level(time,z)
 
             ucur[time_index:time_index+1,:,:] = cur[0]
             vcur[time_index:time_index+1,:,:] = cur[1]
             time_index += 1
 
-    def write_variable_current(self,coverage):
+    def write_variable_current(self):
 
         if self.ncfile == None:
             raise IOError("Please call write_axis() first")
@@ -149,17 +148,17 @@ class WW3Writer (File):
         vcur.comment = "cur=sqrt(U**2+V**2)" ;
 
         time_index=0
-        for time in coverage.read_axis_t():
+        for time in self.coverage.read_axis_t():
 
             logging.info('[WW3Writer] Writing variable \'current\' at time \''+str(time)+'\'')
-            cur = coverage.read_variable_current_at_time(time)
+            cur = self.coverage.read_variable_current_at_time(time)
 
             ucur[time_index:time_index+1,:,:] = cur[0]
             vcur[time_index:time_index+1,:,:] = cur[1]
             time_index += 1
 
 
-    def write_variable_hs(self,coverage):
+    def write_variable_hs(self):
         if self.ncfile == None:
             raise IOError("Please call write_axis() first")
 
@@ -174,12 +173,12 @@ class WW3Writer (File):
         #wlv.valid_max = 10000f ;
 
         time_index=0
-        for time in coverage.read_axis_t():
+        for time in self.coverage.read_axis_t():
             logging.info('[WW3Writer] Writing variable \'hs\' at time \''+str(time)+'\'')
-            var[time_index:time_index+1,:] = coverage.read_variable_hs_at_time(time)
+            var[time_index:time_index+1,:] = self.coverage.read_variable_hs_at_time(time)
             time_index += 1
         
-    def write_variable_2D_mask(self,coverage):
+    def write_variable_2D_mask(self):
         if self.ncfile == None:
             raise IOError("Please call write_axis() first")
 
@@ -194,7 +193,63 @@ class WW3Writer (File):
         #wlv.valid_max = 10000f ;
 
         logging.info('[WW3Writer] Writing variable \'2D mask\'')
-        var[:] = coverage.read_variable_2D_mask()
+        var[:] = self.coverage.read_variable_2D_mask()
+
+    def write_variable_waves_dir(self):
+        if self.ncfile == None:
+            raise IOError("Please call write_axis() first")
+
+        var = self.ncfile.createVariable('waves_dir', float32, ('time', 'latitude', 'longitude',),fill_value=9.96921e+36)
+        var.long_name = "waves_dir" ;
+        var.standard_name = "waves_dir" ;
+        var.globwave_name = "waves_dir" ;
+        var.units = "deg" ;
+        #wlv.scale_factor = "1.f" ;
+        #wlv.add_offset = "0.f" ;
+        #wlv.valid_min = "0f" ;
+        #wlv.valid_max = 10000f ;
+
+        time_index=0
+        for time in self.coverage.read_axis_t():
+            logging.info('[WW3Writer] Writing variable \'waves_dir\' at time \''+str(time)+'\'')
+            var[time_index:time_index+1,:] = self.coverage.read_variable_waves_dir_at_time(time)
+            time_index += 1
+
+    def write_variable_surface_stokes_drift(self):
+        if self.ncfile == None:
+            raise IOError("Please call write_axis() first")
+
+        ucur = self.ncfile.createVariable('uss', float32, ('time', 'latitude', 'longitude',),fill_value=9.96921e+36)
+        ucur.long_name = "eastward surface_stokes_drift" ;
+        ucur.standard_name = "eastward_sea_water_velocity" ;
+        ucur.globwave_name = "eastward_sea_water_velocity" ;
+        ucur.units = "m s-1" ;
+        #ucur.scale_factor = 1.f ;
+        #ucur.add_offset = 0.f ;
+        #ucur.valid_min = -990 ;
+        #ucur.valid_max = 990 ;
+        ucur.comment = "cur=sqrt(U**2+V**2)" ;
+
+        vcur = self.ncfile.createVariable('vss', float32, ('time', 'latitude', 'longitude',),fill_value=9.96921e+36)
+        vcur.long_name = "northward surface_stokes_drift" ;
+        vcur.standard_name = "northward_sea_water_velocity" ;
+        vcur.globwave_name = "northward_sea_water_velocity" ;
+        vcur.units = "m s-1" ;
+        #ucur.scale_factor = 1.f ;
+        #ucur.add_offset = 0.f ;
+        #ucur.valid_min = -990 ;
+        #ucur.valid_max = 990 ;
+        vcur.comment = "cur=sqrt(U**2+V**2)" ;
+
+        time_index=0
+        for time in self.coverage.read_axis_t():
+
+            logging.info('[WW3Writer] Writing variable \'surface_stokes_drift\' at time \''+str(time)+'\'')
+            cur = self.coverage.read_variable_surface_stokes_drift_at_time(time)
+
+            ucur[time_index:time_index+1,:,:] = cur[0]
+            vcur[time_index:time_index+1,:,:] = cur[1]
+            time_index += 1
 
        
     

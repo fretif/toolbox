@@ -18,8 +18,8 @@ import numpy as np
 
 class InterpolatorCore:
 
-    INTERPOLATION_METHOD = "nearest";
-    #INTERPOLATION_METHOD = "linear";
+    #INTERPOLATION_METHOD = "nearest";
+    INTERPOLATION_METHOD = "linear";
 
 def resample_2d_to_grid(sourceAxisX,sourceAxisY,targetAxisX, targetAixsY,data):
     

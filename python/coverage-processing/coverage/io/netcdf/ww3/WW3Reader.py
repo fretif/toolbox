@@ -52,8 +52,11 @@ class WW3Reader (File):
         #mask += 1.0 # inverse le mask
         #mask %= 2 # inverse le mask
         return mask
-    
-    def read_variable_bathy_at_time(self,t):         
+
+    def read_variable_bathymetry(self):
+        return self.ncfile.variables["dpt"][0][:]
+
+    def read_variable_bathymetry_at_time(self,t):
         return self.ncfile.variables["dpt"][t][:]
     
     def read_variable_ssh_at_time(self,t):
@@ -61,18 +64,31 @@ class WW3Reader (File):
     
     def read_variable_hs_at_time(self,t):
         return self.ncfile.variables["hs"][t][:]
+
+    def read_variable_waves_breaking_height_at_time(self,t):
+        return self.ncfile.variables["wch"][t][:]
     
-    def read_variable_waves_dir_at_time(self,t):         
-        return self.ncfile.variables["dir"][t][:]
+    def read_variable_waves_dir_at_time(self,t):
+        #attention en ce qui concerne les conventions d'angle en meteorologie. celles ci
+        # sont appliquées par ww3. en meteo, un vent venant du nord a une direction de 0°,
+        # un vent venant de l'est a une direction de 90°. par consequent il faut corriger
+        # cette convention en faisant 270°-angle
+        return 270.-self.ncfile.variables["dir"][t][:]
     
     def read_variable_waves_mean_period_at_time(self,t):         
         return self.ncfile.variables["t01"][t][:]
 
     def read_variable_waves_peak_frequency_at_time(self,t):
         return self.ncfile.variables["fp"][t][:]
+
+    def read_variable_waves_bottom_dissipation_at_time(self,t):
+        return self.ncfile.variables["fbb"][t][:]
     
     def read_variable_j_pressure_at_time(self,t):         
         return self.ncfile.variables["bhd"][t][:]
+
+    def read_variable_waves_to_ocean_energy_flux_at_time(self,t):
+        return self.ncfile.variables["foc"][t][:]
     
     # Vector
     def read_variable_current_at_time(self,t):

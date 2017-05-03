@@ -155,7 +155,6 @@ Soit l'axe y en premier puis l'axe x. Exemple : [y,x]
         nearest_lat = np.nan
 
         if method=="classic":
-        
             for x in range(0, self.get_x_size()):
                 for y in range(0, self.get_y_size()):
 

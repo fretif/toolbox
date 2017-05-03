@@ -64,8 +64,12 @@ class WW3UnstructuredReader (File):
     def read_variable_hs_at_time(self,t):         
         return np.reshape(self.ncfile.variables["hs"][t][:], (self.x_size, self.y_size))
     
-    def read_variable_waves_dir_at_time(self,t):         
-        return np.reshape(self.ncfile.variables["dir"][t][:], (self.x_size, self.y_size))
+    def read_variable_waves_dir_at_time(self,t):
+         #attention en ce qui concerne les conventions d'angle en meteorologie. celles ci
+        # sont appliquées par ww3. en meteo, un vent venant du nord a une direction de 0°,
+        # un vent venant de l'est a une direction de 90°. par consequent il faut corriger
+        # cette convention en faisant 270°-angle
+        return 270.-np.reshape(self.ncfile.variables["dir"][t][:], (self.x_size, self.y_size))
     
     def read_variable_waves_mean_period_at_time(self,t):         
         return np.reshape(self.ncfile.variables["t01"][t][:], (self.x_size, self.y_size))

@@ -72,6 +72,16 @@ Elle rajoute une dimension temporelle à la couverture horizontale classique.
         index_t = self.find_time_index(t);
        
         return self.reader.read_variable_ssh_at_time(index_t)
+
+    def read_variable_bathy_ssh_at_time(self,t):
+        """Retourne l'élévation de la surface libre + la bathy à la date souhaitée sur toute la couverture horizontale.
+    @type t: datetime ou l'index
+    @param t: date souhaitée
+    @return: un tableau en deux dimensions [y,x]."""
+
+        index_t = self.find_time_index(t);
+
+        return self.reader.read_variable_bathy_ssh_at_time(index_t)
     
     def read_variable_current_at_time(self,t):
         """Retourne les composantes u,v du courant à la date souhaitée
@@ -103,6 +113,26 @@ Elle rajoute une dimension temporelle à la couverture horizontale classique.
         index_t = self.find_time_index(t);
 
         return self.reader.read_variable_waves_dir_at_time(index_t)
+
+    def read_variable_waves_breaking_height_at_time(self,t):
+        """Retourne la hauteur de déferlement des vagues à la date souhaitée sur toute la couverture horizontale.
+    @type t: datetime ou l'index
+    @param t: date souhaitée
+    @return: un tableau en deux dimensions [y,x]."""
+
+        index_t = self.find_time_index(t);
+
+        return self.reader.read_variable_waves_breaking_height_at_time(index_t)
+
+    def read_variable_waves_to_ocean_energy_flux_at_time(self,t):
+        """Retourne la waves_to_ocean_energy_flux à la date souhaitée sur toute la couverture horizontale.
+    @type t: datetime ou l'index
+    @param t: date souhaitée
+    @return: un tableau en deux dimensions [y,x]."""
+
+        index_t = self.find_time_index(t);
+
+        return self.reader.read_variable_waves_to_ocean_energy_flux_at_time(index_t)
     
     def read_variable_waves_mean_period_at_time(self,t):    
         """Retourne la période moyenne des vagues à la date souhaitée sur toute la couverture horizontale.
@@ -135,7 +165,7 @@ Elle rajoute une dimension temporelle à la couverture horizontale classique.
         return self.reader.read_variable_j_pressure_at_time(index_t)
     
     def read_variable_surface_stokes_drift_at_time(self,t):
-        """Retourne la composante u de la dérive de Stokes en surface à la date souhaitée sur toute la couverture horizontale.
+        """Retourne la dérive de Stokes en surface à la date souhaitée sur toute la couverture horizontale.
     @type t: datetime ou l'index
     @param t: date souhaitée
     @return: un tableau en deux dimensions [y,x]."""
@@ -143,6 +173,16 @@ Elle rajoute une dimension temporelle à la couverture horizontale classique.
         index_t = self.find_time_index(t);
 
         return self.reader.read_variable_surface_stokes_drift_at_time(index_t)
+
+    def read_variable_waves_bottom_dissipation_at_time(self,t):
+        """Retourne la l'énergie des vagues dissipée par le fond à la date souhaitée sur toute la couverture horizontale.
+    @type t: datetime ou l'index
+    @param t: date souhaitée
+    @return: un tableau en deux dimensions [y,x]."""
+
+        index_t = self.find_time_index(t);
+
+        return self.reader.read_variable_waves_bottom_dissipation_at_time(index_t)
 
     
     def read_variable_taw_at_time(self,t):
@@ -154,9 +194,6 @@ Elle rajoute une dimension temporelle à la couverture horizontale classique.
         index_t = self.find_time_index(t);
 
         return self.reader.read_variable_taw_at_time(index_t)
-    
-
-        return self.reader.read_variable_v_taw_at_time(index_t)
     
     def read_variable_two_at_time(self,t):
         """Retourne la composante u du tau vagues->ocean à la date souhaitée sur toute la couverture horizontale.
