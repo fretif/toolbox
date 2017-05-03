@@ -36,13 +36,18 @@ class WW3Reader:
         index = pandas.DatetimeIndex(time)
 
         hs = self.filename.variables['hs'][:,0]
-        t = self.filename.variables['fp'][:,0]
-        dir = self.filename.variables['th1m'][:,0]
+        t = self.filename.variables['tp'][:,0]
+        #dir = self.filename.variables['th1m'][:,0]
 
-        data = pandas.DataFrame({'sea_surface_wave_significant_height' : pandas.Series(hs, index=index),'sea_surface_wave_mean_period' : pandas.Series(t, index=index),'sea_surface_wave_from_direction' : pandas.Series(dir, index=index)})
+        # hs, tp
+        data = pandas.DataFrame({'sea_surface_wave_significant_height' : pandas.Series(hs, index=index),'sea_surface_wave_mean_period' : pandas.Series(t, index=index)})
+        # hs, dir
+        #data = pandas.DataFrame({'sea_surface_wave_significant_height' : pandas.Series(hs, index=index),'sea_surface_wave_from_direction' : pandas.Series(dir, index=index)})
+        # hs, tp, dir
+        #data = pandas.DataFrame({'sea_surface_wave_significant_height' : pandas.Series(hs, index=index),'sea_surface_wave_mean_period' : pandas.Series(t, index=index),'sea_surface_wave_from_direction' : pandas.Series(dir, index=index)})
 
-        toPeriod = lambda x:1/x
-        data['sea_surface_wave_mean_period'] = data['sea_surface_wave_mean_period'].apply(toPeriod)
+        #toPeriod = lambda x:1/x
+        #data['sea_surface_wave_mean_period'] = data['sea_surface_wave_mean_period'].apply(toPeriod)
         return data
 
 
