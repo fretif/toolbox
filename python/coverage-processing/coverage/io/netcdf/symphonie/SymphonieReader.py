@@ -31,7 +31,7 @@ La classe SymphonieReader permet de lire les données du format Symphonie
     # Axis
     def read_axis_t(self,timestamp=0):
         data = self.ncfile.variables['time'][:]         
-        result = num2date(data, units = self.ncfile.variables['time'].units.replace('from','since').replace('mar','03').replace('feb','02'), calendar = self.ncfile.variables['time'].calendar)
+        result = num2date(data, units = self.ncfile.variables['time'].units.replace('from','since').replace('mar','03').replace('feb','02').replace('jun','06'), calendar = self.ncfile.variables['time'].calendar)
         
         if timestamp ==1:           
             return [ (t - TimeCoverage.TIME_DATUM).total_seconds() \
@@ -79,6 +79,9 @@ La classe SymphonieReader permet de lire les données du format Symphonie
 
     def read_variable_waves_mean_period_at_time(self,t):
         return self.ncfile.variables["t_wave_t"][t][:]
+
+    def read_variable_waves_dir_at_time(self, t):
+        return self.ncfile.variables["dir_wave_t"][t][:]
 
     def read_variable_wetmask_at_time(self,t):
         return self.ncfile.variables["wetmask_t"][t][:]

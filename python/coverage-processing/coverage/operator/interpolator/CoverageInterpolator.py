@@ -69,16 +69,16 @@ class CoverageInterpolator(File):
         latitudes.units = "degree_north" ;
         latitudes.long_name = "latitude" ;
         latitudes.standard_name = "latitude" ;
-        latitudes.valid_min = "-90.f";
-        latitudes.valid_max = "90.f" ;
+        latitudes.valid_min = "-90.";
+        latitudes.valid_max = "90." ;
         latitudes.axis = "Y" ;
 
         longitudes = self.ncfile.createVariable('longitude', float32, ('longitude',))
         longitudes.units = "degree_east" ;
         longitudes.long_name = "longitude" ;
         longitudes.standard_name = "longitude" ;
-        longitudes.valid_min = "-180.f" ;
-        longitudes.valid_max = "180.f" ;
+        longitudes.valid_min = "-180." ;
+        longitudes.valid_max = "180." ;
         longitudes.axis = "X" ;
 
         # data

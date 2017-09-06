@@ -37,6 +37,7 @@ class WW3Reader:
 
         hs = self.filename.variables['hs'][:,0]
         t = self.filename.variables['tp'][:,0]
+        #t = 1/self.filename.variables['fp'][:,0]
         #dir = self.filename.variables['th1m'][:,0]
 
         # hs, tp
