@@ -48,7 +48,7 @@ cd ~/softs/source
 wget http://zlib.net/zlib-1.2.11.tar.gz
 tar xvfz zlib-1.2.11.tar.gz
 cd zlib-1.2.11
-./configure --prefix=$wd/softs/zlib/zlib-1.2.11
+./configure --prefix=$wd/softs/zlib/zlib-1.2.11 --libdir=$wd/softs/zlib/zlib-1.2.11/lib
 make || exit 1
 make install || exit 1
 
@@ -57,7 +57,7 @@ cd ~/softs/source
 wget https://support.hdfgroup.org/ftp/HDF5/current/src/hdf5-1.10.1.tar.gz
 tar xvfz hdf5-1.10.1.tar.gz
 cd hdf5-1.10.1
-./configure --prefix=$wd/softs/hdf5/hdf5-1.10.1 --with-zlib=$wd/softs/zlib/zlib-1.2.11
+./configure --prefix=$wd/softs/hdf5/hdf5-1.10.1 --libdir=$wd/softs/hdf5/hdf5-1.10.1/lib --with-zlib=$wd/softs/zlib/zlib-1.2.11
 make || exit 1
 make install || exit 1
 
@@ -66,7 +66,7 @@ cd ~/softs/source
 wget ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-4.4.1.1.tar.gz
 tar xvfz netcdf-4.4.1.1.tar.gz
 cd netcdf-4.4.1.1
-./configure --prefix=$wd/softs/netcdf/netcdf-4.4.1.1 CPPFLAGS="-I$wd/softs/zlib/zlib-1.2.11/include -I$wd/softs/hdf5/hdf5-1.10.1/include" LDFLAGS="-L$wd/softs/hdf5/hdf5-1.10.1/lib -L$wd/softs/zlib/zlib-1.2.11/lib"
+./configure --prefix=$wd/softs/netcdf/netcdf-4.4.1.1 --libdir=$wd/softs/netcdf/netcdf-4.4.1.1/lib CPPFLAGS="-I$wd/softs/zlib/zlib-1.2.11/include -I$wd/softs/hdf5/hdf5-1.10.1/include" LDFLAGS="-L$wd/softs/hdf5/hdf5-1.10.1/lib -L$wd/softs/zlib/zlib-1.2.11/lib"
 make || exit 1
 make install || exit 1
 
@@ -125,7 +125,7 @@ cd ~/softs/source
 wget ftp://ftp.unidata.ucar.edu/pub/udunits/udunits-2.2.25.tar.gz
 tar xvfz udunits-2.2.25.tar.gz
 cd  udunits-2.2.25
-./configure --prefix=$wd/softs/udunits/udunits-2.2.25
+./configure --prefix=$wd/softs/udunits/udunits-2.2.25 --libdir=$wd/softs/udunits/udunits-2.2.25/lib
 make || exit 1
 make install || exit 1
 
