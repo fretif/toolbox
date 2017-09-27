@@ -29,20 +29,18 @@ if __name__ == "__main__":
     print("Transform waves data to SIROCCO format")
     
     logging.basicConfig(format='[%(levelname)s] %(message)s',level=logging.INFO)
-    
-    outDir="/tmp/"
-    
-     #
-    # Data from Puertos
-    #
-    sourceDirPuertos="/home/retf/work/fieldsites/med-cruesim/observations/waves/raw-data/PUERTOS/"
 
-    ## CaboBegur
-    reader = PuertosOceanReader(sourceDirPuertos+'REDEXT_T_HIS_CaboBegur.dat')
-    serie = TimeSerie(reader,'H','2010-01-01','2016-01-01');
-    serie.name_station = "CABO-BEGUR"
-    serie.data_source = "Puertos del Estado"
-    serie.meta_data="Burst = 26 min"
+    sourceDir = "./"
+    outDir="/tmp/"
+
+    ## Bouée_1
+    reader = CandhisReader(sourceDir+'CANDHIS_wave_data.csv')
+    serie = TimeSerie(reader,'30min','2013-12-09 00:00:00','2013-12-10 00:00:00');
+    serie.name_station = "Bouée_1"
+    serie.data_source = "CANDHIS"
+    serie.meta_data="Burst = 26 min\n" \
+                    "# Ligne 1 \n" \
+                    "# Ligne 2"
     serie.x_coord="3.65"
     serie.y_coord="41.92"
     logging.info(str(serie.name_station))

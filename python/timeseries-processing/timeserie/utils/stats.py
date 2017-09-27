@@ -11,7 +11,6 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-
 import numpy as np
 
 #  Return the correlation coefficient of two time series (observed, modelized)
