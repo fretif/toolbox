@@ -30,23 +30,21 @@ if __name__ == "__main__":
     logging.basicConfig(format='[%(levelname)s] %(message)s',level=logging.INFO)
     
     # Read file
-    reader = MercatorReader('/home/retf/work/fieldsites/med-cruesim/modelling/mercator/grid/mercator_grid.nc',
-                            '/home/retf/work/fieldsites/med-cruesim/modelling/mercator/netcdf/mercator-grid2D-2012-2013.nc',
-                            '/home/retf/work/fieldsites/med-cruesim/modelling/mercator/netcdf/mercator-gridT-2012-2013.nc',
-                            '/home/retf/work/fieldsites/med-cruesim/modelling/mercator/netcdf/mercator-gridU-2012-2013.nc',
-                            '/home/retf/work/fieldsites/med-cruesim/modelling/mercator/netcdf/mercator-gridV-2012-2013.nc')
+    reader = MercatorReader('/home/fabien/mercator/ext-PSY2V4R4_mask.nc',
+                            '/home/fabien/mercator/ext-PSY2V4R4_1dAV_20130201_20130202_grid2D_R20130213.nc',
+                            '/home/fabien/mercator/ext-PSY2V4R4_1dAV_20130201_20130202_gridT_R20130213.nc',
+                            '/home/fabien/mercator/ext-PSY2V4R4_1dAV_20130201_20130202_gridU_R20130213.nc',
+                            '/home/fabien/mercator/ext-PSY2V4R4_1dAV_20130201_20130202_gridV_R20130213.nc')
         
     coverage = TimeLevelCoverage(reader); 
     
-    writer = WW3Writer('/home/retf/work/fieldsites/med-cruesim/modelling/waves/med/config/mercator/mercator-2014-2016.nc')
-    #writer = WW3Writer('/home/retf/work/fieldsites/med-cruesim/modelling/mercator/netcdf/test.nc')
+    writer = WW3Writer(coverage,'/tmp/ww3.mercator-forcing.nc')
 
-    writer.write_axis(coverage);    
-    writer.write_variable_ssh(coverage);
-    writer.write_variable_current_at_level(coverage,0);
+    writer.write_variable_ssh();
+    writer.write_variable_current_at_depth(0);
     writer.close()    
     
-    print 'End of programm'
+    print('End of programm')
      
     
     

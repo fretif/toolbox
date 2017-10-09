@@ -42,6 +42,9 @@ class MercatorReader:
 
     def read_variable_3D_mask(self):
         return self.mask.variables["tmask"][0][:]
+
+    def read_variable_4D_mask(self):
+        return self.mask.variables["tmask"]
     
     def read_variable_ssh_at_time(self,t):
         return self.grid2D.variables["sossheig"][t][:]
@@ -51,7 +54,7 @@ class MercatorReader:
         if method != "nearest":
             raise ValueError("Only method 'nearest' is implemented yet.")
 
-        mask_t = self.read_variable_mask();
+        mask_t = self.read_variable_4D_mask();
         mask_u = self.mask.variables["umask"][:];
         mask_v = self.mask.variables["vmask"][:];
         lon_t = self.read_axis_x();

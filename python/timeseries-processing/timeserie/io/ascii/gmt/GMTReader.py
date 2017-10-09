@@ -36,6 +36,6 @@ class GMTReader:
         data = data.set_index(pandas.DatetimeIndex(data['time'])) 
         data = data.drop('time',1)
 
-        print data
+        #print data
 
         return data

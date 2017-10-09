@@ -40,7 +40,7 @@ Elle rajoute une dimension temporelle à la couverture horizontale classique.
             return t;
         elif type(t) == datetime:
             zero_delta = timedelta(minutes = 00)
-            for i in xrange(self.get_t_size()):
+            for i in range(self.get_t_size()):
 
                 if self.times[i] - t == zero_delta or self.times[i] - t > TimeCoverage.TIME_DELTA:
                     return i

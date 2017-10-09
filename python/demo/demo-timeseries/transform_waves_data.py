@@ -47,7 +47,7 @@ if __name__ == "__main__":
     writer = SiroccoWriter(outDir+str(serie.name_station)+'_wave_'+str(serie.time_range[0].strftime("%Y"))+'_to_'+str(serie.time_range[serie.time_range.size-1].strftime("%Y"))+'.dat');
     writer.write_waves(serie)
       
-    print 'End of programm'
+    print('End of programm')
      
     
     

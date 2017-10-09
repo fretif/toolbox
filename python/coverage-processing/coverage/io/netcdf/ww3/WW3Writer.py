@@ -40,16 +40,16 @@ class WW3Writer (File):
         latitudes.units = "degree_north" ;
         latitudes.long_name = "latitude" ;
         latitudes.standard_name = "latitude" ;
-        latitudes.valid_min = "-90.f";
-        latitudes.valid_max = "90.f" ;
+        latitudes.valid_min = "-90.0";
+        latitudes.valid_max = "90.0" ;
         latitudes.axis = "Y" ;
         
         longitudes = self.ncfile.createVariable('longitude', float32, ('latitude','longitude',))
         longitudes.units = "degree_east" ;
         longitudes.long_name = "longitude" ;
         longitudes.standard_name = "longitude" ;
-        longitudes.valid_min = "-180.f" ;
-        longitudes.valid_max = "180.f" ;
+        longitudes.valid_min = "-180.0" ;
+        longitudes.valid_max = "180.0" ;
         longitudes.axis = "X" ; 
         
          # data
@@ -83,7 +83,7 @@ class WW3Writer (File):
             wlv[time_index:time_index+1,:] = s
             time_index += 1
             
-    def write_variable_current_at_level(self,z):
+    def write_variable_current_at_depth(self,z):
         
         if self.ncfile == None:
             raise IOError("Please call write_axis() first")   
@@ -114,7 +114,7 @@ class WW3Writer (File):
         for time in self.coverage.read_axis_t():
 
             logging.info('[WW3Writer] Writing variable \'current\' at time \''+str(time)+'\'')
-            cur = self.coverage.read_variable_current_at_time_and_level(time,z)
+            cur = self.coverage.read_variable_current_at_time_and_depth(time,z)
 
             ucur[time_index:time_index+1,:,:] = cur[0]
             vcur[time_index:time_index+1,:,:] = cur[1]

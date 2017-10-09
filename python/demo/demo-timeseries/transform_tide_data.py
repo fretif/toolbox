@@ -33,7 +33,7 @@ if __name__ == "__main__":
     
     ## AJACCIO_ASPRETTO Données REFMAR
 
-    reader = RefmarReader('/home/retf/work/fieldsites/med-cruesim/observations/sea-level/raw-data/REFMAR/Ajaccio_aspretto.txt')
+    reader = RefmarReader('~/Ajaccio_aspretto.txt')
     serie = TimeSerie(reader,'H','2010-01-01','2016-01-01');
     serie.name_station = "AJACCIO_ASPRETTO"
     serie.data_source = "SHOM / OCA / Marine nationale"
@@ -44,7 +44,7 @@ if __name__ == "__main__":
     writer = SiroccoWriter(outDir+str(serie.name_station)+'_tide_'+str(serie.time_range[0].strftime("%Y"))+'_to_'+str(serie.time_range[serie.time_range.size-1].strftime("%Y"))+'.dat');
     writer.write_tide(serie)
       
-    print 'End of programm'
+    print('End of programm')
      
     
     

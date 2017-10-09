@@ -30,16 +30,16 @@ if __name__ == "__main__":
     logging.basicConfig(format='[%(levelname)s] %(message)s',level=logging.INFO)
     
     # Read file
-    reader = WW3Reader('/home/retf/work/fieldsites/med-cruesim/modelling/waves/med/outputs/netcdf/ww3.201103.nc')
+    reader = WW3Reader('ww3.sample.nc')
         
     coverage = TimeCoverage(reader);
 
-    interpolator = CoverageInterpolator(coverage,0.01,0.01,'/home/retf/work/fieldsites/med-cruesim/modelling/waves/med/outputs/netcdf/regular/ww3.201103.nc') # résolution voulue en degrès
-    interpolator.resample_variable_current()
-    interpolator.resample_variable_ssh()
+    interpolator = CoverageInterpolator(coverage,0.1,0.1,'/tmp/ww3.sample-regular.nc',[]) # résolution voulue en degrès
+    interpolator.resample_variable_waves_mean_period()
+    interpolator.resample_variable_hs()
     interpolator.close()
     
-    print 'End of programm'
+    print('End of programm')
      
     
     

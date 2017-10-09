@@ -284,7 +284,10 @@ class CoverageInterpolator(File):
             level_index = 0
             for level in self.targetDepths:
 
-                logging.info('[CoverageInterpolator] At depth '+str(level)+' m.')
+                if type(level) == int:
+                    logging.info('[CoverageInterpolator] At index level '+str(level)+'')
+                else:
+                    logging.info('[CoverageInterpolator] At depth '+str(level)+' m.')
 
                 cur = self.coverage.read_variable_current_at_time_and_depth(time,level,vertical_method)
                 ucur[time_index:time_index+1,level_index:level_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[0])
@@ -414,8 +417,8 @@ class CoverageInterpolator(File):
         var.units = "m" ;
         #wlv.scale_factor = "1.f" ;
         #wlv.add_offset = "0.f" ;
-        #wlv.valid_min = "0f" ;
-        #wlv.valid_max = 10000f ;
+        #var.valid_min = 0. ;
+        #var.valid_max = 100.;
 
         time_index=0
         for time in self.coverage.read_axis_t():

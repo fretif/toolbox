@@ -2,12 +2,15 @@
 # To change this template file, choose Tools | Templates
 # and open the template in the editor.
 
-import os.path
-import pandas
 import logging
+import os.path
+
 import numpy as np
-from utils.jdutil import jd_to_datetime
-from utils.jdutil import date_to_jd
+import pandas
+
+from timeserie.utils.jdutil import date_to_jd
+from timeserie.utils.jdutil import jd_to_datetime
+
 
 def parse(jd):
     return jd_to_datetime(float(jd)+HymexReader.TIME_DATUM)

@@ -47,10 +47,10 @@ if __name__ == "__main__":
     var_si = si(result.sea_surface_wave_significant_height_obs,result.sea_surface_wave_significant_height_model)
     var_maxerr = maxerr(result.sea_surface_wave_significant_height_obs,result.sea_surface_wave_significant_height_model)
 
-    print var_cor,var_bias,var_maxerr,var_rmse
+    print('COR=',var_cor,'BIAS=',var_bias,'MAXERR=',var_maxerr,'RMSE=',var_rmse)
 
 
-    print 'End of programm'
+    print('End of programm')
 
     
        

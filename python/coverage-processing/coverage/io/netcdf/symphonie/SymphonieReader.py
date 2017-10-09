@@ -176,7 +176,6 @@ La classe SymphonieReader permet de lire les données du format Symphonie
                             u_left_z1 = data_u[index_z[y,x],y,x-1];
                             u_left_z2 = data_u[index_z[y,x]+vert_inc,y,x-1];
                             u_left = u_left_z2*r + (1-r)*u_left_z1
-                            print u_left_z1,u_left_z2,u_left
 
                         elif method == "nearest" and mask_u[index_z[y,x],y,x-1] == 1.:
                             # Pas d'interpolation, on prend le plus proche inférieur

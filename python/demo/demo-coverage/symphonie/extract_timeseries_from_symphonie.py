@@ -39,37 +39,36 @@ if __name__ == "__main__":
     ## Configuration ##
     ######################################
 
-    reader = SymphonieReader('/work/thesis/taiwan/modelling/hydro/regional/KRF-HYDRO-002/graphiques/grille.nc',
-                             '/work/thesis/taiwan/modelling/hydro/regional/KRF-HYDRO-002/graphiques/simu_full_hydro_waves.nc')
+    reader = SymphonieReader('/home/fabien/grille.nc',
+                             '/home/fabien/symphonie_var.nc')
 
     coverage = TimeLevelCoverage(reader);
 
-
-    fakeReader = MemoryReader('')
-    binderObs = TimeSerie(fakeReader, freq='30min', start='2012-06-20T00:00:00', end='2012-06-20T12:00:00', );
-    binderObs.name_station = "Jiangjun"
-    binderObs.data_source = "Simu FULL-HYDRO"
-    binderObs.vertical_datum = "TWVD2001"
-    binderObs.x_coord = 120.0167
-    binderObs.y_coord = 23.2125
-    binderObs.data = DataFrame(index=binderObs.time_range,
-                               columns=('sea_surface_wave_significant_height',
+    memReader = MemoryReader('')
+    serie = TimeSerie(memReader, freq='30min', start='2012-06-19T18:00:00', end='2012-06-19T23:00:00');
+    serie.name_station = "Jiangjun"
+    serie.data_source = "Simu FULL-HYDRO"
+    serie.vertical_datum = "TWVD2001"
+    serie.x_coord = 120.0167
+    serie.y_coord = 23.2125
+    serie.data = DataFrame(index=serie.time_range,
+                           columns=('sea_surface_wave_significant_height',
                                         'sea_surface_wave_mean_period',
                                         'sea_surface_wave_to_direction'))
 
-    outputFile='/tmp/' + str(binderObs.name_station) + '-wave-' + str(binderObs.time_range[0].strftime("%Y")) + '_to_' + str(
-            binderObs.time_range[binderObs.time_range.size - 1].strftime("%Y")) + '.dat'
+    outputFile='/tmp/' + str(serie.name_station) + '-wave-' + str(serie.time_range[0].strftime("%Y")) + '_to_' + str(
+            serie.time_range[serie.time_range.size - 1].strftime("%Y")) + '.dat'
 
     ######################################
     ## Début ##
     ######################################
-    nearestPoint = coverage.find_point_index(binderObs.x_coord, binderObs.y_coord)
+    nearestPoint = coverage.find_point_index(serie.x_coord, serie.y_coord)
     logging.info("Nearest point : " + str(nearestPoint[2]) + " / " + str(nearestPoint[3]) + " at " + str(
         nearestPoint[4]) + " km")
     logging.info("Nearest point (i,j) : " + str(nearestPoint[0]) + " / " + str(nearestPoint[1]))
 
 
-    for date in binderObs.read_axis_time():
+    for date in serie.read_axis_time():
         logging.info(date)
         myDate = datetime(date.year, date.month, date.day, date.hour, date.minute, date.second)
 
@@ -86,10 +85,10 @@ if __name__ == "__main__":
         # wind_u = coverage.read_variable_wind_at_time(myDate)[0][nearestPoint[1],nearestPoint[0]]
         # wind_v = coverage.read_variable_wind_at_time(myDate)[1][nearestPoint[1],nearestPoint[0]]
 
-        binderObs.data.loc[date] = [hs, period, dir]
+        serie.data.loc[date] = [hs, period, dir]
 
     writer = SiroccoWriter(outputFile);
-    writer.write_waves(binderObs)
+    writer.write_waves(serie)
 
-    print 'End of programm'
+    print('End of programm')
 

@@ -40,7 +40,7 @@ Elle rajoute les dimensions temporelle et verticale à la couverture horizontale
     @return: un tableau en deux dimensions [u_comp,v_comp] contenant chacun deux dimensions [y,x]."""
 
         index_t = self.find_time_index(time);
-        index_z = self.find_level_index(depth);
+        index_z = self.find_level_index(depth,True);
             
         return self.reader.read_variable_current_at_time_and_depth(index_t,index_z,depth,vertical_method)
 
@@ -55,7 +55,7 @@ Elle rajoute les dimensions temporelle et verticale à la couverture horizontale
     @return: un tableau en deux dimensions [y,x]."""
 
         index_t = self.find_time_index(time);
-        index_z = self.find_level_index(depth);
+        index_z = self.find_level_index(depth,True);
 
         return self.reader.read_variable_salinity_at_time_and_depth(index_t,index_z,depth,vertical_method)
     

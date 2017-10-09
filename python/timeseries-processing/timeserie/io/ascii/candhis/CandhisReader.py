@@ -27,7 +27,7 @@ class CandhisReader:
             logging.warn('[CandhisReader] '+str(count)+' dates are duplicated. We drop them by keeping the first.') 
             data= data.drop_duplicates(subset='time',keep='first')
         data = data.set_index(pandas.DatetimeIndex(data['time'])) 
-        data = data.drop('time',1)    
+        data = data.drop('time',1)
         
         # reverse angle
        

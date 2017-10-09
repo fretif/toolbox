@@ -17,39 +17,28 @@ import sys
 sys.path.append('../../../coverage-processing')
 
 from coverage.TimeLevelCoverage import TimeLevelCoverage
-from coverage.operator.interpolator.CoverageInterpolator import CoverageInterpolator
-from coverage.operator.interpolator.InterpolatorCore import InterpolatorCore
 from coverage.io.netcdf.symphonie.SymphonieReader import SymphonieReader
+from coverage.io.netcdf.ww3.WW3Writer import WW3Writer
 import logging
 
 if __name__ == "__main__":
-    print("Transform/Interpole Symphonie to GMT")
+    """
+    Cette routine permet de transformer les données du format SYMPHONIE à WAVEWATCH III en vu de forcer le modèle de vagues.
+    """
+    print("Transform MERCATOR to WW3")
     
     logging.basicConfig(format='[%(levelname)s] %(message)s',level=logging.INFO)
     
     # Read file
     reader = SymphonieReader('/home/fabien/grille.nc',
                              '/home/fabien/symphonie_var.nc')
-
-    coverage = TimeLevelCoverage(reader);
-
-    #InterpolatorCore.INTERPOLATION_METHOD = "linear";
-    InterpolatorCore.INTERPOLATION_METHOD = "nearest";
-
-    interpolator = CoverageInterpolator(coverage,0.1,0.1,'/tmp/symphonie_3dcurrent-regular.nc',
-                                        [0.0,500.0]) # résoluti1on voulue en degrès
-
-    interpolator.resample_variable_current_at_depths()
-    #interpolator.resample_variable_salinity_at_depths()
-    #interpolator.resample_variable_ssh()
-    #interpolator.resample_variable_current()
-    #interpolator.resample_variable_2D_mask()
-    #interpolator.resample_variable_waves_dir()
-    #interpolator.resample_variable_hs()
-    #interpolator.resample_variable_wind()
-    #interpolator.resample_variable_mesh_size()
-    #interpolator.resample_variable_wetmask()
-    interpolator.close()
+        
+    coverage = TimeLevelCoverage(reader); 
+    
+    writer = WW3Writer(coverage,'/tmp/ww3-forcing.nc')
+    writer.write_variable_ssh();
+    writer.write_variable_current_at_depth(0);
+    writer.close()    
     
     print('End of programm')
      

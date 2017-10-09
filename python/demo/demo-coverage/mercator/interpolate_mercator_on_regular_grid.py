@@ -28,23 +28,22 @@ if __name__ == "__main__":
     logging.basicConfig(format='[%(levelname)s] %(message)s',level=logging.INFO)
     
     # Read file
-    reader = MercatorReader('/home/retf/work/fieldsites/med-cruesim/modelling/mercator/grid/mercator_grid.nc',
-                            '/home/retf/work/fieldsites/med-cruesim/modelling/mercator/netcdf/pool/ext-PSY2V4R4_1dAV_20120706_20120707_grid2D_R20120711.nc',
-                            '/home/retf/work/fieldsites/med-cruesim/modelling/mercator/netcdf/pool/ext-PSY2V4R4_1dAV_20120706_20120707_gridT_R20120711.nc',
-                            '/home/retf/work/fieldsites/med-cruesim/modelling/mercator/netcdf/pool/ext-PSY2V4R4_1dAV_20120706_20120707_gridU_R20120711.nc',
-                            '/home/retf/work/fieldsites/med-cruesim/modelling/mercator/netcdf/pool/ext-PSY2V4R4_1dAV_20120706_20120707_gridV_R20120711.nc')
-
+    reader = MercatorReader('/home/fabien/mercator/ext-PSY2V4R4_mask.nc',
+                            '/home/fabien/mercator/ext-PSY2V4R4_1dAV_20130201_20130202_grid2D_R20130213.nc',
+                            '/home/fabien/mercator/ext-PSY2V4R4_1dAV_20130201_20130202_gridT_R20130213.nc',
+                            '/home/fabien/mercator/ext-PSY2V4R4_1dAV_20130201_20130202_gridU_R20130213.nc',
+                            '/home/fabien/mercator/ext-PSY2V4R4_1dAV_20130201_20130202_gridV_R20130213.nc')
         
     coverage = TimeLevelCoverage(reader);
 
     LevelCoverage.LEVEL_DELTA = 50.0 # On change le delta par défaut pour trouver une couche
 
-    interpolator = CoverageInterpolator(coverage,0.01,0.01,'/home/retf/work/fieldsites/med-cruesim/modelling/mercator/netcdf/pool/test_resample.nc') # résolution voulue en degrès
-    interpolator.resample_variable_current_at_level(155.0) # on peut donner la profondeur en mètres positifs (plus proche) ou en indice de couche verticale.
+    interpolator = CoverageInterpolator(coverage,0.01,0.01,'/tmp/mercator-regular.nc',[155.0]) # résolution voulue en degrès
+    interpolator.resample_variable_current_at_depths()
     interpolator.resample_variable_ssh()
     interpolator.close()
     
-    print 'End of programm'
+    print('End of programm')
      
     
     
