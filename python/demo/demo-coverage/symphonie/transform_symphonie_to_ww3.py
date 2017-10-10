@@ -25,7 +25,7 @@ if __name__ == "__main__":
     """
     Cette routine permet de transformer les données du format SYMPHONIE à WAVEWATCH III en vu de forcer le modèle de vagues.
     """
-    print("Transform MERCATOR to WW3")
+    print("Transform SYMPHONIE to WW3")
     
     logging.basicConfig(format='[%(levelname)s] %(message)s',level=logging.INFO)
     

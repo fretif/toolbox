@@ -13,11 +13,12 @@
 #
 
 class MemoryReader:
-    def __init__(self, myFilename):
-        self.filename = myFilename
+    def __init__(self, metadata):
+        self.filename = None
+        self.metadata=metadata
 
     def read_metadata(self):
-        return {};
+        return self.metadata;
 
     def read_data(self):
         return None

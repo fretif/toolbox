@@ -33,16 +33,16 @@ class SiroccoWriter (File):
             latitudes.units = "degree_north" ;
             latitudes.long_name = "latitude" ;
             latitudes.standard_name = "latitude" ;
-            latitudes.valid_min = "-90.f";
-            latitudes.valid_max = "90.f" ;
+            latitudes.valid_min = -90.;
+            latitudes.valid_max = 90. ;
             latitudes.axis = "Y" ;
 
             longitudes = self.ncfile.createVariable('longitude', float32, ('longitude',))
             longitudes.units = "degree_east" ;
             longitudes.long_name = "longitude" ;
             longitudes.standard_name = "longitude" ;
-            longitudes.valid_min = "-180.f" ;
-            longitudes.valid_max = "180.f" ;
+            longitudes.valid_min = -180. ;
+            longitudes.valid_max = 180. ;
             longitudes.axis = "X" ;
 
             # data
@@ -55,16 +55,16 @@ class SiroccoWriter (File):
             latitudes.units = "degree_north" ;
             latitudes.long_name = "latitude" ;
             latitudes.standard_name = "latitude" ;
-            latitudes.valid_min = "-90.f";
-            latitudes.valid_max = "90.f" ;
+            latitudes.valid_min = -90.;
+            latitudes.valid_max = 90. ;
             latitudes.axis = "Y" ;
 
             longitudes = self.ncfile.createVariable('longitude', float32, ('latitude','longitude',))
             longitudes.units = "degree_east" ;
             longitudes.long_name = "longitude" ;
             longitudes.standard_name = "longitude" ;
-            longitudes.valid_min = "-180.f" ;
-            longitudes.valid_max = "180.f" ;
+            longitudes.valid_min = -180. ;
+            longitudes.valid_max = 180. ;
             longitudes.axis = "X" ;
 
             # data
@@ -214,7 +214,7 @@ class SiroccoWriter (File):
         if self.ncfile == None:
             raise IOError("Please call write_axis() first")   
             
-        ucur = self.ncfile.createVariable('ucur', float32, ('time','level', 'latitude', 'longitude',),fill_value=9.96921e+36)
+        ucur = self.ncfile.createVariable('ucur', float32, ('time','depth', 'latitude', 'longitude',),fill_value=9.96921e+36)
         ucur.long_name = "eastward current" ;
         ucur.standard_name = "eastward_sea_water_velocity" ;
         ucur.globwave_name = "eastward_sea_water_velocity" ;
@@ -225,7 +225,7 @@ class SiroccoWriter (File):
         #ucur.valid_max = 990 ;
         ucur.comment = "cur=sqrt(U**2+V**2)" ;
         
-        vcur = self.ncfile.createVariable('vcur', float32, ('time', 'level', 'latitude', 'longitude',),fill_value=9.96921e+36)
+        vcur = self.ncfile.createVariable('vcur', float32, ('time', 'depth', 'latitude', 'longitude',),fill_value=9.96921e+36)
         vcur.long_name = "northward current" ;
         vcur.standard_name = "northward_sea_water_velocity" ;
         vcur.globwave_name = "northward_sea_water_velocity" ;
