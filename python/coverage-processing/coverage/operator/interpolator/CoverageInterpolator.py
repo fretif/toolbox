@@ -289,7 +289,7 @@ class CoverageInterpolator(File):
                 else:
                     logging.info('[CoverageInterpolator] At depth '+str(level)+' m.')
 
-                cur = self.coverage.read_variable_current_at_time_and_depth(time,level,vertical_method)
+                cur = self.coverage.read_variable_current_at_time_and_depth(time,level)
                 ucur[time_index:time_index+1,level_index:level_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[0])
                 vcur[time_index:time_index+1,level_index:level_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[1])
                 level_index+= 1
@@ -613,11 +613,86 @@ class CoverageInterpolator(File):
                 else:
                     logging.info('[CoverageInterpolator] At depth '+str(level)+' m.')
 
-                var[time_index:time_index+1,level_index:level_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,self.coverage.read_variable_salinity_at_time_and_depth(time,level,vertical_method))
+                var[time_index:time_index+1,level_index:level_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,self.coverage.read_variable_salinity_at_time_and_depth(time,level))
 
                 level_index+= 1
 
 
             time_index += 1
 
+    def resample_variable_temperature_at_depths(self, vertical_method="nearest"):
+        """
+        Interpole un champ de courant au niveau donnée à la construction
+        @vertical_method: méthode d'interpolation verticale. "nearest" ou "linear"
+        """
+        if self.ncfile == None:
+            raise IOError("Please call write_axis() first")
 
+        var = self.ncfile.createVariable('temperature', float32, ('time', 'depth', 'latitude', 'longitude',),
+                                         fill_value=9.96921e+36)
+        var.long_name = "temperature";
+        var.standard_name = "temperature";
+        var.globwave_name = "temperature";
+        var.units = "deg";
+        # ucur.scale_factor = 1.f ;
+        # ucur.add_offset = 0.f ;
+        # ucur.valid_min = -990 ;
+        # ucur.valid_max = 990 ;
+
+        time_index = 0
+        for time in self.coverage.read_axis_t():
+
+            logging.info('[CoverageInterpolator] Resample variable \'temperature\' at time ' + str(
+                time) + ' to the resolution ' + str(self.targetResX) + '/' + str(self.targetResY) + '.')
+
+            level_index = 0
+            for level in self.targetDepths:
+
+                if type(level) == int:
+                    logging.info('[CoverageInterpolator] At index level ' + str(level) + '')
+                else:
+                    logging.info('[CoverageInterpolator] At depth ' + str(level) + ' m.')
+
+                var[time_index:time_index + 1, level_index:level_index + 1, :, :] = resample_2d_to_grid(
+                    self.coverage.read_axis_x(), self.coverage.read_axis_y(), self.lon_reg, self.lat_reg,
+                    self.coverage.read_variable_temperature_at_time_and_depth(time, level))
+
+                level_index += 1
+
+            time_index += 1
+
+    def resample_variable_wind_stress(self):
+
+            if self.ncfile == None:
+                raise IOError("Please call write_axis() first")
+
+            logging.info('[CoverageInterpolator] Resample variable \'wind stress\' to the resolution '+str(self.targetResX)+'/'+str(self.targetResY)+'.')
+
+            ucur = self.ncfile.createVariable('uwind_stress', float32, ('time', 'latitude', 'longitude',),fill_value=9.96921e+36)
+            ucur.long_name = "eastward wind_stress" ;
+            ucur.standard_name = "eastward_wind_stress_velocity" ;
+            ucur.globwave_name = "eastward_wind_stress_velocity" ;
+            ucur.units = "m s-1" ;
+            #ucur.scale_factor = 1.f ;
+            #ucur.add_offset = 0.f ;
+            #ucur.valid_min = -990 ;
+            #ucur.valid_max = 990 ;
+            #ucur.comment = "cur=sqrt(U**2+V**2)" ;
+
+            vcur = self.ncfile.createVariable('vwind_stress', float32, ('time', 'latitude', 'longitude',),fill_value=9.96921e+36)
+            vcur.long_name = "northward wind_stress" ;
+            vcur.standard_name = "northward_wind_stress_velocity" ;
+            vcur.globwave_name = "northward_wind_stress_velocity" ;
+            vcur.units = "m s-1" ;
+            #ucur.scale_factor = 1.f ;
+            #ucur.add_offset = 0.f ;
+            #ucur.valid_min = -990 ;
+            #ucur.valid_max = 990 ;
+            vcur.comment = "cur=sqrt(U**2+V**2)" ;
+
+            time_index=0
+            for time in self.coverage.read_axis_t():
+                cur = self.coverage.read_variable_wind_stress_at_time(time)
+                ucur[time_index:time_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[0])
+                vcur[time_index:time_index+1,:,:] = resample_2d_to_grid(self.coverage.read_axis_x(),self.coverage.read_axis_y(),self.lon_reg,self.lat_reg,cur[1])
+                time_index += 1

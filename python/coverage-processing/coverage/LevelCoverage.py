@@ -14,6 +14,7 @@
 
 from coverage.Coverage import Coverage
 import numpy as np
+import logging
 
 class LevelCoverage(Coverage):    
     """
@@ -49,31 +50,24 @@ Elle rajoute une dimension verticale à la couverture horizontale classique.
     @return:  un entier correspondant à la taille de l'axe z."""
         return np.shape(self.levels)[0];
     
-    def find_level_index(self,depth,force=False):
+    def find_level_index(self,depth):
         """Retourne l'index de la profondeur la plus proche selon le point le plus proche.
     @type depth : integer ou flottant
     @param depth: Profondeur en mètre souhaitée ou index de la profondeur souhaitée
-    @method : Méthode de calcul pour converger.
-    @force : Force un recalcul des indices
     @return:  un tableau de l'indice de la couche verticale inférieur la plus proche en chacun point de la grille. z < vert_coord[y,x] et z > vert_coord[y,x]+1.
     Les valeurs masquées valent -999."""
 
-        if not force and not self.last_index is None:
-            return self.last_index
-
         xmax=self.get_x_size()
         ymax=self.get_y_size()
-        vert_coord = np.zeros([ymax,xmax],dtype=int)
-        vert_coord[:] = -999
-        found = False
+        vert_coord = []
 
         if type(depth) == int:
 
             if depth < 0 or depth >= self.get_z_size():
                 raise ValueError("Depth index have to range between 0 and "+str(self.get_z_size()-1)+". Actually depth index = "+str(depth))
 
-            vert_coord[:] = depth
-            found = True
+            if depth not in vert_coord:
+                vert_coord.append(int(depth))
 
         elif self.is_sigma_coordinate() == True: # Cas de grille sigma
 
@@ -81,30 +75,43 @@ Elle rajoute une dimension verticale à la couverture horizontale classique.
                     for x in range(0,xmax):
 
                         # Pour chaque niveau
-                        for z in range(0,self.get_z_size()-1):
+                        z=0
+                        while z < self.get_z_size()-1 and self.levels[z,y,x] > depth:
+                            z = z + 1
 
-                            if self.levels[z,y,x] > depth - LevelCoverage.LEVEL_DELTA and self.levels[z+1,y,x] < depth + LevelCoverage.LEVEL_DELTA:
-                                vert_coord[y,x]= z
-                                found = True
-                                break;
+                        if self.levels[z,y,x] <= depth and z >= 0 and z < self.get_z_size()-1:
+
+                            if z - 1 >= 0 and z - 1 not in vert_coord:
+                                vert_coord.append(int(z - 1))
+                            if z not in vert_coord:
+                                vert_coord.append(int(z))
+                            if z + 1 < self.get_z_size() and z + 1 not in vert_coord:
+                                vert_coord.append(int(z + 1))
+                        else :
+                            logging.debug("[LevelCoverage] " + str(depth) + " m water depth was not found for the point [" + str(x) + "," + str(y) + "]. Max depth found is for this points is " + str(self.levels[z,y,x]))
 
         else: # Cas de grille classique
 
             # Pour chaque niveau
-            for z in range(0,self.get_z_size()-1):
+            z = 0
+            while z < self.get_z_size() - 1 and self.levels[z] > depth:
+                z = z + 1
 
-                 if self.levels[z] > depth - LevelCoverage.LEVEL_DELTA and self.levels[z+1] < depth + LevelCoverage.LEVEL_DELTA:
-                    vert_coord[:]= z
-                    found = True
-                    break;
+            if self.levels[z] <= depth and z >= 0 and z < self.get_z_size() - 1:
 
-        if found == False:
-                raise ValueError(""+str(depth)+" was not found. Maybe the LevelCoverage.LEVEL_DELTA ("+ str(LevelCoverage.LEVEL_DELTA)+"m) is too small or the depth is out the range.")
+                if z - 1 >= 0 and z - 1 not in vert_coord:
+                    vert_coord.append(int(z - 1))
+                if z not in vert_coord:
+                    vert_coord.append(int(z))
+                if z + 1 < self.get_z_size() and z + 1 not in vert_coord:
+                    vert_coord.append(int(z + 1))
+            else:
+                raise ValueError(
+                    "[LevelCoverage] " + str(depth) + " m water depth was not found in the grid. Abort.")
 
-        # On sauvegarde les index
-        self.last_index = vert_coord
         # On retourne le tableau d'index
-        return vert_coord
+        return np.array(np.unique(vert_coord))
+
 
     def read_variable_3D_mask(self):
         """Retourne le masque terre/mer sur toute la couverture selon la profondeur z

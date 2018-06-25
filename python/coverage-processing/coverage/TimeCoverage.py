@@ -40,9 +40,8 @@ Elle rajoute une dimension temporelle à la couverture horizontale classique.
             return t;
         elif type(t) == datetime:
             zero_delta = timedelta(minutes = 00)
-            for i in range(self.get_t_size()):
-
-                if self.times[i] - t == zero_delta or self.times[i] - t > TimeCoverage.TIME_DELTA:
+            for i in range(0,self.get_t_size()):
+                if t - self.times[i] == zero_delta or t - self.times[i] < TimeCoverage.TIME_DELTA:
                     return i
 
             raise ValueError(""+str(t)+" was not found. Maybe the TimeCoverage.TIME_DELTA ("+ str(TimeCoverage.TIME_DELTA)+") is too small or the date is out the range.")
@@ -245,6 +244,16 @@ Elle rajoute une dimension temporelle à la couverture horizontale classique.
         index_t = self.find_time_index(t);
 
         return self.reader.read_variable_wetmask_at_time(index_t)
+
+    def read_variable_wind_stress_at_time(self, t):
+        """Retourne les composantes u,v de la contrainte de vent à la date souhaitée
+    @type t: datetime ou l'index
+    @param t: date souhaitée
+    @return: un tableau en deux dimensions [u_comp,v_comp] contenant chacun deux dimensions [y,x]."""
+
+        index_t = self.find_time_index(t);
+
+        return self.reader.read_variable_wind_stress_at_time(index_t)
 
             
         
