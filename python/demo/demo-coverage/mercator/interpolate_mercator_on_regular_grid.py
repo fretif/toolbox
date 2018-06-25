@@ -19,6 +19,7 @@ sys.path.append('../../../coverage-processing')
 from coverage.TimeLevelCoverage import TimeLevelCoverage
 from coverage.LevelCoverage import LevelCoverage
 from coverage.operator.interpolator.CoverageInterpolator import CoverageInterpolator
+from coverage.operator.interpolator.InterpolatorCore import InterpolatorCore
 from coverage.io.netcdf.mercator.MercatorReader import MercatorReader
 import logging
 
@@ -36,7 +37,9 @@ if __name__ == "__main__":
         
     coverage = TimeLevelCoverage(reader);
 
-    LevelCoverage.LEVEL_DELTA = 50.0 # On change le delta par défaut pour trouver une couche
+    #InterpolatorCore.HORIZONTAL_INTERPOLATION_METHOD = = "linear";
+    InterpolatorCore.HORIZONTAL_INTERPOLATION_METHOD = "nearest";
+    InterpolatorCore.VERTICAL_INTERPOLATION_METHOD = "linear";
 
     interpolator = CoverageInterpolator(coverage,0.01,0.01,'/tmp/mercator-regular.nc',[155.0]) # résolution voulue en degrès
     interpolator.resample_variable_current_at_depths()

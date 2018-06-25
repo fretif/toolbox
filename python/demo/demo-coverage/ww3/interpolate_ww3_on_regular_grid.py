@@ -18,6 +18,7 @@ sys.path.append('../../../coverage-processing')
 
 from coverage.TimeCoverage import TimeCoverage
 from coverage.operator.interpolator.CoverageInterpolator import CoverageInterpolator
+from coverage.operator.interpolator.InterpolatorCore import InterpolatorCore
 from coverage.io.netcdf.ww3.WW3Reader import WW3Reader
 import logging
 
@@ -33,6 +34,9 @@ if __name__ == "__main__":
     reader = WW3Reader('ww3.sample.nc')
         
     coverage = TimeCoverage(reader);
+
+    #InterpolatorCore.HORIZONTAL_INTERPOLATION_METHOD = = "linear";
+    InterpolatorCore.HORIZONTAL_INTERPOLATION_METHOD = "nearest";
 
     interpolator = CoverageInterpolator(coverage,0.1,0.1,'/tmp/ww3.sample-regular.nc',[]) # résolution voulue en degrès
     interpolator.resample_variable_waves_mean_period()

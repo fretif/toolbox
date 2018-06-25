@@ -33,8 +33,9 @@ if __name__ == "__main__":
 
     coverage = TimeLevelCoverage(reader);
 
-    #InterpolatorCore.INTERPOLATION_METHOD = "linear";
-    InterpolatorCore.INTERPOLATION_METHOD = "nearest";
+    #InterpolatorCore.HORIZONTAL_INTERPOLATION_METHOD = = "linear";
+    InterpolatorCore.HORIZONTAL_INTERPOLATION_METHOD = "nearest";
+    InterpolatorCore.VERTICAL_INTERPOLATION_METHOD = "linear";
 
     interpolator = CoverageInterpolator(coverage,0.1,0.1,'/tmp/symphonie_3dcurrent-regular.nc',
                                         [0.0,500.0]) # résoluti1on voulue en degrès
