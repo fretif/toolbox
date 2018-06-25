@@ -1,11 +1,16 @@
 #!/bin/bash
 
-infile=med-cruesim/grid.nc
-infile=taiwan/grille.nc
+#infile=med-cruesim/grid.nc
+#infile=/home/retf/work/fieldsites/med-cruesim/modelling/hydro/gulf-of-lion/bathy_maker/GDL-WEST-MED/grid.nc
+#infile="/home/retf/work/fieldsites/med-cruesim/modelling/waves/la-tet/outputs/test-one/grid-sympho.nc"
+#infile=/home/retf/work/fieldsites/med-cruesim/modelling/hydro/la-tet/grid/grid_no_wetmask.nc
+#infile=/home/retf/work/fieldsites/med-cruesim/modelling/hydro/la-tet/grid/grid-smooth.nc
+#infile=/home/retf/work/fieldsites/med-cruesim/modelling/hydro/la-tet/grid/grid.nc
+infile=/home/retf/test/grid.nc
 
 #1 for classic grid
 #2 for circular grid
-grid_type=2
+grid_type=1
 
 grd2xyz $infile?longitude_t > longitude_t
 grd2xyz $infile?latitude_t > latitude_t
@@ -24,12 +29,26 @@ awk '{ print  $3" "$5" "$7" "$8}' joined.xyz > s-lonlat.xyz
 if [[ $grid_type == 1 ]] 
 then
   # we get the long, lat, and bathy
+  head s-grid.xyz
   awk '{ print  $3}' s-grid.xyz > longitude.dat
   awk '{ print  $4}' s-grid.xyz > latitude.dat
+  #awk '{  if ($1 == 125 && $2 == 110) { printf("%s\n",0.77) } else print  $5}' s-grid.xyz > bathy.dat
   awk '{ print  $5}' s-grid.xyz > bathy.dat
   
+  #awk '{ if($1 < 7) { printf("%s\n",-50)} 
+  #else if($2 < 4 || $2 > 208) { printf("%s\n",-50)}  
+  #else print $5}' s-grid.xyz > bathy.dat
+  
   #TODO improve way to do input boundaries  
-  awk '{ if ($1 == 601 && $6 == 1) { printf("%s\n",2) } else print  $6}' s-grid.xyz > mask.dat
+  #awk '{ if ($1 == 263 && $6 == 1) { printf("%s\n",2) } 
+  #else if($1 < 7) { printf("%s\n",0)} 
+  #else if($1 >= 7 && $1 <= 222 && $2 < 4 || $2 > 208) { printf("%s\n",0)} 
+  #else if($1 >= 7 && $1 <= 222 && $2 >= 4 && $2 <= 208 && $6 == 0) { printf("%s\n",15)}
+  #else print $6}' s-grid.xyz > mask.dat
+  
+  awk '{ if ($1 == 671 && $6 == 1) { printf("%s\n",2) } else print $6}' s-grid.xyz > mask.dat
+  #awk '{ print $6}' s-grid.xyz > mask.dat
+
   
 elif [[ $grid_type == 2 ]] 
 then
