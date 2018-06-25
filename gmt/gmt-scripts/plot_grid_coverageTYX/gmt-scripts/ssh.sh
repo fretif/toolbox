@@ -64,7 +64,7 @@ else
 	echo "5 8 12 0 5 BC ${currentTime:0:`expr index "$currentTime" "_"`-1} ${currentTime: -8:2} h ${currentTime: -5:2}" >> ${workingDir}/legend
  	cat ${workingDir}/legend | pstext -R0/10/0/10 -JX10c -X0 -Y6 -O >> ${outfile}.ps
 	
-	ps2raster -E$png_resolution -A -Tg -P ${outfile}.ps
+	ps2raster -E600 -A -Tg -P ${outfile}.ps
 	
 	#export to SIG
 	#makecpt -C${colorPalPath}pasadena.cpt -T0.145/0.20/0.001 -M -Z > ${workingDir}/colorPal.cpt

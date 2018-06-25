@@ -16,14 +16,14 @@ gmtset PS_MEDIA A3+   # A3+ was fine with -Jx1:2000
 
 gmtset MAP_GRID_CROSS_SIZE_PRIMARY 0
 gmtset MAP_GRID_PEN_PRIMARY 0.015c,0/0/0,.
-gmtset MAP_TICK_PEN_PRIMARY 0.01c
+gmtset MAP_TICK_PEN_PRIMARY 0.02c
 
 gmtset MAP_GRID_PEN_SECONDARY 0.015c,0/0/0,solid
 gmtset MAP_GRID_CROSS_SIZE_SECONDARY 0
 gmtset MAP_TICK_PEN_SECONDARY 0.01c
 
 gmtset FONT_ANNOT_PRIMARY 10p,Helvetica,black
-gmtset FONT_ANNOT_SECONDARY white
+gmtset FONT_ANNOT_SECONDARY 5p,Helvetica,black
 
 gmtset MAP_TICK_LENGTH_SECONDARY 5p
 
@@ -380,6 +380,16 @@ for ((group=1;group<=$maxGroup;group++)) do
 			  elif [[ "${style}" == "circlef" ]] 
 			  then			    
 				  psxy ${workingDir}/file.tmp $paramR $paramJ -Sc0.1 -G$color -W0.3p,$color,solid -O -K >> ${outfile}.ps
+			  elif [[ "${style}" == "direction" ]] 
+			  then
+			      awk '$0~/#/ {next;}
+				NR%6==0{				       
+				       printf("%s %s %s 0.12i\n",$1,0.25,$2);
+				  
+			     }' ${workingDir}/file.tmp > ${workingDir}/file-time.tmp
+			     
+			     mv ${workingDir}/file-time.tmp ${workingDir}/file.tmp							     			     
+			     psxy ${workingDir}/file.tmp $paramR $paramJ -SV0.09i+b -W0.8p -G$color -O -K >> ${outfile}.ps
 			  else
 				  psxy ${workingDir}/file.tmp $paramR $paramJ -W1p,$color,$style -O -K >> ${outfile}.ps #-Y`echo "0.3 * $index" | bc -l`
 				  #psxy ${workingDir}/file.tmp $paramR $paramJ -W1p,$color,$style -O -K -Y`echo "0.5 * $index" | bc -l` >> ${outfile}.ps
@@ -389,9 +399,13 @@ for ((group=1;group<=$maxGroup;group++)) do
 			  then
 			    if [[ "${style}" == "circle" ]] || [[ "${style}" == "circlef" ]] 
 			    then
-			      echo "S 0.1i c 0.1i - thin,$color,solid 0.3i $fileTitle" >> ${workingDir}/legend
+			    	echo "S 0.1i c 0.1i - thin,$color,solid 0.3i $fileTitle" >> ${workingDir}/legend
+			    elif [[ "${style}" == "direction" ]]  
+			    then
+			    	echo "S 0.1i v0.1i+a40+e 0.15i $color thin 0.3i $fileTitle" >> ${workingDir}/legend
+			    	#S 0.1i v0.1i+a40+e 0.25i magenta 0.25p 0.3i This is a vector
 			    else
-			      echo "S 0.1i - 0.15i - thin,$color,$style 0.3i $fileTitle" >> ${workingDir}/legend
+			    	echo "S 0.1i - 0.15i - thin,$color,$style 0.3i $fileTitle" >> ${workingDir}/legend
 			    fi
 			  fi
 			  
@@ -418,10 +432,10 @@ done
 
 #echo "5 9.5 $startTimeTitle - $endTimeTitle" | pstext -R0/10/0/10 $paramJText -X-12 -Y2 -O -K >> ${outfile}.ps
 #echo "5 9.5 $title" | pstext -R -J -Y1.2 -O -K >> ${outfile}.ps
+#-Dx-0.2i/`echo "0.2*$countFiles" | bc -l`i/5i/3.3i/BL -X`echo "$graphOffsetX*($plotPerLine-3)" | bc -l`
+pslegend ${workingDir}/legend -Dx-0.2i/0.5i+w5i/3.3i+jBL+l1.2 $paramR $paramJ  -Y-3 -O >> ${outfile}.ps
 
-pslegend ${workingDir}/legend $paramR $paramJ -Dx-0.2i/`echo "0.2*$countFiles" | bc -l`i/5i/3.3i/BL -X`echo "$graphOffsetX*($plotPerLine-2)" | bc -l` -Y-6 -O >> ${outfile}.ps
-
-ps2raster ${outfile}.ps -A -E300 -Tg -P
+ps2raster ${outfile}.ps -A -E$png_resolution -Tg -P
 
 rm -f ${outfile}.ps
 rm *.eps

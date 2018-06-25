@@ -68,8 +68,9 @@ then
   paramJ="-JX25cT/10c"
   paramJText="-JX25c/10c"
 else
-  paramJ="-JX10cT/5c"
-  paramJText="-JX10c/5c"
+  paramJ="-JX10cT/4c"
+  paramJsmall="-JX10cT/2c"
+  paramJText="-JX10c/4c"
 fi
 
 parsedTime="${startTime:0:4}-${startTime:5:2}-${startTime:8:2}"
@@ -77,7 +78,9 @@ startTimeTitle=`date --date="$parsedTime" "+%d %B %Y"`
 parsedTime="${endTime:0:4}-${endTime:5:2}-${endTime:8:2}"
 endTimeTitle=`date --date="$parsedTime" "+%d %B %Y"`
 
+#graphOffsetX=12
 graphOffsetX=11.5
+graphOffsetY=5
 
 for ((group=1;group<=$maxGroup;group++)) do 
 
@@ -90,9 +93,9 @@ for ((group=1;group<=$maxGroup;group++)) do
   then  
     if [[ $plotPerLine == 1 ]]
     then   
-        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -Y6 -O -K >> ${outfile}.ps
+        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -Y$graphOffsetY -O -K >> ${outfile}.ps
     else       
-        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]} -BWS -X$graphOffsetX -Y0 -O -K >> ${outfile}.ps
+        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -X$graphOffsetX -Y0 -O -K >> ${outfile}.ps
     fi     
   fi
   
@@ -100,10 +103,10 @@ for ((group=1;group<=$maxGroup;group++)) do
   then  
     if [[ $plotPerLine == 1 ]]
     then   
-        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -Y6 -O -K >> ${outfile}.ps    
+        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -Y$graphOffsetY -O -K >> ${outfile}.ps    
     elif [[ $plotPerLine == 2 ]]
     then   
-        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -X-$graphOffsetX -Y6 -O -K >> ${outfile}.ps
+        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -X-$graphOffsetX -Y$graphOffsetY -O -K >> ${outfile}.ps
     else
         psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]} -BWS -X$graphOffsetX -Y0 -O -K >> ${outfile}.ps
     fi   
@@ -113,10 +116,10 @@ for ((group=1;group<=$maxGroup;group++)) do
   then   
     if [[ $plotPerLine == 1 ]]
     then   
-        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -Y6 -O -K >> ${outfile}.ps    
+        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -Y$graphOffsetY -O -K >> ${outfile}.ps    
     elif [[ $plotPerLine == 3 ]]
     then 
-        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -X-`echo "$graphOffsetX*($plotPerLine-1)" | bc -l` -Y6 -O -K >> ${outfile}.ps
+        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -X-`echo "$graphOffsetX*($plotPerLine-1)" | bc -l` -Y$graphOffsetY -O -K >> ${outfile}.ps
     else        
         psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]} -BWS -X$graphOffsetX -Y0 -O -K >> ${outfile}.ps
     fi  
@@ -126,10 +129,10 @@ for ((group=1;group<=$maxGroup;group++)) do
   then   
     if [[ $plotPerLine == 1 ]]
     then   
-        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -Y6 -O -K >> ${outfile}.ps    
+        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -Y$graphOffsetY -O -K >> ${outfile}.ps    
     elif [[ $plotPerLine == 2 ]]
     then   
-        psbasemap$paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -X-`echo "$graphOffsetX*($plotPerLine-1)" | bc -l` -Y6 -O -K >> ${outfile}.ps
+        psbasemap$paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -X-`echo "$graphOffsetX*($plotPerLine-1)" | bc -l` -Y$graphOffsetY -O -K >> ${outfile}.ps
     else
         psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]} -BWS -X$graphOffsetX -Y0 -O -K >> ${outfile}.ps
     fi 
@@ -139,7 +142,7 @@ for ((group=1;group<=$maxGroup;group++)) do
   then   
     if [[ $plotPerLine == 1 ]]
     then   
-        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -Y6 -O -K >> ${outfile}.ps    
+        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -Y$graphOffsetY -O -K >> ${outfile}.ps    
     else
 	psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]} -BWS -X$graphOffsetX -Y0 -O -K >> ${outfile}.ps
     fi
@@ -149,10 +152,10 @@ for ((group=1;group<=$maxGroup;group++)) do
   then   
     if [[ $plotPerLine == 1 ]]
     then   
-        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -Y6 -O -K >> ${outfile}.ps    
+        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -Y$graphOffsetY -O -K >> ${outfile}.ps    
     elif [[ $plotPerLine == 3 ]]
     then   
-        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -X-`echo "$graphOffsetX*($plotPerLine-1)" | bc -l` -Y6 -O -K >> ${outfile}.ps
+        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -X-`echo "$graphOffsetX*($plotPerLine-1)" | bc -l` -Y$graphOffsetY -O -K >> ${outfile}.ps
     else
         psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]} -BWS -X$graphOffsetX -Y0 -O -K >> ${outfile}.ps
     fi  
@@ -172,9 +175,9 @@ for ((group=1;group<=$maxGroup;group++)) do
   then   
     if [[ $plotPerLine == 1 ]]
     then   
-        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -Y6 -O -K >> ${outfile}.ps    
+        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -Y$graphOffsetY -O -K >> ${outfile}.ps    
     else
-        psbasemap$paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]} -BWS -X$graphOffsetX -Y0 -O -K >> ${outfile}.ps
+        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]} -BWS -X$graphOffsetX -Y0 -O -K >> ${outfile}.ps
     fi
   fi
   
@@ -182,10 +185,10 @@ for ((group=1;group<=$maxGroup;group++)) do
   then   
     if [[ $plotPerLine == 1 ]]
     then   
-        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -Y6 -O -K >> ${outfile}.ps    
+        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -Y$graphOffsetY -O -K >> ${outfile}.ps    
     elif [[ $plotPerLine == 3 ]]
     then   
-        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -X-`echo "$graphOffsetX*($plotPerLine-1)" | bc -l` -Y6 -O -K >> ${outfile}.ps
+        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -X-`echo "$graphOffsetX*($plotPerLine-1)" | bc -l` -Y$graphOffsetY -O -K >> ${outfile}.ps
     else
         psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]} -BWS -X$graphOffsetX -Y0 -O -K >> ${outfile}.ps
     fi  
@@ -195,7 +198,7 @@ for ((group=1;group<=$maxGroup;group++)) do
   then   
     if [[ $plotPerLine == 1 ]]
     then   
-        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -Y6 -O -K >> ${outfile}.ps    
+        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -Y$graphOffsetY -O -K >> ${outfile}.ps    
     else
         psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]} -BWS -X$graphOffsetX -Y0 -O -K >> ${outfile}.ps
     fi
@@ -205,7 +208,7 @@ for ((group=1;group<=$maxGroup;group++)) do
   then   
     if [[ $plotPerLine == 1 ]]
     then   
-        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -Y6 -O -K >> ${outfile}.ps    
+        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -Y$graphOffsetY -O -K >> ${outfile}.ps    
     else
 	psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]} -BWS -X$graphOffsetX -Y0 -O -K >> ${outfile}.ps
     fi
@@ -277,7 +280,27 @@ for ((group=1;group<=$maxGroup;group++)) do
 					printf("%s %s\n",dateGMT,$'${columns["$group$index"]}'); 	  
 				      }' $file > ${workingDir}/file.tmp
 
-			  elif [[ "${format}" == "sirocco" ]] 
+			  elif [[ "${format}" == "matlab" ]] 
+			then
+				if [[ ! -n "${columns["$group$index"]}" ]] 
+				then
+					echo "You need select a column for Matlab."				
+				fi
+
+				# MATLAB Format #
+				 
+				awk '$0~/#/ {next;}
+				     { year  = substr($1,1,4); 
+				       month = substr($1,5,2);
+				       day   = substr($1,7,2);
+				       hour  = substr($1,9,2);
+				       min   = substr($1,11,2);
+				       sec   = substr($1,13,2);      
+				       dateGMT = year"-"month"-"day"T"hour":"min":"sec;
+				       printf("%s %s\n",dateGMT,$'${columns["$group$index"]}'); 	  
+				     }' $file > ${workingDir}/file.tmp
+
+			elif [[ "${format}" == "sirocco" ]] 
 			  then
 				  if [[ ! -n "${columns["$group$index"]}" ]] 
 				  then
@@ -380,20 +403,40 @@ for ((group=1;group<=$maxGroup;group++)) do
 			  elif [[ "${style}" == "circlef" ]] 
 			  then			    
 				  psxy ${workingDir}/file.tmp $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Sc0.1 -G$color -W0.3p,$color,solid -O -K >> ${outfile}.ps
-			  else
-				  psxy ${workingDir}/file.tmp $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -W1p,$color,$style -O -K >> ${outfile}.ps #-Y`echo "0.3 * $index" | bc -l`
-				  #psxy ${workingDir}/file.tmp $paramR $paramJ -W1p,$color,$style -O -K -Y`echo "0.5 * $index" | bc -l` >> ${outfile}.ps
-			  fi		  
-			  
-			  if [[ $group == 1 ]]
+			  elif [[ "${style}" == "direction" ]] 
 			  then
+			      awk '$0~/#/ {next;}
+				NR%8==0{				       
+				       printf("%s %s %s 0.12i\n",$1,6,$2);
+				  
+			     }' ${workingDir}/file.tmp > ${workingDir}/file-time.tmp
+			     
+			     mv ${workingDir}/file-time.tmp ${workingDir}/file.tmp
+                             psxy ${workingDir}/file.tmp $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -SV0.09i+b -W0.8p -G$color -O -K >> ${outfile}.ps
+			  else
+                                #head ${workingDir}/file.tmp
+                              
+                                #if [[ $group == 3 ]]
+			        #then
+				#	psxy ${workingDir}/file.tmp $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJsmall -W1p,$color,$style -O -K >> ${outfile}.ps 
+                                #else
+			  		psxy ${workingDir}/file.tmp $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -W1p,$color,$style -O -K >> ${outfile}.ps 
+                                #fi
+			fi	  
+			  
+			  #if [[ $group == 1 ]]
+			  #then
 			    if [[ "${style}" == "circle" ]] || [[ "${style}" == "circlef" ]] 
 			    then
 			      echo "S 0.1i c 0.1i - thin,$color,solid 0.3i $fileTitle" >> ${workingDir}/legend
+			    elif [[ "${style}" == "direction" ]]  
+			    then
+			      echo "S 0.1i v0.1i+a40+e 0.15i $color thin 0.3i $fileTitle" >> ${workingDir}/legend
+			      #S 0.1i v0.1i+a40+e 0.25i magenta 0.25p 0.3i This is a vector
 			    else
 			      echo "S 0.1i - 0.15i - thin,$color,$style 0.3i $fileTitle" >> ${workingDir}/legend
 			    fi
-			  fi
+			  #fi
 			  
 			  if [[ -f "${statFileGroup["$group$index"]}" ]]
 			  then 			   
@@ -416,11 +459,11 @@ for ((group=1;group<=$maxGroup;group++)) do
    
 done
 
-pslegend ${workingDir}/legend $paramR/${ZminGroup["1"]}/${ZmaxGroup["1"]} $paramJ -Dx-0.2i/`echo "0.2*$countFiles" | bc -l`i/5i/3.3i/BL -X-`echo "$graphOffsetX*($plotPerLine-1)" | bc -l` -Y-2.8 -O >> ${outfile}.ps
+pslegend ${workingDir}/legend $paramR/${ZminGroup["1"]}/${ZmaxGroup["1"]} $paramJ -Dx-0.2i/`echo "0.2*$countFiles" | bc -l`i/5i/3.3i/BL -X-`echo "$graphOffsetX*($plotPerLine-1)" | bc -l` -Y-3 -O >> ${outfile}.ps
 
 #echo "5 9.5 $title"  | pstext -R0/10/0/10 $paramJText -Gwhite -F+f22p -To -W0.5p,black,solid -Y5.5 -O >> ${outfile}.ps
 
-ps2raster ${outfile}.ps -A -E300 -Tg -P
+ps2raster ${outfile}.ps -A -E$png_resolution -Tg -P
 
 rm -f ${outfile}.ps
 rm *.eps

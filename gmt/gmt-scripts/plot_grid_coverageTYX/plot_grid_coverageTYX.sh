@@ -92,9 +92,15 @@ then
   var=utaw
 fi
 
+gmtconvert $infile?bathy > /dev/null 2> ${workingDir}/check_variable
+if [[ `cat ${workingDir}/check_variable | grep "Variable not found" -c` -eq 0 ]]
+then
+  var=bathy
+fi
+
 if [[ ! -n $var ]]
 then
-  echo "No ssh or hs variables found. Unable to compute the envelope. Abort"
+  echo "No ssh or hs or uwind or utax or bathy variables found. Unable to compute the envelope. Abort"
   exit
 fi
 
@@ -255,7 +261,7 @@ do
 done	
 
 # Plot 2D
-if test $bathymetry -eq 1
+if test $bathy -eq 1
 then
 	source $basedir/gmt-scripts/bathy.sh
 fi

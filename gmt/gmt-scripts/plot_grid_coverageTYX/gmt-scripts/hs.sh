@@ -54,10 +54,12 @@ else
  	gmtset MAP_GRID_PEN_PRIMARY thinner,black,solid
  	gmtset MAP_FRAME_PEN thinner,black,solid 	
  	
- 	psscale -Dx14c/12.25c+w12c/0.5c+jTC+e -C$hsPalFile -Bx1+g1 -By+lm -S -O -K >> ${outfile}.ps 	
+ 	#psscale -Dx12c/12.25c+w12c/0.5c+jTC+e -C$hsPalFile -Bx1+g1 -By+lm -S -O -K >> ${outfile}.ps 
+ 	psscale -Dx19.5c/7.25c+w6c/0.5c+jTC+e -C$hsPalFile -Bx1+g1 -By+lm -S -O -K >> ${outfile}.ps 
 	echo "5 9 20 0 5 BC Significant wave height (m)" > ${workingDir}/legend
 	echo "5 8.2 12 0 5 BC ${currentTime:0:`expr index "$currentTime" "_"`-1} ${currentTime: -8:2} h ${currentTime: -5:2}" >> ${workingDir}/legend
- 	cat ${workingDir}/legend | pstext -R0/10/0/10 -JX10c -X0 -Y4.5 -O >> ${outfile}.ps
+ 	#cat ${workingDir}/legend | pstext -R0/10/0/10 -JX10c -X0 -Y4.5 -O >> ${outfile}.ps
+ 	cat ${workingDir}/legend | pstext -R0/10/0/10 -JX10c -X4 -Y1 -O >> ${outfile}.ps
  	
 	#psscale -D`echo "($Xmax - $Xmin)*$mapRatioSize + 1" | bc -l`/`echo "(($Ymax - $Ymin)*$mapRatioSize)/2" | bc -l`/`echo "($Ymax - $Ymin)*$mapRatioSize" | bc -l`/`echo "(($Ymax - $Ymin)*$mapRatioSize)/40" | bc -l` -C$hsPalFile -B0.1:"":/:"": -E -O -K >> ${outfile}.ps	
 	#echo "5 9 12 0 5 BC Significant wave height (m)" > ${workingDir}/legend

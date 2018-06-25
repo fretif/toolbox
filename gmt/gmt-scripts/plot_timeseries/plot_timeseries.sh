@@ -70,6 +70,9 @@ paramR="-R$startTime/$endTime/$Zmin/$Zmax"
 paramJ="-JX10cT/5c"
 paramJText="-JX10c/5c"
 
+#paramJ="-JX10cT/3c"
+#paramJText="-JX10c/3c"
+
 parsedTime="${startTime:0:4}-${startTime:5:2}-${startTime:8:2}"
 startTimeTitle=`date --date="$parsedTime" "+%d %B %Y"`
 parsedTime="${endTime:0:4}-${endTime:5:2}-${endTime:8:2}"
@@ -169,6 +172,26 @@ for index in "${!files[@]}"; do
 				       hour  = substr($2,9,2);
 				       min   = substr($2,11,2);
 				       sec   = substr($2,13,2);      
+				       dateGMT = year"-"month"-"day"T"hour":"min":"sec;
+				       printf("%s %s\n",dateGMT,$'${columns[$index]}'); 	  
+				     }' $file > ${workingDir}/file.tmp
+
+			elif [[ "${format}" == "matlab" ]] 
+			then
+				if [[ ! -n "${columns[$index]}" ]] 
+				then
+					echo "You need select a column for Matlab."				
+				fi
+
+				# MATLAB Format #
+				 
+				awk '$0~/#/ {next;}
+				     { year  = substr($1,1,4); 
+				       month = substr($1,5,2);
+				       day   = substr($1,7,2);
+				       hour  = substr($1,9,2);
+				       min   = substr($1,11,2);
+				       sec   = substr($1,13,2);      
 				       dateGMT = year"-"month"-"day"T"hour":"min":"sec;
 				       printf("%s %s\n",dateGMT,$'${columns[$index]}'); 	  
 				     }' $file > ${workingDir}/file.tmp
@@ -277,8 +300,8 @@ for index in "${!files[@]}"; do
 			elif [[ "${style}" == "direction" ]] 
 			then
 			      awk '$0~/#/ {next;}
-				{				       
-				       printf("%s %s %s 0.12i\n",$1,21,$2);
+				NR%8==0{				       
+				       printf("%s %s %s 0.12i\n",$1,6,$2);
 				  
 			     }' ${workingDir}/file.tmp > ${workingDir}/file-time.tmp
 			     
@@ -313,13 +336,13 @@ done
 
 #echo "5 9.5 $startTimeTitle - $endTimeTitle" | pstext -R0/10/0/10 $paramJText -Y1 -O -K >> ${outfile}.ps
 #echo "5 9 $title" | pstext -R -J -Y1.2 -O -K >> ${outfile}.ps
-   echo "5 9.5 ${title}" | pstext -R0/10/0/10 $paramJText -Gwhite -To -W0.5p,black,solid -O -K >> ${outfile}.ps	
+##   echo "5 9.5 ${title}" | pstext -R0/10/0/10 $paramJText -Gwhite -To -W0.5p,black,solid -O -K >> ${outfile}.ps	
 
 #pslegend ${workingDir}/legend $paramR $paramJ -Dx-0.2i/`echo "0.2*$countFiles" | bc -l`i/5i/3.3i/BL -O >> ${outfile}.ps
 pslegend ${workingDir}/legend $paramR $paramJ -Dx-0.2i/`echo "0.2" | bc -l`i/5i/3.3i/BL -X-0 -Y-2.3 -O >> ${outfile}.ps
 #pslegend ${workingDir}/legend $paramR $paramJ -Dx0.1i/0i+w2.2i/0.6i+jBL+l1.2 -F+p0.3p+gwhite -Y8.5 -O >> ${outfile}.ps
 
-ps2raster ${outfile}.ps -A -E300 -Tg -P
+ps2raster ${outfile}.ps -A -E$png_resolution -Tg -P
 
 rm -f ${outfile}.ps
 rm *.eps
