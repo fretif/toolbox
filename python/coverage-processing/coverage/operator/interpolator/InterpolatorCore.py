@@ -11,16 +11,18 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-
+# Author : Fabien Rétif - fabien.retif@zoho.com
+#
+from __future__ import division, print_function, absolute_import
 from scipy.interpolate import griddata
 from scipy.interpolate import interp1d
 import logging
 import numpy as np
 
-class InterpolatorCore:
+class InterpolatorCore(object):
 
-    #HORIZONTAL_INTERPOLATION_METHOD = "nearest";
-    HORIZONTAL_INTERPOLATION_METHOD = "linear";
+    HORIZONTAL_INTERPOLATION_METHOD = "nearest";
+    #HORIZONTAL_INTERPOLATION_METHOD = "linear";
     VERTICAL_INTERPOLATION_METHOD = "nearest";
 
 def resample_2d_to_grid(sourceAxisX,sourceAxisY,targetAxisX, targetAixsY,data):

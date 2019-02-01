@@ -11,7 +11,9 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-
+# Author : Fabien Rétif - fabien.retif@zoho.com
+#
+from __future__ import division, print_function, absolute_import
 from coverage.operator.interpolator.InterpolatorCore import resample_2d_to_grid
 from coverage.TimeCoverage import TimeCoverage
 from coverage.LevelCoverage import LevelCoverage

@@ -1,10 +1,10 @@
 # -*- encoding:utf-8 -*-
 """
 ==================================
-NetCDF (:mod:`coverage.io.netcdf`)
+MATLAB (:mod:`coverage.io.matlab`)
 ==================================
 
-.. currentmodule:: coverage.io.netcdf
+.. currentmodule:: coverage.io.matlab
 
 """
 from __future__ import division, print_function, absolute_import

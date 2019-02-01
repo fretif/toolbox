@@ -1,4 +1,4 @@
-#! /usr/bin/env python2.7
+#! #! /usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 #
 # CoverageProcessing is free software: you can redistribute it and/or modify
@@ -11,7 +11,9 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-
+# Author : Fabien Rétif - fabien.retif@zoho.com
+#
+from __future__ import division, print_function, absolute_import
 from coverage.io.File import File
 from netCDF4 import Dataset, num2date
 import numpy as np

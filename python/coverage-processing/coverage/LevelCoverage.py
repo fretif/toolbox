@@ -11,7 +11,9 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-
+# Author : Fabien Rétif - fabien.retif@zoho.com
+#
+from __future__ import division, print_function, absolute_import
 from coverage.Coverage import Coverage
 import numpy as np
 import logging

@@ -11,8 +11,9 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-
-
+# Author : Fabien Rétif - fabien.retif@zoho.com
+#
+from __future__ import division, print_function, absolute_import
 import numpy as np
 import math
  
@@ -60,7 +61,7 @@ def distance_on_unit_sphere(long1, lat1,long2, lat2):
     # in your favorite set of units to get length.
     return arc*6373
 
-class Coverage:  
+class Coverage(object):
     """
 La classe Coverage représente une couverture spatiale sur l'horizontale. Les points qui représentent cette couverture
 peuvent être alignés sur une maille régulière (x,y) ou sur une maille non-régulière ((x1,y1),(x2,y2)). En fonction du

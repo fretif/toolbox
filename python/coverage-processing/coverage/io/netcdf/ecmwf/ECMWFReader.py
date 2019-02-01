@@ -11,7 +11,9 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-
+# Author : Fabien Rétif - fabien.retif@zoho.com
+#
+from __future__ import division, print_function, absolute_import
 from coverage.io.File import File
 from coverage.TimeCoverage import TimeCoverage
 from netCDF4 import Dataset, num2date
@@ -49,18 +51,49 @@ class ECMWFReader (File):
         mask += 1.0 # inverse le mask
         mask %= 2 # inverse le mask
         return mask
+
+    def read_variable_3D_mask_at_time(self,t):
+        mask = self.ncfile.variables["LSM"][t][:]
+        mask += 1.0 # inverse le mask
+        mask %= 2 # inverse le mask
+        return mask
     
-    def read_variable_sp_at_time(self,t):
+    def read_variable_surface_pressure_at_time(self,t):
         sp = self.ncfile.variables["SP"][t][:]
         sp *= 0.01 # Pa to hPa
         return sp
 
-    def read_variable_ssp_at_time(self,t):
+    def read_variable_sea_surface_pressure_at_time(self,t):
         sp = self.ncfile.variables["MSL"][t][:]
         sp *= 0.01 # Pa to hPa
         return sp
-    
-    # Vector
+
+    def read_variable_surface_sensible_heat_flux_at_time(self, t):
+        return self.ncfile.variables["SSHF"][t][:]
+
+    def read_variable_surface_latent_heat_flux_at_time(self, t):
+        return self.ncfile.variables["SLHF"][t][:]
+
     def read_variable_wind_at_time(self,t):
         return [self.ncfile.variables["U10M"][t][:], self.ncfile.variables["V10M"][t][:]]
-    
+
+    def read_variable_surface_air_temperature_at_time(self, t):
+        return self.ncfile.variables["T2M"][t][:]
+
+    def read_variable_dewpoint_temperature_at_time(self, t):
+        return self.ncfile.variables["D2M"][t][:]
+
+    def read_variable_surface_solar_radiation_downwards_at_time(self, t):
+        return self.ncfile.variables["SSRD"][t][:]
+
+    def read_variable_surface_thermal_radiation_downwards_at_time(self, t):
+        return self.ncfile.variables["STRD"][t][:]
+
+    def read_variable_surface_solar_radiation_at_time(self, t):
+        return self.ncfile.variables["SSR"][t][:]
+
+    def read_variable_surface_thermal_radiation_at_time(self, t):
+        return self.ncfile.variables["STR"][t][:]
+
+    def read_variable_rain_at_time(self, t):
+        return self.ncfile.variables["TP"][t][:]

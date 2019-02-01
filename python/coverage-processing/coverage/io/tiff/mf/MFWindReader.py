@@ -1,4 +1,4 @@
-#! /usr/bin/env python2.7
+##! /usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 #
 # CoverageProcessing is free software: you can redistribute it and/or modify
@@ -11,7 +11,9 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-
+# Author : Fabien Rétif - fabien.retif@zoho.com
+#
+from __future__ import division, print_function, absolute_import
 from coverage.io.File import File
 from coverage.TimeCoverage import TimeCoverage
 from netCDF4 import Dataset, num2date
@@ -21,7 +23,7 @@ from time import strftime
 import logging
 from osgeo import gdal
 
-class MFWindReader ():
+class MFWindReader(object):
 
     def __init__(self, Ucomp,Vcomp):
 

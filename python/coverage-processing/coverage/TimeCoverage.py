@@ -11,7 +11,9 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-
+# Author : Fabien Rétif - fabien.retif@zoho.com
+#
+from __future__ import division, print_function, absolute_import
 from coverage.Coverage import Coverage
 from datetime import timedelta
 from datetime import datetime
@@ -61,7 +63,17 @@ Elle rajoute une dimension temporelle à la couverture horizontale classique.
     
     # Variables
     
-    # HYDRO   
+    # HYDRO
+    def read_variable_3D_mask_at_time(self, t):
+        """Retourne le masque à la date souhaitée sur toute la couverture horizontale.
+    @type t: datetime ou l'index
+    @param t: date souhaitée
+    @return: un tableau en deux dimensions [y,x]."""
+
+        index_t = self.find_time_index(t);
+
+        return self.reader.read_variable_3D_mask_at_time(index_t)
+
     def read_variable_ssh_at_time(self,t):
         """Retourne l'élévation de la surface libre à la date souhaitée sur toute la couverture horizontale.
     @type t: datetime ou l'index
@@ -205,7 +217,7 @@ Elle rajoute une dimension temporelle à la couverture horizontale classique.
         return self.reader.read_variable_two_at_time(index_t)
     
     # METEO
-    def read_variable_sp_at_time(self,t):
+    def read_variable_surface_pressure_at_time(self,t):
         """Retourne la pression à la surface à la date souhaitée sur toute la couverture horizontale.
     @type t: datetime ou l'index
     @param t: date souhaitée
@@ -213,9 +225,9 @@ Elle rajoute une dimension temporelle à la couverture horizontale classique.
 
         index_t = self.find_time_index(t);
 
-        return self.reader.read_variable_sp_at_time(index_t)
+        return self.reader.read_variable_surface_pressure_at_time(index_t)
 
-    def read_variable_ssp_at_time(self,t):
+    def read_variable_sea_surface_pressure_at_time(self,t):
         """Retourne la pression à la surface de la mer (sea surface pressure) à la date souhaitée sur toute la couverture horizontale.
     @type t: datetime ou l'index
     @param t: date souhaitée
@@ -223,7 +235,7 @@ Elle rajoute une dimension temporelle à la couverture horizontale classique.
 
         index_t = self.find_time_index(t);
 
-        return self.reader.read_variable_ssp_at_time(index_t)
+        return self.reader.read_variable_sea_surface_pressure_at_time(index_t)
 
     def read_variable_wind_at_time(self,t):
         """Retourne les composantes u,v du vent à la date souhaitée
@@ -255,8 +267,92 @@ Elle rajoute une dimension temporelle à la couverture horizontale classique.
 
         return self.reader.read_variable_wind_stress_at_time(index_t)
 
-            
-        
-        
-    
+    def read_variable_surface_sensible_heat_flux_at_time(self, t):
+        """Retourne les composantes u,v de surface sensible heat flux à la date souhaitée
+    @type t: datetime ou l'index
+    @param t: date souhaitée
+    @return: un tableau en deux dimensions [u_comp,v_comp] contenant chacun deux dimensions [y,x]."""
 
+        index_t = self.find_time_index(t);
+
+        return self.reader.read_variable_surface_sensible_heat_flux_at_time(index_t)
+
+    def read_variable_surface_latent_heat_flux_at_time(self, t):
+        """Retourne les composantes u,v de surface latente heat flux à la date souhaitée
+    @type t: datetime ou l'index
+    @param t: date souhaitée
+    @return: un tableau en deux dimensions [u_comp,v_comp] contenant chacun deux dimensions [y,x]."""
+
+        index_t = self.find_time_index(t);
+
+        return self.reader.read_variable_surface_latent_heat_flux_at_time(index_t)
+
+    def read_variable_surface_air_temperature_at_time(self, t):
+        """Retourne les composantes u,v de surface air temperature à la date souhaitée
+    @type t: datetime ou l'index
+    @param t: date souhaitée
+    @return: un tableau en deux dimensions [u_comp,v_comp] contenant chacun deux dimensions [y,x]."""
+
+        index_t = self.find_time_index(t);
+
+        return self.reader.read_variable_surface_air_temperature_at_time(index_t)
+
+    def read_variable_dewpoint_temperature_at_time(self, t):
+        """Retourne les composantes u,v de dewpoint temperature à la date souhaitée
+    @type t: datetime ou l'index
+    @param t: date souhaitée
+    @return: un tableau en deux dimensions [u_comp,v_comp] contenant chacun deux dimensions [y,x]."""
+
+        index_t = self.find_time_index(t);
+
+        return self.reader.read_variable_dewpoint_temperature_at_time(index_t)
+
+    def read_variable_surface_solar_radiation_downwards_at_time(self, t):
+        """Retourne les composantes u,v de surface solar radiation downwards à la date souhaitée
+    @type t: datetime ou l'index
+    @param t: date souhaitée
+    @return: un tableau en deux dimensions [u_comp,v_comp] contenant chacun deux dimensions [y,x]."""
+
+        index_t = self.find_time_index(t);
+
+        return self.reader.read_variable_surface_solar_radiation_downwards_at_time(index_t)
+
+    def read_variable_surface_thermal_radiation_downwards_at_time(self, t):
+        """Retourne les composantes u,v de surface thermal radiation downwards à la date souhaitée
+    @type t: datetime ou l'index
+    @param t: date souhaitée
+    @return: un tableau en deux dimensions [u_comp,v_comp] contenant chacun deux dimensions [y,x]."""
+
+        index_t = self.find_time_index(t);
+
+        return self.reader.read_variable_surface_thermal_radiation_downwards_at_time(index_t)
+
+    def read_variable_surface_solar_radiation_at_time(self, t):
+        """Retourne les composantes u,v de surface solar radiation à la date souhaitée
+    @type t: datetime ou l'index
+    @param t: date souhaitée
+    @return: un tableau en deux dimensions [u_comp,v_comp] contenant chacun deux dimensions [y,x]."""
+
+        index_t = self.find_time_index(t);
+
+        return self.reader.read_variable_surface_solar_radiation_at_time(index_t)
+    
+    def read_variable_surface_thermal_radiation_at_time(self, t):
+        """Retourne les composantes u,v de surface thermal radiation à la date souhaitée
+    @type t: datetime ou l'index
+    @param t: date souhaitée
+    @return: un tableau en deux dimensions [u_comp,v_comp] contenant chacun deux dimensions [y,x]."""
+
+        index_t = self.find_time_index(t);
+
+        return self.reader.read_variable_surface_thermal_radiation_at_time(index_t)
+
+    def read_variable_rain_at_time(self, t):
+        """Retourne les composantes u,v de rain à la date souhaitée
+    @type t: datetime ou l'index
+    @param t: date souhaitée
+    @return: un tableau en deux dimensions [u_comp,v_comp] contenant chacun deux dimensions [y,x]."""
+
+        index_t = self.find_time_index(t);
+
+        return self.reader.read_variable_rain_at_time(index_t)
