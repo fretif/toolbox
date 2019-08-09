@@ -1,9 +1,10 @@
 #!/bin/bash
 
-psxy  $instrumentFile ${envelope} -Gred -W2p -J -P -O -K >> ${outfile}.ps
+psxy  $instrumentFile ${envelope} -Sc0.03 -Gorange -Wthin,black,solid -J -P -O -K >> ${outfile}.ps
 
-echo "3.066668 42.704167" | psxy ${envelope} -Sc0.3c -Gorange -Wthin,black,solid -J -P -O -K -V >> ${outfile}.ps
-#psxy ${envelope} $instrumentFile/cigu-bouy.xy -S -Gred -Wfaint,black,solid -J -P -O -K >> ${outfile}.ps
-#psxy ${envelope} $instrumentFile/meteo.xy -S -Gorange -Wfaint,black,solid -J -P -O -K >> ${outfile}.ps
-#psxy ${envelope} $instrumentFile/tide.xy -S -Gpurple -Wfaint,black,solid -J -P -O -K >> ${outfile}.ps
+awk 'NR%2==1{ printf("%s %s %s\n",$1,$2,$3)}' $instrumentFile > ${workingDir}/label.dat
+pstext ${workingDir}/label.dat ${envelope} -To -F+f4p,Arial -D0.15/0 -J -P -O -K >> ${outfile}.ps
+
+awk 'NR%2==0{ printf("%s %s %s\n",$1,$2,$3)}' $instrumentFile > ${workingDir}/label.dat
+pstext ${workingDir}/label.dat ${envelope} -To -F+f4p,Arial, -D-0.15/0 -J -P -O -K >> ${outfile}.ps
 

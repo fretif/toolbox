@@ -27,8 +27,7 @@ set_default_style
 # 1. Import config file
 
 basedir="${0%/*}"
-# Old way to use
-#source $basedir/$1
+source ./gmt-scripts/variablesDefinition.sh
 source $1
 
 # 2. Set environement
@@ -62,50 +61,37 @@ file=$(basename "$infile")
 filename="${file%.*}"
 
 #Check variables
-gmtconvert $infile?ssh > /dev/null 2> ${workingDir}/check_variable
-if [[ `cat ${workingDir}/check_variable | grep "Variable not found" -c` -eq 0 ]]
-then
-  var=ssh
-fi
+for var in "${variables[@]}"; do
+	
+	if [[ -n "${VARIABLE_NAME["$var"]}" ]]
+	then
+		gmtconvert $infile?${VARIABLE_NAME["$var"]} > /dev/null 2> ${workingDir}/check_variable	
+		if [[ `cat ${workingDir}/check_variable | grep "Variable not found" -c` -eq 1 ]]
+		then 			
+  			echo "[ERROR] Variable '${VARIABLE_NAME["$var"]}' not found."
+  			exit 1
+		else
+			testVar=${VARIABLE_NAME["$var"]}
+		fi
+	elif [[ -n "${VARIABLE_NAME["eastward_$var"]}" ]]
+	then
 
-gmtconvert $infile?hs > /dev/null 2> ${workingDir}/check_variable
-if [[ `cat ${workingDir}/check_variable | grep "Variable not found" -c` -eq 0 ]]
-then
-  var=hs
-fi
-
-gmtconvert $infile?uwind > /dev/null 2> ${workingDir}/check_variable
-if [[ `cat ${workingDir}/check_variable | grep "Variable not found" -c` -eq 0 ]]
-then
-  var=uwind
-fi
-
-gmtconvert $infile?ucur > /dev/null 2> ${workingDir}/check_variable
-if [[ `cat ${workingDir}/check_variable | grep "Variable not found" -c` -eq 0 ]]
-then
-  var=ucur
-fi
-
-gmtconvert $infile?utaw > /dev/null 2> ${workingDir}/check_variable
-if [[ `cat ${workingDir}/check_variable | grep "Variable not found" -c` -eq 0 ]]
-then
-  var=utaw
-fi
-
-gmtconvert $infile?bathy > /dev/null 2> ${workingDir}/check_variable
-if [[ `cat ${workingDir}/check_variable | grep "Variable not found" -c` -eq 0 ]]
-then
-  var=bathy
-fi
-
-if [[ ! -n $var ]]
-then
-  echo "No ssh or hs or uwind or utax or bathy variables found. Unable to compute the envelope. Abort"
-  exit
-fi
+		gmtconvert $infile?${VARIABLE_NAME["eastward_$var"]} > /dev/null 2> ${workingDir}/check_variable
+		if [[ `cat ${workingDir}/check_variable | grep "Variable not found" -c` -eq 1 ]]
+		then 
+			echo "[ERROR] Variable '${VARIABLE_NAME["$var"]}' not found."
+  			exit 1
+		else
+			testVar=${VARIABLE_NAME["eastward_$var"]}
+		fi
+	else
+		echo "[ERROR] Variable '$var' not found in the default variables."
+  		exit 1
+	fi
+done
 
 #Compute envelope
-grdinfo -C $infile?$var > ${workingDir}/minmax 
+grdinfo -C $infile?$testVar > ${workingDir}/minmax 
 
 if [[ ! -n "$Xmin" && ! -n "$Xmax" && ! -n "$Ymin" && ! -n "$Ymax" ]]
 then		
@@ -134,163 +120,33 @@ fi
 tIndex=0
 gmtconvert $infile?time | while read currentSecondTime
 do
-  currentTime=`date -u --date="@$currentSecondTime" "+%d-%B-%Y_%H-%M-%S"`
+  currentTimeFilename=`date -u --date="@$currentSecondTime" "$dateFormatFilename"`
+  currentTimeSubTitle=`date -u --date="@$currentSecondTime" "$dateFormatSubTitle"`
 
-  if test $currentSecondTime -ge $startSecondTime && test $currentSecondTime -le $endSecondTime
+  if (( $(echo "$currentSecondTime >= $startSecondTime" |bc -l) && $(echo "$currentSecondTime <= $endSecondTime" |bc -l) ))
   then
 
-	echo "Current file : $filename - $currentTime"	
+	echo "Current file : $filename - $currentTimeSubTitle"	
 
-	var="sea-surface-height"
-	if test $ssh -eq 1;
-	then	
-		set_default_style #reset style
-		source $basedir/gmt-scripts/ssh.sh
-	fi
+	for var in "${variables[@]}"; do
 
-	var="barotropic-current"	
-	if test $barotropicCurrent -eq 1;
-	then
-		set_default_style #reset style		
-		source $basedir/gmt-scripts/barotropicCurrent.sh
-	fi
-	
-	var="surface-current"			
-	if test $surfaceCurrent -eq 1;
-	then									
 		set_default_style #reset style
-		source $basedir/gmt-scripts/surfaceCurrent.sh
-	fi
-
-	var="surface-temperature"	
-	if test $surfaceTemperature -eq 1 ;
-	then	
-		
-		set_default_style #reset style
-		source $basedir/gmt-scripts/temperature.sh
-	fi
-
-	var="surface-salinity"	
-	if test $surfaceSalinity -eq 1;
-	then					
-		set_default_style #reset style
-		source $basedir/gmt-scripts/salinity.sh
-	fi
-
-	var="middle-current"	
-	if test $middleCurrent -eq 1;
-	then				
-		set_default_style #reset style
-		source $basedir/gmt-scripts/middleCurrent.sh
-	fi
-
-	var="bottom-current"	
-	if test $bottomCurrent -eq 1;
-	then				
-		set_default_style #reset style
-		source $basedir/gmt-scripts/bottomCurrent.sh
-	fi
-
-	var="wind-stress"	
-	if test $windStress -eq 1;
-	then				
-		set_default_style #reset style
-		source $basedir/gmt-scripts/windStress.sh
-	fi
-
-	var="inverse-barometer"	
-	if test $inverseBarometer -eq 1;
-	then				
-		set_default_style #reset style
-		source $basedir/gmt-scripts/ib.sh
-	fi
-
-	var="hs-wave"	
-	if test $hs -eq 1;
-	then					
-		set_default_style #reset style
-		source $basedir/gmt-scripts/hs.sh
-	fi
-	
-	var="two"	
-	if test $two -eq 1;
-	then					
-		set_default_style #reset style
-		source $basedir/gmt-scripts/two.sh
-	fi
-	
-	var="two-momentum-flux"	
-	if test $twoMomentumFlux -eq 1;
-	then					
-		set_default_style #reset style		
-		source $basedir/gmt-scripts/two-momentum-flux.sh
-	fi
-	
-	var="taw"	
-	if test $taw -eq 1;
-	then					
-		set_default_style #reset style
-		source $basedir/gmt-scripts/taw.sh
-	fi
-	
-	var="taw-momentum-flux"	
-	if test $tawMomentumFlux -eq 1;
-	then					
-		set_default_style #reset style
-		source $basedir/gmt-scripts/taw-momentum-flux.sh
-	fi 
-	
-	var="wind"	
-	if test $wind -eq 1;
-	then					
-		set_default_style #reset style
-		source $basedir/gmt-scripts/wind.sh
-	fi
-	
-	var="surfaceStokesDrift"	
-	if test $stokesDrift -eq 1;
-	then					
-		set_default_style #reset style
-		source $basedir/gmt-scripts/surfaceStokesDrift.sh
-	fi
+		source $basedir/gmt-scripts/${GMT_SCRIPT["$var"]}.sh
+	done
   fi
-
   
   ((tIndex ++))
 
 done	
 
-# Plot 2D
-if test $bathy -eq 1
-then
-	source $basedir/gmt-scripts/bathy.sh
-fi
-
-if test $meshSize -eq 1
-then
-	source $basedir/gmt-scripts/meshSize.sh
-fi
-
 #Export to MOV
-if test $surfaceTemperature -eq 1
+if test $exportToMov -eq 1
 then
-	var="surface-temperature"		
+	for var in "${variables[@]}"; do
 
-	if test $exportToMov -eq 1
-	then
-		source $basedir/exportToMov.sh
-	fi
-fi
+		source $basedir/gmt-scripts/exportToMov.sh	
+	done
 
-if test $surfaceSalinity -eq 1
-then
-	var="surface-salinity"
-	source $basedir/gmt-scripts/salinity.sh
-
-	if test $exportToMov -eq 1
-	then
-		source $basedir/exportToMov.sh
-	fi
 fi
 
 rm *.eps
