@@ -76,7 +76,7 @@ set getAnalysis=1
 set getForecast=0
 
 # Repertoire de travail
-cd /scratch/ms/fr/aufr/med-previ
+cd /scratch/ms/fr/tohw/med-previ
 
 # DEBUT DU SCRIPT
 #-------------------------------
@@ -112,23 +112,16 @@ while ( $currentSecondTime <= $endSecondTime )
   target=MED.analysis.$dd.grib
 EOF
 
-    	echo 'mars request for '$dd
-		mars request  # executes the program created above
+	    	echo 'mars request for '$dd
+			mars request  # executes the program created above
 
-    	if ( $? != 0 ) then # Check MARS exit code.
-        	echo " The MARS request failed for $dd."
-        	exit 1
-    	else
-        	# Transformation en NetCDF
-			if ( -f MED.analysis.$dd.grib ) then
-				grib_to_netcdf -o MED.analysis.$dd.nc MED.analysis.$dd.grib
-				rm -f MED.analysis.$dd.grib
-			endif  
-  
+	    	if ( $? != 0 ) then # Check MARS exit code.
+			echo " The MARS request failed for $dd."
+			exit 1 
 		endif #end-check-exit-code
 	endif #end-analysis
 
-    if ($getForecast == 1) then
+      if ($getForecast == 1) then
 	
 	# 2. On recupere les previsions à 1h 
 	
@@ -155,13 +148,6 @@ EOF
 		if ( $? != 0 ) then # Check MARS exit code.  
 			echo " The MARS request failed for $dd."
 			exit 1
-		else
-        	# Transformation en NetCDF
-			if ( -f MED.forecast.$dd.grib ) then
-				grib_to_netcdf -o MED.forecast.$dd.nc MED.forecast.$dd.grib
-				rm -f MED.forecast.$dd.grib
-			endif  
-  
 		endif #end-check-exit-code
 	endif #end-forecast
 
