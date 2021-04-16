@@ -6,7 +6,7 @@ then
 else	
 
 	#outfile
-	outfile="${outDir}/$currentTimeFilename-$var"
+	outfile="${outDir}/$currentTimeFilename-${STANDARD_NAME["$var"]}"
 
 	echo "-> ${LONG_NAME["$var"]}..."
 
@@ -67,7 +67,7 @@ else
  	gmtset MAP_GRID_PEN_PRIMARY thinner,black,solid
  	gmtset MAP_FRAME_PEN thinner,black,solid 	
 
-	psscale $colorBarPosition -C${COLOR_PALETTES["$var"]} -Bx5+g5 -By+l"${CANONICAL_UNITS["$var"]}" -S -O -K >> ${outfile}.ps	
+	psscale $colorBarPosition -C${COLOR_PALETTES["$var"]} -Bx${SCALE_TICK["$var"]} -By+l"${CANONICAL_UNITS["$var"]}" -S -O -K >> ${outfile}.ps	
 	echo "5 9 20 0 5 BC ${LONG_NAME["$var"]}" > ${workingDir}/legend
 	echo "5 8 12 0 5 BC ${currentTimeSubTitle}" >> ${workingDir}/legend
  	cat ${workingDir}/legend | pstext -R0/10/0/10 -JX10c $titlePosition -O >> ${outfile}.ps

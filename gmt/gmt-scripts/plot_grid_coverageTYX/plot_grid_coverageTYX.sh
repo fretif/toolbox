@@ -12,9 +12,12 @@ function set_default_style {
   gmtset MAP_FRAME_PEN 0.05c
   gmtset MAP_TICK_PEN_PRIMARY 0.01c
   gmtset MAP_ANNOT_OFFSET_PRIMARY 0.05c
+  gmtset FONT_ANNOT_PRIMARY 8p,Helvetica,black
+  gmtset FONT_LABEL 8p,Helvetica,black
+  gmtset FONT_TITLE 13p,Helvetica,black
   gmtset MAP_LABEL_OFFSET 0.25c
   gmtset MAP_ANNOT_OBLIQUE 32
-  gmtset MAP_ANNOT_MIN_SPACING 4c
+  gmtset MAP_ANNOT_MIN_SPACING 2c
   gmtset MAP_GRID_PEN_PRIMARY 0.015c,black,. # dotted-line
   gmtset PS_LINE_JOIN miter
   gmtset PS_LINE_CAP butt
@@ -27,7 +30,7 @@ set_default_style
 # 1. Import config file
 
 basedir="${0%/*}"
-source ./gmt-scripts/variablesDefinition.sh
+source $basedir/gmt-scripts/variablesDefinition.sh
 source $1
 
 # 2. Set environement
@@ -64,9 +67,9 @@ filename="${file%.*}"
 for var in "${variables[@]}"; do
 	
 	if [[ -n "${VARIABLE_NAME["$var"]}" ]]
-	then
-		gmtconvert $infile?${VARIABLE_NAME["$var"]} > /dev/null 2> ${workingDir}/check_variable	
-		if [[ `cat ${workingDir}/check_variable | grep "Variable not found" -c` -eq 1 ]]
+	then 
+		ncdump -h $infile > ${workingDir}/check_variable	        
+		if [[ `cat ${workingDir}/check_variable | grep " ${VARIABLE_NAME["$var"]}(" -c` -eq 0 ]]
 		then 			
   			echo "[ERROR] Variable '${VARIABLE_NAME["$var"]}' not found."
   			exit 1
@@ -76,10 +79,10 @@ for var in "${variables[@]}"; do
 	elif [[ -n "${VARIABLE_NAME["eastward_$var"]}" ]]
 	then
 
-		gmtconvert $infile?${VARIABLE_NAME["eastward_$var"]} > /dev/null 2> ${workingDir}/check_variable
-		if [[ `cat ${workingDir}/check_variable | grep "Variable not found" -c` -eq 1 ]]
+        ncdump -h $infile > ${workingDir}/check_variable
+		if [[ `cat ${workingDir}/check_variable | grep " ${VARIABLE_NAME["eastward_$var"]}(" -c` -eq 0 ]]
 		then 
-			echo "[ERROR] Variable '${VARIABLE_NAME["$var"]}' not found."
+			echo "[ERROR] Variable '${VARIABLE_NAME["eastward_$var"]}' not found."
   			exit 1
 		else
 			testVar=${VARIABLE_NAME["eastward_$var"]}

@@ -6,7 +6,7 @@ then
 else	
 
 	#outfile
-	outfile="${outDir}/$currentTimeFilename-$var"
+	outfile="${outDir}/$currentTimeFilename-${STANDARD_NAME["$var"]}"
 
 	echo "-> ${LONG_NAME["$var"]}..."
 
@@ -37,7 +37,10 @@ else
 	then		
 		grd2cpt -C${colorPalPath}/pasadena.cpt ${workingDir}/data.grd -Z > ${workingDir}/colorPal.cpt
 		COLOR_PALETTES["$var"]="${workingDir}/colorPal.cpt"	
-		#cp ${workingDir}/colorPal.cpt ./regional/meteo-temp.cpt		
+
+        if [[ "${saveColorPal}" == "1" ]]; then
+		    cp ${workingDir}/colorPal.cpt $var.cpt		
+        fi
 	fi
 	  
 	#
@@ -57,9 +60,9 @@ else
  	gmtset MAP_GRID_PEN_PRIMARY thinner,black,solid
  	gmtset MAP_FRAME_PEN thinner,black,solid 	
 
-	psscale $colorBarPosition -C${COLOR_PALETTES["$var"]} -Bx5+g5 -By+l"${CANONICAL_UNITS["$var"]}" -S -O -K >> ${outfile}.ps	
+	psscale $colorBarPosition -C${COLOR_PALETTES["$var"]} -Bx${SCALE_TICK["$var"]} -By+l"${CANONICAL_UNITS["$var"]}" -S -O -K >> ${outfile}.ps	
 	echo "5 9 20 0 5 BC ${LONG_NAME["$var"]}" > ${workingDir}/legend
-	echo "5 8 12 0 5 BC ${currentTimeSubTitle}" >> ${workingDir}/legend
+	echo "5 8.5 8 0 5 BC ${currentTimeSubTitle}" >> ${workingDir}/legend
  	cat ${workingDir}/legend | pstext -R0/10/0/10 -JX10c $titlePosition -O >> ${outfile}.ps
 	
 	ps2raster -E$png_resolution -A -Tg -P ${outfile}.ps

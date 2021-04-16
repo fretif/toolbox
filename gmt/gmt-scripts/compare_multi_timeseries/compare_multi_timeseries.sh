@@ -410,7 +410,7 @@ for ((group=1;group<=$maxGroup;group++)) do
 			     #}' ${workingDir}/file.tmp > ${workingDir}/file-time.tmp
 
 			     awk '$0~/#/ {next;}
-				{				       
+				NR%10==0{				       
 				       printf("%s %s %s 0.12i\n",$1,'${directionZValue["$group$index"]}',$2);				  
 			     }' ${workingDir}/file.tmp > ${workingDir}/file-time.tmp
 			     

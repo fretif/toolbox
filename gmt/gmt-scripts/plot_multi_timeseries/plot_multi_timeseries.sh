@@ -433,7 +433,7 @@ done
 #echo "5 9.5 $startTimeTitle - $endTimeTitle" | pstext -R0/10/0/10 $paramJText -X-12 -Y2 -O -K >> ${outfile}.ps
 #echo "5 9.5 $title" | pstext -R -J -Y1.2 -O -K >> ${outfile}.ps
 #-Dx-0.2i/`echo "0.2*$countFiles" | bc -l`i/5i/3.3i/BL -X`echo "$graphOffsetX*($plotPerLine-3)" | bc -l`
-pslegend ${workingDir}/legend -Dx-0.2i/0.5i+w5i/3.3i+jBL+l1.2 $paramR $paramJ  -Y-3 -O >> ${outfile}.ps
+pslegend ${workingDir}/legend -Dx-0.2i/0.5i+w5i/3.3i+jBL+l1.2 $paramR $paramJ  -Y`echo "1.5*($plotPerLine-3)" | bc -l` -O >> ${outfile}.ps
 
 ps2raster ${outfile}.ps -A -E$png_resolution -Tg -P
 
