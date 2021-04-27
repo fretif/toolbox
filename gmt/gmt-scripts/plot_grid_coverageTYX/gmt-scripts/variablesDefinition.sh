@@ -328,17 +328,19 @@ SCALE_TICK["sea_surface_wave_peak_period"]="1+g1"
 
 STANDARD_NAME["sea_surface_wave_from_direction"]="sea_surface_wave_from_direction"
 LONG_NAME["sea_surface_wave_from_direction"]="Sea Surface Wave From Direction"
-VARIABLE_NAME["sea_surface_wave_from_direction"]="wave_from_dir"
-CANONICAL_UNITS["sea_surface_wave_from_direction"]="degree" # from North=0 / East=90"
-GMT_SCRIPT["sea_surface_wave_from_direction"]="2d_var"
-SCALE_TICK["sea_surface_wave_from_direction"]="1+g1"
+VARIABLE_NAME["sea_surface_wave_from_direction"]=${VARIABLE_NAME["sea_surface_wave_significant_height"]}
+CANONICAL_UNITS["sea_surface_wave_from_direction"]=${CANONICAL_UNITS["sea_surface_wave_significant_height"]}
+VARIABLE_NAME["dir_sea_surface_wave_from_direction"]="wave_from_dir" # from North=0 / East=90"
+GMT_SCRIPT["sea_surface_wave_from_direction"]="dir_var"
+SCALE_TICK["sea_surface_wave_from_direction"]=${SCALE_TICK["sea_surface_wave_significant_height"]}
 
 STANDARD_NAME["sea_surface_wave_to_direction"]="sea_surface_wave_to_direction"
 LONG_NAME["sea_surface_wave_to_direction"]="Sea Surface Wave To Direction"
-VARIABLE_NAME["sea_surface_wave_to_direction"]="wave_to_dir"
-CANONICAL_UNITS["sea_surface_wave_to_direction"]="degree" # from North=0 / East=90"
-GMT_SCRIPT["sea_surface_wave_to_direction"]="2d_var"
-SCALE_TICK["sea_surface_wave_to_direction"]="1+g1"
+VARIABLE_NAME["sea_surface_wave_to_direction"]=${VARIABLE_NAME["sea_surface_wave_significant_height"]}
+CANONICAL_UNITS["sea_surface_wave_to_direction"]=${CANONICAL_UNITS["sea_surface_wave_significant_height"]}
+VARIABLE_NAME["dir_sea_surface_wave_to_direction"]="wave_to_dir" # from North=0 / East=90" 
+GMT_SCRIPT["sea_surface_wave_to_direction"]="dir_var"
+SCALE_TICK["sea_surface_wave_to_direction"]=${SCALE_TICK["sea_surface_wave_significant_height"]}
 
 STANDARD_NAME["sea_surface_wave_stokes_drift_velocity"]="sea_surface_wave_stokes_drift_velocity"
 LONG_NAME["sea_surface_wave_stokes_drift_velocity"]="Sea Surface Wave Stokes Drift Velocity"

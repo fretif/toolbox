@@ -22,6 +22,7 @@ function set_default_style {
   gmtset PS_LINE_JOIN miter
   gmtset PS_LINE_CAP butt
   gmtset PS_MITER_LIMIT 180
+  gmtset PS_MEDIA=A2 MAP_ORIGIN_X=2i MAP_ORIGIN_Y=2i
 }
 
 LANG=en_us_8859_1
@@ -94,22 +95,25 @@ for var in "${variables[@]}"; do
 done
 
 #Compute envelope
+crop=1
 grdinfo -C $infile?$testVar > ${workingDir}/minmax 
 
 if [[ ! -n "$Xmin" && ! -n "$Xmax" && ! -n "$Ymin" && ! -n "$Ymax" ]]
 then		
-	Xmin=`cat ${workingDir}/minmax | cut -f "2"`
+	Xmin=`cat ${workingDir}/minmax | cut -f "2"`	
 	Xmax=`cat ${workingDir}/minmax | cut -f "3"`
 	Ymin=`cat ${workingDir}/minmax | cut -f "4"`
-	Ymax=`cat ${workingDir}/minmax | cut -f "5"`
-fi		
+	Ymax=`cat ${workingDir}/minmax | cut -f "5"`	
+	crop=0	
+fi
+
+envelope="-R$Xmin/$Xmax/$Ymin/$Ymax"		
 	
 Xincr=`cat ${workingDir}/minmax | cut -f "8"`		
 Yincr=`cat ${workingDir}/minmax | cut -f "9"`	
 Xsize=`cat ${workingDir}/minmax | cut -f "10"`		
 Ysize=`cat ${workingDir}/minmax | cut -f "11"`	
 
-envelope="-R$Xmin/$Xmax/$Ymin/$Ymax"	
 
 if [[ -n "$mapRatioSize" ]]
 then 

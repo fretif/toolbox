@@ -9,9 +9,22 @@ else
 	outfile="${outDir}/$currentTimeFilename-${STANDARD_NAME["$var"]}"
 
 	echo "-> ${LONG_NAME["$var"]}..."
-
-	grdsample $envelope ${infile}?${VARIABLE_NAME["$var"]}[$tIndex] -G${workingDir}/data.grd
-	grdsample $envelope ${infile}?${VARIABLE_NAME["dir_$var"]}[$tIndex] -G${workingDir}/dir.grd
+	
+	# Cropping	
+	if [[ "$crop" == "0" ]]
+	then 
+		grdsample -I${Xsize}+/${Ysize}+ ${infile}?${VARIABLE_NAME["$var"]}[$tIndex] -G${workingDir}/data.grd
+		grdsample -I${Xsize}+/${Ysize}+ ${infile}?${VARIABLE_NAME["dir_$var"]}[$tIndex] -G${workingDir}/dir.grd
+	else
+		grdsample $envelope ${infile}?${VARIABLE_NAME["$var"]}[$tIndex] -G${workingDir}/data.grd
+		grdsample $envelope ${infile}?${VARIABLE_NAME["dir_$var"]}[$tIndex] -G${workingDir}/dir.grd
+	fi
+	
+	if [[ ! -n "${workingDir}/data.grd" ]] 
+	then
+		echo "Error during cropping"
+		exit 0
+	fi	
 	
 	# We apply mask if we need	
 	if [[ -n "$maskFile" ]] 
@@ -67,12 +80,11 @@ else
  	gmtset MAP_GRID_PEN_PRIMARY thinner,black,solid
  	gmtset MAP_FRAME_PEN thinner,black,solid 	
 
-	psscale $colorBarPosition -C${COLOR_PALETTES["$var"]} -Bx${SCALE_TICK["$var"]} -By+l"${CANONICAL_UNITS["$var"]}" -S -O -K >> ${outfile}.ps	
-	echo "5 9 20 0 5 BC ${LONG_NAME["$var"]}" > ${workingDir}/legend
-	echo "5 8 12 0 5 BC ${currentTimeSubTitle}" >> ${workingDir}/legend
- 	cat ${workingDir}/legend | pstext -R0/10/0/10 -JX10c $titlePosition -O >> ${outfile}.ps
+	psscale $envelope $projection -DjBR+w${colorBarXsize}/${colorBarYsize}+o0.5/0.3c+j+e -C${COLOR_PALETTES["$var"]} -Bx${SCALE_TICK["$var"]} -By+l"${CANONICAL_UNITS["$var"]}" -S -O -K >> ${outfile}.ps	
+	echo ${LONG_NAME["$var"]} | pstext $envelope $projection -F+f20p,Helvetica+cTC -Y2 -P -O -K >> ${outfile}.ps
+	echo ${currentTimeSubTitle} | pstext $envelope $projection -F+f8p,Helvetica+cTC -Y-0.8 -P -O >> ${outfile}.ps
 	
-	ps2raster -E$png_resolution -A -Tg -P ${outfile}.ps
+	psconvert -A -Tg -P ${outfile}.ps
 
 	rm -f ${workingDir}/pal.cpt 
 	rm -f ${outfile}.ps 
