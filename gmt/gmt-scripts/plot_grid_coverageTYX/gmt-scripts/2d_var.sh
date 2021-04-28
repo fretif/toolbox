@@ -63,7 +63,7 @@ else
 
 	if [[ -n "$instrumentFile" ]] 
 	then
-		source ./gmt-scripts/instrument.sh
+		source $basedir/gmt-scripts/instrument.sh
 	fi
 
 	psbasemap $envelope $projection $mapAnnotation -P -O -K >> ${outfile}.ps

@@ -31,11 +31,13 @@ gmtset MAP_TICK_LENGTH_SECONDARY 5p
 gmtset PS_LINE_JOIN miter
 gmtset PS_LINE_CAP butt
 gmtset PS_MITER_LIMIT 180
+gmtset PS_MEDIA=A2 MAP_ORIGIN_X=2i MAP_ORIGIN_Y=2i
 LANG=en_us_8859_1
 
 gmtset FORMAT_DATE_MAP=yyyy/mm/dd
 gmtset FORMAT_CLOCK_MAP=hh:mm
 #gmtset TIME_UNIT=h
+
 
 #################
 #	CONFIG File	#
@@ -138,7 +140,7 @@ for ((group=1;group<=$maxGroup;group++)) do
         psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -Y$graphOffsetY -O -K >> ${outfile}.ps    
     elif [[ $plotPerLine == 2 ]]
     then   
-        psbasemap$paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -X-`echo "$graphOffsetX*($plotPerLine-1)" | bc -l` -Y$graphOffsetY -O -K >> ${outfile}.ps
+        psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]}+l"${titleYGroup["$group"]}" -BWS -X-`echo "$graphOffsetX*($plotPerLine-1)" | bc -l` -Y$graphOffsetY -O -K >> ${outfile}.ps
     else
         psbasemap $paramR/${ZminGroup["$group"]}/${ZmaxGroup["$group"]} $paramJ -Bsx${secondAnnotX} -Bpx${annontX} -Bpy${annontYGroup["$group"]} -BWS -X$graphOffsetX -Y0 -O -K >> ${outfile}.ps
     fi 
@@ -410,7 +412,7 @@ for ((group=1;group<=$maxGroup;group++)) do
 			     #}' ${workingDir}/file.tmp > ${workingDir}/file-time.tmp
 
 			     awk '$0~/#/ {next;}
-				NR%10==0{				       
+				NR%1==0{				       
 				       printf("%s %s %s 0.12i\n",$1,'${directionZValue["$group$index"]}',$2);				  
 			     }' ${workingDir}/file.tmp > ${workingDir}/file-time.tmp
 			     
@@ -463,7 +465,12 @@ for ((group=1;group<=$maxGroup;group++)) do
 done
 
 #pslegend ${workingDir}/legend $paramR/${ZminGroup["1"]}/${ZmaxGroup["1"]} $paramJ -Dx-0.2i/`echo "0.2*$countFiles" | bc -l`i/5i/3.3i/BL -X-`echo "$graphOffsetX*($plotPerLine-1)" | bc -l` -Y-3 -O >> ${outfile}.ps
-pslegend ${workingDir}/legend  -Dx0i/0i+w2i/0.6i+jBL+l1.2 $paramR/${ZminGroup["1"]}/${ZmaxGroup["1"]} $paramJ -F+p0.5p,black+gwhite -Y4 -O >> ${outfile}.ps
+if [[ $plotPerLine == 1 ]]
+then 
+    pslegend ${workingDir}/legend  -Dx0i/0i+w2i/0.6i+jBL+l1.2 $paramR/${ZminGroup["1"]}/${ZmaxGroup["1"]} $paramJ -F+p0.5p,black+gwhite -Y4 -O >> ${outfile}.ps
+else
+    pslegend ${workingDir}/legend  -Dx0i/0i+w2i/0.6i+jBL+l1.2 $paramR/${ZminGroup["1"]}/${ZmaxGroup["1"]} $paramJ -F+p0.5p,black+gwhite -X-`echo "$graphOffsetX*($plotPerLine-1)" | bc -l` -Y4 -O >> ${outfile}.ps
+fi
 
 #echo "5 9.5 $title"  | pstext -R0/10/0/10 $paramJText -Gwhite -F+f22p -To -W0.5p,black,solid -Y5.5 -O >> ${outfile}.ps
 
